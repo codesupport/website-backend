@@ -1,0 +1,31 @@
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.iml
+*.launch
+.settings/
+*.sublime-workspace
+build/
+out/
+
+#Maven
+dependency-reduced-pom.xml
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# System Files
+.DS_Store
+Thumbs.db

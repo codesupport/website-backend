@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: ${database.url}
+    driverClassName: ${database.driver}
+    username: ${database.username}
+    password: ${database.password}
+  jpa:
+    database-platform: ${database.dialect}
+    open-in-view: false
+logging:
+  level:
+    root: ERROR
+    org.springframework: INFO
+    network.codesupport: INFO
+  pattern:
+    console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
+server:
+  port: 8082

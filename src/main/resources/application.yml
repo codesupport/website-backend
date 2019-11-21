@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: @active.spring.profile@
+logging:
+  level:
+    root: ERROR
+    org.springframework: INFO
+    network.codesupport: DEBUG
+  pattern:
+    console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
+server:
+  port: 8082

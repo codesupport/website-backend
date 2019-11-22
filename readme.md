@@ -1,6 +1,19 @@
 #Api Service Demo
 Demo Api-Service with SpringBoot and Hibernate
 
+##Maven commands
+
+``./mvnw clean`` - Deletes `target/` folder (build folder)
+
+``./mvnw package`` - Compiles .class files, runs tess, and packages into jar (``./mvn compile`` just compiles)
+
+``./mvnw install`` - Compiles, packages, and installs to local m2 repo (``<user>/.m2/repository``)
+
+``./mvnw test`` - Runs unit tests
+
+``./mvn clean package`` - Deletes `target/` folder and repackages (preferred way to build)
+
+
 ##Usage
 ###Build the App
 (From api-service root folder)

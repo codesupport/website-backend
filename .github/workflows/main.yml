@@ -1,0 +1,21 @@
+name: CI
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Runs Unit Tests
+        uses: actions/setup-java@v1
+        with:
+          java-version: '1.8.0'
+      - run: ./mvnw test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Builds The Source Code
+        uses: actions/setup-java@v1
+        with:
+          java-version: '1.8.0'
+      - run: ./mvnw package -Dmaven.test.skip=true

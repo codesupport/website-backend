@@ -16,8 +16,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>CodeSupport Api</name>
-    <description>Demo application showing SpringBoot REST Api and hibernate</description>
+    <name>CodeSupport Website API</name>
+    <description>Backend API service for the CodeSupport website</description>
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>

@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 
+/**
+ * API contract with the persistent storage for the {@link dev.codesupport.web.domain.User} resource.
+ */
 @Data
 @Entity(name = "User")
 public class UserEntity implements IdentifiableEntity<Long> {

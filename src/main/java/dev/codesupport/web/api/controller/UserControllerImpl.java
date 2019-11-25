@@ -9,6 +9,11 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+import static dev.codesupport.web.common.service.service.RestResponse.restResponse;
+
+/**
+ * API Contract implementation for the {@link User} resource.
+ */
 @Component
 @Validated
 public class UserControllerImpl implements UserController {
@@ -22,26 +27,26 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public RestResponse<User> getAllUsers() {
-        return RestResponse.restResponse(service.findAllUsers());
+        return restResponse(service.findAllUsers());
     }
 
     @Override
     public RestResponse<User> getUserById(Long id) {
-        return RestResponse.restResponse(service.getUserById(id));
+        return restResponse(service.getUserById(id));
     }
 
     @Override
     public RestResponse<User> createUsers(List<User> users) {
-        return RestResponse.restResponse(service.createUsers(users));
+        return restResponse(service.createUsers(users));
     }
 
     @Override
     public RestResponse<User> updateUsers(List<User> users) {
-        return RestResponse.restResponse(service.updateUsers(users));
+        return restResponse(service.updateUsers(users));
     }
 
     @Override
     public RestResponse<User> deleteUsers(List<User> users) {
-        return RestResponse.restResponse(service.deleteUsers(users));
+        return restResponse(service.deleteUsers(users));
     }
 }

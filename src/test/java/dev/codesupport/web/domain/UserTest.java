@@ -19,10 +19,10 @@ public class UserTest {
         List<ValidationIssue> validationIssues = user.validate();
 
         List<String> expected = new ArrayList<>();
-        expected.add("ValidationIssue(id=null, type=MISSING, parameterName=username, message=Missing parameter)");
-        expected.add("ValidationIssue(id=null, type=MISSING, parameterName=password, message=Missing parameter)");
-        expected.add("ValidationIssue(id=null, type=MISSING, parameterName=email, message=Missing parameter)");
-        expected.add("ValidationIssue(id=null, type=MISSING, parameterName=addedBy, message=Missing parameter)");
+        expected.add("ValidationIssue(id=null, type=MISSING, propertyName=username, message=Missing parameter)");
+        expected.add("ValidationIssue(id=null, type=MISSING, propertyName=password, message=Missing parameter)");
+        expected.add("ValidationIssue(id=null, type=MISSING, propertyName=email, message=Missing parameter)");
+        expected.add("ValidationIssue(id=null, type=MISSING, propertyName=addedBy, message=Missing parameter)");
 
         List<String> actual = new ArrayList<>();
 
@@ -49,10 +49,10 @@ public class UserTest {
         List<ValidationIssue> validationIssues = user.validate();
 
         List<String> expected = new ArrayList<>();
-        expected.add("ValidationIssue(id=1, type=INVALID, parameterName=username, message=Invalid parameter (Must be 4-15 Alphanumeric figures))");
-        expected.add("ValidationIssue(id=1, type=INVALID, parameterName=password, message=Invalid parameter (Must be >10 Alphanumeric figures))");
-        expected.add("ValidationIssue(id=1, type=INVALID, parameterName=email, message=Invalid parameter (Must be valid email))");
-        expected.add("ValidationIssue(id=1, type=MISSING, parameterName=addedBy, message=Missing parameter)");
+        expected.add("ValidationIssue(id=1, type=INVALID, propertyName=username, message=Invalid parameter (Must be 4-15 Alphanumeric figures))");
+        expected.add("ValidationIssue(id=1, type=INVALID, propertyName=password, message=Invalid parameter (Must be >10 Alphanumeric figures))");
+        expected.add("ValidationIssue(id=1, type=INVALID, propertyName=email, message=Invalid parameter (Must be valid email))");
+        expected.add("ValidationIssue(id=1, type=MISSING, propertyName=addedBy, message=Missing parameter)");
 
         List<String> actual = new ArrayList<>();
 

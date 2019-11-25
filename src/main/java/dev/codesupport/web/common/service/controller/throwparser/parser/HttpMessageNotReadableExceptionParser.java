@@ -5,6 +5,12 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 
+/**
+ * Used to parse Spring's {@link HttpMessageNotReadableException} type throwables.
+ *
+ * @see HttpMessageNotReadableException
+ * @see AbstractThrowableParser
+ */
 @Component
 @NoArgsConstructor
 class HttpMessageNotReadableExceptionParser extends AbstractThrowableParser<HttpMessageNotReadableException> {

@@ -50,7 +50,7 @@ public class ValidationExceptionParserTest {
         //noinspection ResultOfMethodCallIgnored
         doReturn(parameterName)
                 .when(mockValidationIssue)
-                .getParameterName();
+                .getPropertyName();
 
         //ResultOfMethodCallIgnored - We're not calling a method, we're making a mock
         //noinspection ResultOfMethodCallIgnored

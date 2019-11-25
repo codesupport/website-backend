@@ -6,6 +6,12 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.springframework.stereotype.Component;
 
+/**
+ * Used to parse {@link ResourceNotFoundException} type throwables.
+ *
+ * @see ResourceNotFoundException
+ * @see AbstractThrowableParser
+ */
 @Component
 @NoArgsConstructor
 class ResourceNotFoundExceptionParser extends AbstractThrowableParser<ResourceNotFoundException> {

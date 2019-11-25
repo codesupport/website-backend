@@ -12,6 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Persistence level validation for User resources.
+ * <p>Validates that no other {@link User} resource exists within the persistent storage with the same username.</p>
+ *
+ * @see AbstractPersistenceValidation
+ */
 @Component
 public class UserValidation extends AbstractPersistenceValidation<UserEntity, Long, User, UserRepository> {
 

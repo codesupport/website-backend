@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Defines endpoints and validations for the associated API Contract for the {@link User} resource.
+ */
 @RestController
 @RequestMapping("/api/v1")
 @Validated

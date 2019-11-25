@@ -5,6 +5,12 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+/**
+ * Used to parse Spring's {@link MethodArgumentTypeMismatchException} type throwables.
+ *
+ * @see MethodArgumentTypeMismatchException
+ * @see AbstractThrowableParser
+ */
 @Component
 @NoArgsConstructor
 class MethodArgumentTypeMismatchExceptionParser extends AbstractThrowableParser<MethodArgumentTypeMismatchException> {

@@ -5,6 +5,12 @@ import dev.codesupport.web.common.service.data.validation.ValidationIssue;
 
 import java.util.List;
 
+/**
+ * Used to indicate domain level or persistence level validation issues.
+ *
+ * @see dev.codesupport.web.common.domain.Validatable
+ * @see dev.codesupport.web.common.service.service.CrudOperations
+ */
 public class ValidationException extends ServiceLayerException {
 
     @Getter

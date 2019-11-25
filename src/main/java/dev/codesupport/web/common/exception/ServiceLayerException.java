@@ -1,5 +1,8 @@
 package dev.codesupport.web.common.exception;
 
+/**
+ * Used to indicate service layer business logic issues.
+ */
 public class ServiceLayerException extends RuntimeException {
     public enum Reason {
         RESOURCE_ALREADY_EXISTS("Resource already exists");

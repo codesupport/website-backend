@@ -1,12 +1,19 @@
 spring:
   datasource:
     url: ${database.url}
-    driverClassName: ${database.driver}
     username: ${database.username}
     password: ${database.password}
+    driver-class-name: ${database.driver}
+    hikari:
+      maximum-pool-size: ${db.pool.size:4}
+      minimum-idle: ${db.pool.idle:2}
   jpa:
-    database-platform: ${database.dialect}
+    properties:
+      hibernate:
+        dialect: ${database.dialect}
     open-in-view: false
+    hibernate:
+      ddl-auto: none
 logging:
   level:
     root: ERROR
@@ -15,4 +22,4 @@ logging:
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
 server:
-  port: 8082
+  port: 8080

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Handles the business logic for the various resource operations provided by the API contract endpoints.
+ */
 @Service
 public class UserService {
 

@@ -17,10 +17,16 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
+/**
+ * Controller for handling exceptions and servlet errors.
+ */
 @Slf4j
 @Controller
 public class ErrorHandlerController implements ErrorController {
 
+    /**
+     * Factory class used to find an appropriate parser for a given exception.
+     */
     private final ThrowableParserFactory throwableParserFactory;
 
     @Autowired
@@ -28,6 +34,17 @@ public class ErrorHandlerController implements ErrorController {
         this.throwableParserFactory = throwableParserFactory;
     }
 
+    /**
+     * Handles the error/exception that caused the controller to be activated.
+     * <p>This method checks to see what caused the error, whether it was caused by a servlet error with an HttpStatus
+     * code, or an exception thrown.
+     *
+     * Any exception is then parsed by way of an appropriate parser created by the {@link ThrowableParserFactory} and
+     * an appropriate message is wrapped in a {@link RestResponse} and provided back in the Http response.</p>
+     *
+     * @param request The data associated to the request that err'd
+     * @return The wrapped response to inform the user of the error.
+     */
     //WeakerAccess - SonarQube wants it public
     //S3752 - Need to use RequestMapping to catch errors for every request method type.
     @SuppressWarnings({"squid:S3752", "WeakerAccess"})
@@ -71,10 +88,20 @@ public class ErrorHandlerController implements ErrorController {
         return new ResponseEntity<>(restResponse, httpStatus);
     }
 
+    /**
+     * Segregated out into a method for easier unit testing.
+     *
+     * @return A new instance of a {@link RestResponse} wrapper object.
+     */
     RestResponse<Serializable> createRestResponse() {
         return new RestResponse<>();
     }
 
+    /**
+     * Boilerplate spring method.
+     *
+     * @return The endpoint associated to the error page.
+     */
     @Override
     public String getErrorPath() {
         return "/error";

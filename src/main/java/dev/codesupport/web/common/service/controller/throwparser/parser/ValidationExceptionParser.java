@@ -7,6 +7,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+/**
+ * Used to parse {@link ValidationException} type throwables.
+ *
+ * @see ValidationException
+ * @see AbstractThrowableParser
+ */
 @Component
 @NoArgsConstructor
 class ValidationExceptionParser extends AbstractThrowableParser<ValidationException> {
@@ -19,7 +25,7 @@ class ValidationExceptionParser extends AbstractThrowableParser<ValidationExcept
     @Override
     protected String responseMessage() {
         return throwable.getValidationIssues().stream()
-                .map(e -> "[" + e.getParameterName() + ": " + e.getMessage() + "]")
+                .map(e -> "[" + e.getPropertyName() + ": " + e.getMessage() + "]")
                 .collect(Collectors.joining(","));
     }
 }

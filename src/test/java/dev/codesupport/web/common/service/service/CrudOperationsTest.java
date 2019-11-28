@@ -13,7 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,8 +34,8 @@ import static org.mockito.Mockito.verify;
 public class CrudOperationsTest {
 
     private static CrudOperations<MockEntity, Long, MockDomain> crudOperationsSpy;
-    private static CrudRepository<MockEntity, Long> mockRepository;
-    private static AbstractPersistenceValidation<MockEntity, Long, MockDomain, CrudRepository<MockEntity, Long>> mockValidator;
+    private static JpaRepository<MockEntity, Long> mockRepository;
+    private static AbstractPersistenceValidation<MockEntity, Long, MockDomain, JpaRepository<MockEntity, Long>> mockValidator;
     private static ApplicationContext mockContext;
 
     @BeforeClass
@@ -59,7 +59,7 @@ public class CrudOperationsTest {
 
         //unchecked - This is not a concern for the purposes of this test.
         //noinspection unchecked
-        mockRepository = mock(CrudRepository.class);
+        mockRepository = mock(JpaRepository.class);
 
         CrudOperations.setContext(mockContext);
 

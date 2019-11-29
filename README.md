@@ -1,5 +1,4 @@
-# Api Service Demo
-Demo Api-Service with SpringBoot and Hibernate
+# CodeSupport Website Backend
 
 ## Maven commands
 
@@ -144,3 +143,5 @@ Any business logic exceptions throw `ServiceLayerException` in the service class
 Validation and Resource exceptions are handled by the framework if utilizing provided APIs.
 All exceptions are caught and handled by the framework to provide feedback to the user and log
 to the system.
+
+**Any Questions?** Feel free to mention @LamboCreeper#6510 in the [CodeSupport Discord](https://discord.gg/Hn9SETt).

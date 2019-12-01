@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.annotation.Nullable;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -28,6 +30,10 @@ public class ErrorHandlerController implements ErrorController {
      * Factory class used to find an appropriate parser for a given exception.
      */
     private final ThrowableParserFactory throwableParserFactory;
+    /**
+     * The attribute name for Spring's DefaultErrorAttribute related exceptions.
+     */
+    static final String SPRING_DEFAULT_ERROR = DefaultErrorAttributes.class.getName() + ".ERROR";
 
     @Autowired
     ErrorHandlerController(ThrowableParserFactory throwableParserFactory) {
@@ -56,24 +62,25 @@ public class ErrorHandlerController implements ErrorController {
 
         HttpStatus httpStatus = (status instanceof Integer) ? HttpStatus.valueOf((Integer) status) : HttpStatus.I_AM_A_TEAPOT;
 
-        Object exception = request.getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
+        Throwable throwable = getExceptionOrReturnNull(request);
 
-        if (!(exception instanceof Throwable)) {
-            exception = request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
-        }
-
-        if (exception instanceof Throwable) {
-            AbstractThrowableParser throwableParser = throwableParserFactory.createParser((Throwable) exception);
+        if (throwable != null) {
+            //RawTypes - Don't need to specify types for this to work correctly.
+            //noinspection rawtypes
+            AbstractThrowableParser throwableParser = throwableParserFactory.createParser(throwable);
             throwableParser.modifyResponse(restResponse);
         } else {
             if (HttpStatus.NOT_FOUND.equals(httpStatus)) {
                 restResponse.setStatus(RestStatus.NOT_FOUND);
                 restResponse.setMessage("The requested endpoint does not exist.");
+            } else if (HttpStatus.UNAUTHORIZED.equals(httpStatus)) {
+                restResponse.setStatus(RestStatus.UNAUTHORIZED);
+                restResponse.setMessage("You are not authorized for this resource.");
             }
         }
 
-        if (exception instanceof Throwable && !RestStatus.NOT_FOUND.equals(restResponse.getStatus())) {
-            log.error("Service exception: [refId: " + restResponse.getReferenceId() + "]", (Throwable) exception);
+        if (throwable != null && !RestStatus.NOT_FOUND.equals(restResponse.getStatus())) {
+            log.error("Service exception: [refId: " + restResponse.getReferenceId() + "]", throwable);
         }
 
         if (RestStatus.NOT_FOUND.equals(restResponse.getStatus())) {
@@ -89,7 +96,29 @@ public class ErrorHandlerController implements ErrorController {
     }
 
     /**
-     * Segregated out into a method for easier unit testing.
+     * Searches various attributes for Exceptions, returning the first one found.
+     *
+     * @param request The HttpServletRequest containing possible exceptions.
+     * @return Throwable exception if found, null otherwise.
+     */
+    @Nullable
+    Throwable getExceptionOrReturnNull(HttpServletRequest request) {
+        Object throwable = request.getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
+
+        if (!(throwable instanceof Throwable)) {
+            throwable = request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+        }
+
+        if (!(throwable instanceof Throwable)) {
+            throwable = request.getAttribute(SPRING_DEFAULT_ERROR);
+        }
+
+        return (throwable instanceof Throwable) ? (Throwable) throwable : null;
+    }
+
+    /**
+     * Creates a new instance of a RestResponse
+     * <p>Segregated out into a method for easier unit testing.</p>
      *
      * @return A new instance of a {@link RestResponse} wrapper object.
      */

@@ -10,9 +10,8 @@ import dev.codesupport.web.common.domain.Validatable;
 import dev.codesupport.web.common.service.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
 import dev.codesupport.web.common.util.MappingUtils;
-import org.assertj.core.util.Lists;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,27 +30,27 @@ import java.util.Optional;
  */
 public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Validatable<I>> {
 
-    private final CrudRepository<E, I> crudRepository;
+    private final JpaRepository<E, I> jpaRepository;
     private final Class<E> entityClass;
     private final Class<D> domainClass;
-    private final AbstractPersistenceValidation<E, I, D, ? extends CrudRepository<E, I>> validation;
+    private final AbstractPersistenceValidation<E, I, D, ? extends JpaRepository<E, I>> validation;
     @Setter
     private static ApplicationContext context;
 
     /**
      * Creates a new crudOperations object for a given resource.
      *
-     * @param crudRepository Reference to the crudRepository associated with the resource.
+     * @param jpaRepository Reference to the jpaRepository associated with the resource.
      * @param entityClass Reference to the entity class associated with the resource.
      * @param domainClass Reference to the domain class associated with the resource.
      * @throws ConfigurationException when the ApplicationContext has not been configured.
      */
     public CrudOperations(
-            CrudRepository<E, I> crudRepository,
+            JpaRepository<E, I> jpaRepository,
             Class<E> entityClass,
             Class<D> domainClass
     ) {
-        this.crudRepository = crudRepository;
+        this.jpaRepository = jpaRepository;
         this.entityClass = entityClass;
         this.domainClass = domainClass;
 
@@ -64,12 +63,12 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * @return the validation component associated to the resource
      * @throws ConfigurationException when the ApplicationContext has not been configured.
      */
-    AbstractPersistenceValidation<E, I, D, CrudRepository<E, I>> getValidationBean() {
+    AbstractPersistenceValidation<E, I, D, JpaRepository<E, I>> getValidationBean() {
         if (context == null) {
             throw new ConfigurationException("CrudOperations ApplicationContext not configured");
         }
 
-        AbstractPersistenceValidation<E, I, D, CrudRepository<E, I>> validationToReturn = null;
+        AbstractPersistenceValidation<E, I, D, JpaRepository<E, I>> validationToReturn = null;
 
         Map<String, AbstractPersistenceValidation> beans = context.getBeansOfType(AbstractPersistenceValidation.class);
 
@@ -94,7 +93,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * @return The resource data list for the given id
      */
     public List<D> getById(I id) {
-        Optional<E> object = crudRepository.findById(id);
+        Optional<E> object = jpaRepository.findById(id);
 
         if (!object.isPresent()) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
@@ -109,7 +108,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * @return List of data for the given resource
      */
     public List<D> getAll() {
-        return MappingUtils.convertToType(Lists.newArrayList(crudRepository.findAll()), domainClass);
+        return MappingUtils.convertToType(jpaRepository.findAll(), domainClass);
     }
 
     /**
@@ -153,7 +152,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
     List<D> saveEntities(List<D> domainObjects) {
         List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
 
-        List<E> savedEntities = Lists.newArrayList(crudRepository.saveAll(entities));
+        List<E> savedEntities = jpaRepository.saveAll(entities);
 
         return MappingUtils.convertToType(savedEntities, domainClass);
     }
@@ -170,7 +169,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
 
         List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
 
-        crudRepository.deleteAll(entities);
+        jpaRepository.deleteAll(entities);
     }
 
     /**
@@ -216,7 +215,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * @throws ResourceNotFoundException if the resource data doesn't exist.
      */
     void resourceDoesntExistCheck(D domainObject) {
-        if (domainObject.getId() == null || !crudRepository.existsById(domainObject.getId())) {
+        if (domainObject.getId() == null || !jpaRepository.existsById(domainObject.getId())) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
         }
     }
@@ -240,7 +239,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * @throws ServiceLayerException if the resource data already exists.
      */
     void resourceAlreadyExistsCheck(D domainObject) {
-        if (domainObject.getId() != null && crudRepository.existsById(domainObject.getId())) {
+        if (domainObject.getId() != null && jpaRepository.existsById(domainObject.getId())) {
             throw new ServiceLayerException(ServiceLayerException.Reason.RESOURCE_ALREADY_EXISTS);
         }
     }

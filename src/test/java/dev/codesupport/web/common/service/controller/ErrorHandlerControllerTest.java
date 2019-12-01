@@ -16,6 +16,7 @@ import java.io.Serializable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -26,7 +27,7 @@ public class ErrorHandlerControllerTest {
     public void shouldReturnCorrect404ResponseForPageNotFound() {
         String referenceId = "123";
 
-        ErrorHandlerController controller = spy(new ErrorHandlerController(mock(ThrowableParserFactory.class)));
+        ErrorHandlerController controllerSpy = spy(new ErrorHandlerController(mock(ThrowableParserFactory.class)));
 
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
 
@@ -44,16 +45,18 @@ public class ErrorHandlerControllerTest {
                 .getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
 
         doReturn(mockRestResponse)
-                .when(controller)
+                .when(controllerSpy)
                 .createRestResponse();
 
         doReturn(httpStatus.value())
                 .when(mockRequest)
                 .getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
+        //ThrowableNotThrown - Not throwing an exception, mocking the return of one.
+        //noinspection ThrowableNotThrown
         doReturn(null)
-                .when(mockRequest)
-                .getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
+                .when(controllerSpy)
+                .getExceptionOrReturnNull(mockRequest);
 
         doReturn(null)
                 .when(mockRequest)
@@ -65,18 +68,68 @@ public class ErrorHandlerControllerTest {
         restResponse.setMessage("The requested endpoint does not exist.");
 
         ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
-        ResponseEntity<RestResponse<Serializable>> actual = controller.handleError(mockRequest);
+        ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void shouldReturnCorrectResponseForRequestDispatcherException() {
+    public void shouldReturnCorrect401ResponseForUnauthorizedRequest() {
+        String referenceId = "123";
+
+        ErrorHandlerController controllerSpy = spy(new ErrorHandlerController(mock(ThrowableParserFactory.class)));
+
+        HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+
+        RestResponse<Serializable> mockRestResponse = new RestResponse<>();
+        mockRestResponse.setReferenceId(referenceId);
+
+        doReturn("GET")
+                .when(mockRequest)
+                .getMethod();
+
+        doReturn("test/uri")
+                .when(mockRequest)
+                .getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+
+        doReturn(mockRestResponse)
+                .when(controllerSpy)
+                .createRestResponse();
+
+        doReturn(httpStatus.value())
+                .when(mockRequest)
+                .getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+
+        //ThrowableNotThrown - Not throwing an exception, mocking the return of one.
+        //noinspection ThrowableNotThrown
+        doReturn(null)
+                .when(controllerSpy)
+                .getExceptionOrReturnNull(mockRequest);
+
+        doReturn(null)
+                .when(mockRequest)
+                .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+
+        RestResponse<Serializable> restResponse = new RestResponse<>();
+        restResponse.setReferenceId(referenceId);
+        restResponse.setStatus(RestStatus.UNAUTHORIZED);
+        restResponse.setMessage("You are not authorized for this resource.");
+
+        ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
+        ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectResponseIfExceptionFound() {
         String referenceId = "123";
 
         ThrowableParserFactory mockThrowableParserFactory = mock(ThrowableParserFactory.class);
 
-        ErrorHandlerController controller = spy(new ErrorHandlerController(mockThrowableParserFactory));
+        ErrorHandlerController controllerSpy = spy(new ErrorHandlerController(mockThrowableParserFactory));
 
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -96,20 +149,18 @@ public class ErrorHandlerControllerTest {
                 .getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
 
         doReturn(mockRestResponse)
-                .when(controller)
+                .when(controllerSpy)
                 .createRestResponse();
 
         doReturn(httpStatus.value())
                 .when(mockRequest)
                 .getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
-        doReturn(null)
-                .when(mockRequest)
-                .getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
-
+        //ThrowableNotThrown - Not throwing an exception, mocking the return of one.
+        //noinspection ThrowableNotThrown
         doReturn(mockThrowable)
-                .when(mockRequest)
-                .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+                .when(controllerSpy)
+                .getExceptionOrReturnNull(mockRequest);
 
         ThrowableParser throwableParser = new ThrowableParser();
         ReflectionTestUtils.setField(throwableParser, "throwable", mockThrowable);
@@ -124,45 +175,79 @@ public class ErrorHandlerControllerTest {
         restResponse.setMessage("Mock parser message");
 
         ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
-        ResponseEntity<RestResponse<Serializable>> actual = controller.handleError(mockRequest);
+        ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void shouldReturnCorrectResponseForDispatcherServletException() {
-        String referenceId = "123";
-
+    public void shouldReturnCorrectThrowableForRequestDispatcherException() {
         ThrowableParserFactory mockThrowableParserFactory = mock(ThrowableParserFactory.class);
 
         ErrorHandlerController controller = spy(new ErrorHandlerController(mockThrowableParserFactory));
 
-        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+
+        Throwable mockThrowable1 = mock(Throwable.class);
+        Throwable mockThrowable2 = mock(Throwable.class);
+        Throwable mockThrowable3 = mock(Throwable.class);
+
+        doReturn(mockThrowable1)
+                .when(mockRequest)
+                .getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
+
+        doReturn(mockThrowable2)
+                .when(mockRequest)
+                .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+
+        doReturn(mockThrowable3)
+                .when(mockRequest)
+                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
+
+        Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
+
+        assertEquals(mockThrowable1, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectThrowableForDispatcherServletException() {
+        ThrowableParserFactory mockThrowableParserFactory = mock(ThrowableParserFactory.class);
+
+        ErrorHandlerController controller = spy(new ErrorHandlerController(mockThrowableParserFactory));
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
 
-        RestResponse<Serializable> mockRestResponse = new RestResponse<>();
-        mockRestResponse.setReferenceId(referenceId);
+        Throwable mockThrowable1 = mock(Throwable.class);
+        Throwable mockThrowable2 = mock(Throwable.class);
 
-        Throwable mockThrowable = mock(Throwable.class);
-
-        doReturn("GET")
+        doReturn(null)
                 .when(mockRequest)
-                .getMethod();
+                .getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
 
-        doReturn("test/uri")
+        doReturn(mockThrowable1)
                 .when(mockRequest)
-                .getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+                .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
 
-        doReturn(mockRestResponse)
-                .when(controller)
-                .createRestResponse();
-
-        doReturn(httpStatus.value())
+        doReturn(mockThrowable2)
                 .when(mockRequest)
-                .getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
 
-        doReturn(mockThrowable)
+        Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
+
+        assertEquals(mockThrowable1, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectThrowableForDefaultAttributesError() {
+        ThrowableParserFactory mockThrowableParserFactory = mock(ThrowableParserFactory.class);
+
+        ErrorHandlerController controller = spy(new ErrorHandlerController(mockThrowableParserFactory));
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+
+        Throwable mockThrowable1 = mock(Throwable.class);
+
+        doReturn(null)
                 .when(mockRequest)
                 .getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
 
@@ -170,22 +255,38 @@ public class ErrorHandlerControllerTest {
                 .when(mockRequest)
                 .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
 
-        ThrowableParser throwableParser = new ThrowableParser();
-        ReflectionTestUtils.setField(throwableParser, "throwable", mockThrowable);
+        doReturn(mockThrowable1)
+                .when(mockRequest)
+                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
 
-        doReturn(throwableParser)
-                .when(mockThrowableParserFactory)
-                .createParser(mockThrowable);
+        Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
 
-        RestResponse<Serializable> restResponse = new RestResponse<>();
-        restResponse.setReferenceId(referenceId);
-        restResponse.setStatus(RestStatus.WARNING);
-        restResponse.setMessage("Mock parser message");
+        assertEquals(mockThrowable1, actual);
+    }
 
-        ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
-        ResponseEntity<RestResponse<Serializable>> actual = controller.handleError(mockRequest);
+    @Test
+    public void shouldReturnNullIfNoExceptionFound() {
+        ThrowableParserFactory mockThrowableParserFactory = mock(ThrowableParserFactory.class);
 
-        assertEquals(expected, actual);
+        ErrorHandlerController controller = spy(new ErrorHandlerController(mockThrowableParserFactory));
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+
+        doReturn(null)
+                .when(mockRequest)
+                .getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
+
+        doReturn(null)
+                .when(mockRequest)
+                .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+
+        doReturn(null)
+                .when(mockRequest)
+                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
+
+        Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
+
+        assertNull(actual);
     }
 
     @Test

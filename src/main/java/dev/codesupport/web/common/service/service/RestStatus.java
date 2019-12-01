@@ -19,5 +19,9 @@ public enum RestStatus {
     /**
      * The request failed due to a resource not found
      */
-    NOT_FOUND
+    NOT_FOUND,
+    /**
+     * The request failed due to authorization issues
+     */
+    UNAUTHORIZED
 }

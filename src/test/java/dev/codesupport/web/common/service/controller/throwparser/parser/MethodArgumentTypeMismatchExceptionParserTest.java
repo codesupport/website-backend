@@ -19,7 +19,7 @@ public class MethodArgumentTypeMismatchExceptionParserTest {
     public void shouldReturnCorrectParserType() {
         MethodArgumentTypeMismatchExceptionParser parser = new MethodArgumentTypeMismatchExceptionParser();
 
-        AbstractThrowableParser instancedParser = parser.instantiate();
+        AbstractThrowableParser<MethodArgumentTypeMismatchException> instancedParser = parser.instantiate();
 
         assertTrue(instancedParser instanceof MethodArgumentTypeMismatchExceptionParser);
     }
@@ -28,8 +28,8 @@ public class MethodArgumentTypeMismatchExceptionParserTest {
     public void shouldCreateNewInstance() {
         MethodArgumentTypeMismatchExceptionParser parser = new MethodArgumentTypeMismatchExceptionParser();
 
-        AbstractThrowableParser firstInstance = parser.instantiate();
-        AbstractThrowableParser secondInstance = parser.instantiate();
+        AbstractThrowableParser<MethodArgumentTypeMismatchException> firstInstance = parser.instantiate();
+        AbstractThrowableParser<MethodArgumentTypeMismatchException> secondInstance = parser.instantiate();
 
         assertNotSame(firstInstance, secondInstance);
     }
@@ -37,7 +37,7 @@ public class MethodArgumentTypeMismatchExceptionParserTest {
     @Test
     public void shouldReturnCorrectMessage() {
         String parameterName = "ParameterName";
-        Class parameterType = Long.class;
+        Class<Long> parameterType = Long.class;
 
         MethodArgumentTypeMismatchExceptionParser parser = new MethodArgumentTypeMismatchExceptionParser();
 

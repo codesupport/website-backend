@@ -22,7 +22,7 @@ public class ValidationExceptionParserTest {
     public void shouldReturnCorrectParserType() {
         ValidationExceptionParser parser = new ValidationExceptionParser();
 
-        AbstractThrowableParser instancedParser = parser.instantiate();
+        AbstractThrowableParser<ValidationException> instancedParser = parser.instantiate();
 
         assertTrue(instancedParser instanceof ValidationExceptionParser);
     }
@@ -31,8 +31,8 @@ public class ValidationExceptionParserTest {
     public void shouldCreateNewInstance() {
         ValidationExceptionParser parser = new ValidationExceptionParser();
 
-        AbstractThrowableParser firstInstance = parser.instantiate();
-        AbstractThrowableParser secondInstance = parser.instantiate();
+        AbstractThrowableParser<ValidationException> firstInstance = parser.instantiate();
+        AbstractThrowableParser<ValidationException> secondInstance = parser.instantiate();
 
         assertNotSame(firstInstance, secondInstance);
     }

@@ -3,6 +3,7 @@ package dev.codesupport.web.common.service.controller.throwparser.parser;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.junit.Test;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +16,7 @@ public class HttpMessageNotReadableExceptionParserTest {
     public void shouldReturnCorrectParserType() {
         HttpMessageNotReadableExceptionParser parser = new HttpMessageNotReadableExceptionParser();
 
-        AbstractThrowableParser instancedParser = parser.instantiate();
+        AbstractThrowableParser<HttpMessageNotReadableException> instancedParser = parser.instantiate();
 
         assertTrue(instancedParser instanceof HttpMessageNotReadableExceptionParser);
     }
@@ -24,8 +25,8 @@ public class HttpMessageNotReadableExceptionParserTest {
     public void shouldCreateNewInstance() {
         HttpMessageNotReadableExceptionParser parser = new HttpMessageNotReadableExceptionParser();
 
-        AbstractThrowableParser firstInstance = parser.instantiate();
-        AbstractThrowableParser secondInstance = parser.instantiate();
+        AbstractThrowableParser<HttpMessageNotReadableException> firstInstance = parser.instantiate();
+        AbstractThrowableParser<HttpMessageNotReadableException> secondInstance = parser.instantiate();
 
         assertNotSame(firstInstance, secondInstance);
     }

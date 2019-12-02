@@ -18,7 +18,7 @@ public class ResourceNotFoundExceptionParserTest {
     public void shouldReturnCorrectParserType() {
         ResourceNotFoundExceptionParser parser = new ResourceNotFoundExceptionParser();
 
-        AbstractThrowableParser instancedParser = parser.instantiate();
+        AbstractThrowableParser<ResourceNotFoundException> instancedParser = parser.instantiate();
 
         assertTrue(instancedParser instanceof ResourceNotFoundExceptionParser);
     }
@@ -27,8 +27,8 @@ public class ResourceNotFoundExceptionParserTest {
     public void shouldCreateNewInstance() {
         ResourceNotFoundExceptionParser parser = new ResourceNotFoundExceptionParser();
 
-        AbstractThrowableParser firstInstance = parser.instantiate();
-        AbstractThrowableParser secondInstance = parser.instantiate();
+        AbstractThrowableParser<ResourceNotFoundException> firstInstance = parser.instantiate();
+        AbstractThrowableParser<ResourceNotFoundException> secondInstance = parser.instantiate();
 
         assertNotSame(firstInstance, secondInstance);
     }

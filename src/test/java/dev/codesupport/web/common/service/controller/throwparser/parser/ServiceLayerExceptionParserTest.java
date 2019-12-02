@@ -18,7 +18,7 @@ public class ServiceLayerExceptionParserTest {
     public void shouldReturnCorrectParserType() {
         ServiceLayerExceptionParser parser = new ServiceLayerExceptionParser();
 
-        AbstractThrowableParser instancedParser = parser.instantiate();
+        AbstractThrowableParser<ServiceLayerException> instancedParser = parser.instantiate();
 
         assertTrue(instancedParser instanceof ServiceLayerExceptionParser);
     }
@@ -27,8 +27,8 @@ public class ServiceLayerExceptionParserTest {
     public void shouldCreateNewInstance() {
         ServiceLayerExceptionParser parser = new ServiceLayerExceptionParser();
 
-        AbstractThrowableParser firstInstance = parser.instantiate();
-        AbstractThrowableParser secondInstance = parser.instantiate();
+        AbstractThrowableParser<ServiceLayerException> firstInstance = parser.instantiate();
+        AbstractThrowableParser<ServiceLayerException> secondInstance = parser.instantiate();
 
         assertNotSame(firstInstance, secondInstance);
     }

@@ -17,7 +17,7 @@ public class NumberFormatExceptionParserTest {
     public void shouldReturnCorrectParserType() {
         NumberFormatExceptionParser parser = new NumberFormatExceptionParser();
 
-        AbstractThrowableParser instancedParser = parser.instantiate();
+        AbstractThrowableParser<NumberFormatException> instancedParser = parser.instantiate();
 
         assertTrue(instancedParser instanceof NumberFormatExceptionParser);
     }
@@ -26,8 +26,8 @@ public class NumberFormatExceptionParserTest {
     public void shouldCreateNewInstance() {
         NumberFormatExceptionParser parser = new NumberFormatExceptionParser();
 
-        AbstractThrowableParser firstInstance = parser.instantiate();
-        AbstractThrowableParser secondInstance = parser.instantiate();
+        AbstractThrowableParser<NumberFormatException> firstInstance = parser.instantiate();
+        AbstractThrowableParser<NumberFormatException> secondInstance = parser.instantiate();
 
         assertNotSame(firstInstance, secondInstance);
     }

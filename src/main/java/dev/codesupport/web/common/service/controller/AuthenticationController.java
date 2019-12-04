@@ -54,9 +54,10 @@ public class AuthenticationController {
      */
     @PostMapping(value = "/authenticate")
     public ResponseEntity<RestResponse<Serializable>> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        String username = authenticationRequest.getUsername();
+        authenticate(username, authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+                .loadUserByUsername(username);
         final String token = jwtUtility.generateToken(userDetails.getUsername());
         return ResponseEntity.ok(
                 getRestResponse(Collections.singletonList(token))

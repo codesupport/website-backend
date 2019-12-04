@@ -96,25 +96,25 @@ public class JJwtUtility extends JwtUtility {
      */
     private static class DecodedJJWT implements DecodedJWT {
 
-        private final Jws<Claims> jwsClaims;
+        private final Claims jwtBody;
 
         DecodedJJWT(Jws<Claims> jwsClaims) {
-            this.jwsClaims = jwsClaims;
+            jwtBody = jwsClaims.getBody();
         }
 
         @Override
         public String getUsername() {
-            return jwsClaims.getBody().get(USERNAME, String.class);
+            return jwtBody.get(USERNAME, String.class);
         }
 
         @Override
         public Long getExpiration() {
-            return jwsClaims.getBody().get(EXPIRATION, Long.class);
+            return jwtBody.get(EXPIRATION, Long.class);
         }
 
         @Override
         public String getIssuer() {
-            return jwsClaims.getBody().getIssuer();
+            return jwtBody.getIssuer();
         }
     }
 

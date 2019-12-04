@@ -43,7 +43,7 @@ public class AuthenticationUserDetailsService implements UserDetailsService {
 
             @Override
             public String getUsername() {
-                return "admin";
+                return username;
             }
 
             @Override

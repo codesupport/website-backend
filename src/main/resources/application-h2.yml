@@ -12,3 +12,7 @@ spring:
   h2:
     console:
       enabled: true
+security:
+  jwt:
+    issuer: test.CodeSupport.dev
+    expiration: 10m

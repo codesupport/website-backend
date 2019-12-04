@@ -2,6 +2,7 @@ package dev.codesupport.web.common.service.controller;
 
 import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.security.AuthenticationRequest;
+import dev.codesupport.web.common.security.JwtUtility;
 import dev.codesupport.web.common.service.service.AuthenticationUserDetailsService;
 import dev.codesupport.web.common.service.service.RestResponse;
 import org.junit.Test;
@@ -10,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -28,27 +31,22 @@ import static org.mockito.Mockito.spy;
 public class AuthenticationControllerTest {
 
     @Test
-    public void shouldReturnTokenIfAuthenticUser() {
+    public void shouldReturnTokenIfAuthenticatedUser() {
         AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-
         AuthenticationUserDetailsService mockAuthenticationUserDetailsService = mock(AuthenticationUserDetailsService.class);
-
-        AuthenticationController controllerSpy = spy(new AuthenticationController(mockAuthenticationManager, mockAuthenticationUserDetailsService));
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
 
         AuthenticationRequest mockAuthenticationRequest = mock(AuthenticationRequest.class);
+        UserDetails mockUserDetails = mock(UserDetails.class);
 
         String referenceId = "12345";
         String username = "testuser";
         String password = "password123";
 
-        List<Serializable> token = Collections.singletonList("1234");
+        List<Serializable> tokenList = Collections.singletonList("1234");
 
-        RestResponse<Serializable> restResponse = new RestResponse<>(token);
+        RestResponse<Serializable> restResponse = new RestResponse<>(tokenList);
         restResponse.setReferenceId(referenceId);
-
-        doReturn(restResponse)
-                .when(controllerSpy)
-                .getRestResponse(token);
 
         //ResultOfMethodCallIgnored - Not using results, we're creating mocks
         //noinspection ResultOfMethodCallIgnored
@@ -62,11 +60,35 @@ public class AuthenticationControllerTest {
                 .when(mockAuthenticationRequest)
                 .getPassword();
 
+        doReturn(username)
+                .when(mockUserDetails)
+                .getUsername();
+
+        doReturn(mockUserDetails)
+                .when(mockAuthenticationUserDetailsService)
+                .loadUserByUsername(username);
+
+        doReturn(tokenList.get(0))
+                .when(mockJwtUtility)
+                .generateToken(username);
+
+        AuthenticationController controllerSpy = spy(
+                new AuthenticationController(
+                        mockAuthenticationManager,
+                        mockAuthenticationUserDetailsService,
+                        mockJwtUtility
+                )
+        );
+
+        doReturn(restResponse)
+                .when(controllerSpy)
+                .getRestResponse(tokenList);
+
         doNothing()
                 .when(controllerSpy)
                 .authenticate(username, password);
 
-        RestResponse<Serializable> expectedResponse = new RestResponse<>(token);
+        RestResponse<Serializable> expectedResponse = new RestResponse<>(tokenList);
         expectedResponse.setReferenceId(referenceId);
 
         ResponseEntity<RestResponse<Serializable>> expected = ResponseEntity.ok(expectedResponse);
@@ -78,10 +100,14 @@ public class AuthenticationControllerTest {
     @Test
     public void shouldReturnCorrectRestResponseInstance() {
         AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-
         AuthenticationUserDetailsService mockAuthenticationUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
 
-        AuthenticationController controller = new AuthenticationController(mockAuthenticationManager, mockAuthenticationUserDetailsService);
+        AuthenticationController controller = new AuthenticationController(
+                mockAuthenticationManager,
+                mockAuthenticationUserDetailsService,
+                mockJwtUtility
+        );
 
         List<Serializable> expected = Collections.singletonList("string");
 
@@ -93,10 +119,14 @@ public class AuthenticationControllerTest {
     @Test
     public void shouldReturnNewRestResponseInstance() {
         AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-
         AuthenticationUserDetailsService mockAuthenticationUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
 
-        AuthenticationController controller = new AuthenticationController(mockAuthenticationManager, mockAuthenticationUserDetailsService);
+        AuthenticationController controller = new AuthenticationController(
+                mockAuthenticationManager,
+                mockAuthenticationUserDetailsService,
+                mockJwtUtility
+        );
 
         List<Serializable> strings = Collections.singletonList("string");
 
@@ -109,10 +139,14 @@ public class AuthenticationControllerTest {
     @Test(expected = InvalidUserException.class)
     public void shouldThrowInvalidUserExceptionOnDisabledExceptions() {
         AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-
         AuthenticationUserDetailsService mockAuthenticationUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
 
-        AuthenticationController controller = new AuthenticationController(mockAuthenticationManager, mockAuthenticationUserDetailsService);
+        AuthenticationController controller = new AuthenticationController(
+                mockAuthenticationManager,
+                mockAuthenticationUserDetailsService,
+                mockJwtUtility
+        );
 
         String username = "testuser";
         String password = "password123";
@@ -129,10 +163,14 @@ public class AuthenticationControllerTest {
     @Test(expected = BadCredentialsException.class)
     public void shouldBubbleBadCredentialExceptions() {
         AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-
         AuthenticationUserDetailsService mockAuthenticationUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
 
-        AuthenticationController controller = new AuthenticationController(mockAuthenticationManager, mockAuthenticationUserDetailsService);
+        AuthenticationController controller = new AuthenticationController(
+                mockAuthenticationManager,
+                mockAuthenticationUserDetailsService,
+                mockJwtUtility
+        );
 
         String username = "testuser";
         String password = "password123";
@@ -146,18 +184,47 @@ public class AuthenticationControllerTest {
         controller.authenticate(username, password);
     }
 
-    @Test(expected = Test.None.class)
-    public void shouldThrowNoExceptionsIfValidAuthentication() {
+    @Test(expected = InvalidUserException.class)
+    public void shouldThrowInvalidUserExceptionIfAuthenticationIsNull() {
         AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-
         AuthenticationUserDetailsService mockAuthenticationUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
 
-        AuthenticationController controller = new AuthenticationController(mockAuthenticationManager, mockAuthenticationUserDetailsService);
+        AuthenticationController controller = new AuthenticationController(
+                mockAuthenticationManager,
+                mockAuthenticationUserDetailsService,
+                mockJwtUtility
+        );
 
         String username = "testuser";
         String password = "password123";
 
         doReturn(null)
+                .when(mockAuthenticationManager)
+                .authenticate(
+                        new UsernamePasswordAuthenticationToken(username, password)
+                );
+
+        controller.authenticate(username, password);
+    }
+
+    @Test(expected = Test.None.class)
+    public void shouldThrowNoExceptionsIfValidAuthentication() {
+        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
+        AuthenticationUserDetailsService mockAuthenticationUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
+        Authentication mockAuthentication = mock(Authentication.class);
+
+        AuthenticationController controller = new AuthenticationController(
+                mockAuthenticationManager,
+                mockAuthenticationUserDetailsService,
+                mockJwtUtility
+        );
+
+        String username = "testuser";
+        String password = "password123";
+
+        doReturn(mockAuthentication)
                 .when(mockAuthenticationManager)
                 .authenticate(
                         new UsernamePasswordAuthenticationToken(username, password)

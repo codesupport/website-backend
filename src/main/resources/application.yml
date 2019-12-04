@@ -1,11 +1,15 @@
 spring:
   profiles:
     active: @active.spring.profile@
+security:
+  jwt:
+    issuer: CodeSupport.dev
+    expiration: 10m
 logging:
   level:
     root: ERROR
     org.springframework: INFO
-    network.codesupport: DEBUG
+    dev.codesupport: DEBUG
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
 server:

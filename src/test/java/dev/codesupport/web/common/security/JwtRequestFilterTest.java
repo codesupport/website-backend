@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security;
 
+import dev.codesupport.web.common.exception.InvalidTokenException;
 import dev.codesupport.web.common.service.service.AuthenticationUserDetailsService;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +19,10 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -33,26 +36,27 @@ public class JwtRequestFilterTest {
     }
 
     @Test
-    public void shouldInvokeConfigureSpringSecurityContext() throws IOException, ServletException {
+    public void shouldInvokeCheckForJWToken() throws IOException, ServletException {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockResponse = mock(HttpServletResponse.class);
         FilterChain mockFilterChain = mock(FilterChain.class);
         AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
 
-        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService));
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
 
         doNothing()
                 .when(jwtRequestFilterSpy)
-                .configureSpringSecurityContext(mockRequest);
+                .checkForJWToken(any());
 
         doNothing()
                 .when(mockFilterChain)
-                .doFilter(mockRequest, mockResponse);
+                .doFilter(any(), any());
 
         jwtRequestFilterSpy.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
 
         verify(jwtRequestFilterSpy, times(1))
-                .configureSpringSecurityContext(mockRequest);
+                .checkForJWToken(mockRequest);
     }
 
     @Test
@@ -61,16 +65,17 @@ public class JwtRequestFilterTest {
         HttpServletResponse mockResponse = mock(HttpServletResponse.class);
         FilterChain mockFilterChain = mock(FilterChain.class);
         AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
 
-        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService));
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
 
         doNothing()
                 .when(jwtRequestFilterSpy)
-                .configureSpringSecurityContext(mockRequest);
+                .checkForJWToken(any());
 
         doNothing()
                 .when(mockFilterChain)
-                .doFilter(mockRequest, mockResponse);
+                .doFilter(any(), any());
 
         jwtRequestFilterSpy.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
 
@@ -79,45 +84,201 @@ public class JwtRequestFilterTest {
     }
 
     @Test
-    public void shouldConfigureSpringSecurityContextWithNoAutheticationIfTokenNull() {
+    public void shouldNotInvokeValidateTokenIfTokenNull() {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
 
-        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService));
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
 
         doReturn(null)
                 .when(jwtRequestFilterSpy)
                 .getTokenFromRequest(mockRequest);
 
-        jwtRequestFilterSpy.configureSpringSecurityContext(mockRequest);
+        doNothing()
+                .when(jwtRequestFilterSpy)
+                .validateJWToken(any(), any());
 
-        Authentication actual = SecurityContextHolder.getContext().getAuthentication();
+        jwtRequestFilterSpy.checkForJWToken(mockRequest);
 
-        assertNull(actual);
+        verify(jwtRequestFilterSpy, times(0))
+                .validateJWToken(any(), any());
     }
 
     @Test
-    public void shouldConfigureSpringSecurityContextWithCorrectAutheticationIfTokenValid() {
+    public void shouldNotInvokeValidateTokenIfTokenEmpty() {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        doReturn("")
+                .when(jwtRequestFilterSpy)
+                .getTokenFromRequest(mockRequest);
+
+        doNothing()
+                .when(jwtRequestFilterSpy)
+                .validateJWToken(any(), any());
+
+        jwtRequestFilterSpy.checkForJWToken(mockRequest);
+
+        verify(jwtRequestFilterSpy, times(0))
+                .validateJWToken(any(), any());
+    }
+
+    @Test
+    public void shouldInvokeValidateTokenIfTokenPresent() {
+        String token = "token";
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        doReturn(token)
+                .when(jwtRequestFilterSpy)
+                .getTokenFromRequest(mockRequest);
+
+        doNothing()
+                .when(jwtRequestFilterSpy)
+                .validateJWToken(any(), any());
+
+        jwtRequestFilterSpy.checkForJWToken(mockRequest);
+
+        verify(jwtRequestFilterSpy, times(1))
+                .validateJWToken(token, mockRequest);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowIllegalArgumentExceptionIfTokenStringIsNull() {
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        doNothing()
+                .when(jwtRequestFilterSpy)
+                .configureSpringSecurityContext(any(), any());
+
+        jwtRequestFilterSpy.validateJWToken(null, mockRequest);
+    }
+
+    @Test
+    public void shouldNotInvokeConfigureSpringSecurityContextIfInvalidTokenExceptionThrown() {
+        String tokenString = "token";
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        doThrow(InvalidTokenException.class)
+                .when(mockJsonWebTokenFactory)
+                .createToken(tokenString);
+
+        doNothing()
+                .when(jwtRequestFilterSpy)
+                .configureSpringSecurityContext(any(), any());
+
+        jwtRequestFilterSpy.validateJWToken(tokenString, mockRequest);
+
+        verify(jwtRequestFilterSpy, times(0))
+                .configureSpringSecurityContext(any(), any());
+    }
+
+    @Test
+    public void shouldInvokeConfigureSpringSecurityContextIfValidToken() {
+        String tokenString = "token";
+        String username = "user";
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        JsonWebToken mockToken = mock(JsonWebToken.class);
+
+        //ResultOfMethodCallIgnored - We're not getting the result, we're creating a mock.
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(username)
+                .when(mockToken)
+                .getUsername();
+
+        doReturn(mockToken)
+                .when(mockJsonWebTokenFactory)
+                .createToken(tokenString);
+
+        doNothing()
+                .when(jwtRequestFilterSpy)
+                .configureSpringSecurityContext(any(), any());
+
+        jwtRequestFilterSpy.validateJWToken(tokenString, mockRequest);
+
+        verify(jwtRequestFilterSpy, times(1))
+                .configureSpringSecurityContext(username, mockRequest);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowIllegalArgumentExceptionIfUsernameIsNull() {
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        jwtRequestFilterSpy.configureSpringSecurityContext(null, mockRequest);
+    }
+
+    @Test
+    public void shouldNotReConfigureSpringSecurityContextIfPreviouslyConfigured() {
+        String username = "user";
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        Authentication mockAuthentication = mock(Authentication.class);
+        UserDetails mockUserDetails = mock(UserDetails.class);
+
+        SecurityContextHolder.getContext().setAuthentication(mockAuthentication);
+
+        doReturn(mockUserDetails)
+                .when(mockUserDetailsService)
+                .loadUserByUsername(username);
+
+        jwtRequestFilterSpy.configureSpringSecurityContext(username, mockRequest);
+
+        Authentication actual = SecurityContextHolder.getContext().getAuthentication();
+
+        assertEquals(mockAuthentication, actual);
+    }
+
+    @Test
+    public void shouldConfigureSpringSecurityContextIfNotPreviouslyConfigured() {
+        String username = "user";
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
         UserDetails mockUserDetails = mock(UserDetails.class);
 
         doReturn(mockUserDetails)
                 .when(mockUserDetailsService)
-                .loadUserByUsername("admin");
+                .loadUserByUsername(username);
 
-        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService));
-
-        doReturn("1234")
-                .when(jwtRequestFilterSpy)
-                .getTokenFromRequest(mockRequest);
-
-        jwtRequestFilterSpy.configureSpringSecurityContext(mockRequest);
+        jwtRequestFilterSpy.configureSpringSecurityContext(username, mockRequest);
 
         UsernamePasswordAuthenticationToken expected = new UsernamePasswordAuthenticationToken(
-                mockUserDetails, null, mockUserDetails.getAuthorities());
-        expected
-                .setDetails(new WebAuthenticationDetailsSource().buildDetails(mockRequest));
+                mockUserDetails,
+                null,
+                mockUserDetails.getAuthorities()
+        );
+        expected.setDetails(new WebAuthenticationDetailsSource().buildDetails(mockRequest));
 
         Authentication actual = SecurityContextHolder.getContext().getAuthentication();
 
@@ -130,10 +291,30 @@ public class JwtRequestFilterTest {
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
 
-        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService));
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
 
         doReturn(null)
+                .when(mockRequest)
+                .getHeader(headerName);
+
+        String actual = jwtRequestFilterSpy.getTokenFromRequest(mockRequest);
+
+        assertNull(actual);
+    }
+
+    @Test
+    public void shouldReturnNullIfTokenEmpty() {
+        String headerName = "Authorization";
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
+
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
+
+        doReturn("")
                 .when(mockRequest)
                 .getHeader(headerName);
 
@@ -149,8 +330,9 @@ public class JwtRequestFilterTest {
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
 
-        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService));
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
 
         doReturn(headerValue)
                 .when(mockRequest)
@@ -169,8 +351,9 @@ public class JwtRequestFilterTest {
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         AuthenticationUserDetailsService mockUserDetailsService = mock(AuthenticationUserDetailsService.class);
+        JsonWebTokenFactory mockJsonWebTokenFactory = mock(JsonWebTokenFactory.class);
 
-        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService));
+        JwtRequestFilter jwtRequestFilterSpy = spy(new JwtRequestFilter(mockUserDetailsService, mockJsonWebTokenFactory));
 
         doReturn(headerValue)
                 .when(mockRequest)

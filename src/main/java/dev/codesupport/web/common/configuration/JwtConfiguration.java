@@ -10,12 +10,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Configurations for JWTs
+ * <p>This is populated automatically at startup by spring via the application.yml files.</p>
+ */
 @Data
 @Configuration
+// This sets the class to use values from the application.yml files.
 @ConfigurationProperties(prefix = "security.jwt")
 public class JwtConfiguration {
 
+    /**
+     * The acceptable value pattern for expiration time expressions, ex:
+     * 5s
+     * 5m
+     * 5h
+     */
     private static final Pattern timePattern = Pattern.compile("^\\d+[msh]?$");
+    /**
+     * Unit -> coefficient map for converting time expressions to millisecond values
+     */
     private static final Map<String, Integer> coefficients;
 
     static {
@@ -25,7 +39,13 @@ public class JwtConfiguration {
         coefficients.put("h", 3600000);
     }
 
+    /**
+     * Issuer of the JWT
+     */
     private String issuer;
+    /**
+     * How long until the token expires after it's been created
+     */
     private Long expiration = 1000 * 60 * 5L; // 5 minutes default
 
     /**

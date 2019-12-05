@@ -18,7 +18,7 @@ logging:
   level:
     root: ERROR
     org.springframework: INFO
-    network.codesupport: INFO
+    dev.codesupport: INFO
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
 server:

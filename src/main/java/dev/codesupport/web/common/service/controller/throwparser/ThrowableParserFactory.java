@@ -1,12 +1,13 @@
 package dev.codesupport.web.common.service.controller.throwparser;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Responsible for creating parsers for given exceptions.
@@ -17,11 +18,17 @@ public class ThrowableParserFactory {
     /**
      * Map of parsers as returned by Spring's ApplicationContext.
      */
+    // This should be fine for the purpose here.
+    @SuppressWarnings("rawtypes")
     private final Map<String, AbstractThrowableParser> parserMap;
 
     @Autowired
     ThrowableParserFactory(ApplicationContext context) {
-        parserMap = context.getBeansOfType(AbstractThrowableParser.class);
+        // This should be fine for the purpose here.
+        //noinspection rawtypes
+        Map<String, AbstractThrowableParser> beanMap = context.getBeansOfType(AbstractThrowableParser.class);
+        // Remap to key = canonical class name, value = parser object
+        parserMap = beanMap.values().stream().collect(Collectors.toMap(AbstractThrowableParser::getThrowableClassType, Function.identity()));
     }
 
     /**
@@ -33,6 +40,8 @@ public class ThrowableParserFactory {
      * @return A parser to be used for parsing the exception message.
      * @throws NullPointerException If the provided throwable was null.
      */
+    // This should be fine for the purpose here.
+    @SuppressWarnings("rawtypes")
     public AbstractThrowableParser createParser(Throwable throwable) {
         Objects.requireNonNull(throwable);
 
@@ -40,6 +49,8 @@ public class ThrowableParserFactory {
 
         String parserName = getParserNameFromException(rootCause);
 
+        // This should be fine for the purpose here.
+        //noinspection rawtypes
         AbstractThrowableParser parser;
 
         if (parserMap.containsKey(parserName)) {
@@ -76,13 +87,13 @@ public class ThrowableParserFactory {
     }
 
     /**
-     * Generates the convention driven name of the parser associated to the given throwable.
+     * Generates the convention driven map key of the parser associated to the given throwable.
      *
      * @param throwable The throwable to get the parser name for.
-     * @return The name of the parser that would be associated to the given throwable.
+     * @return The map key of the parser that would be associated to the given throwable.
      */
     String getParserNameFromException(Throwable throwable) {
-        return StringUtils.uncapitalize(throwable.getClass().getSimpleName() + "Parser");
+        return throwable.getClass().getCanonicalName();
     }
 
 }

@@ -2,7 +2,9 @@ package dev.codesupport.testutils.controller.throwparsing.parser;
 
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.service.RestStatus;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class ThrowableParser extends AbstractThrowableParser<Throwable> {
 
     @Override

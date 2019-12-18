@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.service.controller.throwparser;
 
+import dev.codesupport.testutils.controller.throwparsing.parser.ThrowableParser;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.junit.Test;
@@ -16,9 +17,7 @@ public class AbstractThrowableParserTest {
 
     @Test
     public void shouldReturnParserFromInstantiateMethod() {
-        //unchecked - this is fine for the purposes of this test.
-        //noinspection unchecked
-        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(AbstractThrowableParser.class);
+        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(new ThrowableParser());
 
         Throwable mockThrowable = mock(Throwable.class);
 
@@ -37,9 +36,7 @@ public class AbstractThrowableParserTest {
 
     @Test
     public void shouldHaveThrowableOnInstantiatedParser() {
-        //unchecked - this is fine for the purposes of this test.
-        //noinspection unchecked
-        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(AbstractThrowableParser.class);
+        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(new ThrowableParser());
 
         Throwable mockThrowable = mock(Throwable.class);
 
@@ -66,9 +63,7 @@ public class AbstractThrowableParserTest {
         RestResponse<Serializable> actual = new RestResponse<>();
         actual.setReferenceId(referenceId);
 
-        //unchecked - this is fine for the purposes of this test.
-        //noinspection unchecked
-        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(AbstractThrowableParser.class);
+        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(new ThrowableParser());
 
         doReturn(parserMessage)
                 .when(parserSpy)
@@ -90,12 +85,49 @@ public class AbstractThrowableParserTest {
 
     @Test
     public void shouldReturnFailedRestStatusByDefault() {
-        //unchecked - this is fine for the purposes of this test.
-        //noinspection unchecked
-        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(AbstractThrowableParser.class);
+        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(new ThrowableParser());
 
-        RestStatus expected = RestStatus.FAIL;
+        RestStatus expected = RestStatus.WARNING;
         RestStatus actual = parserSpy.responseStatus();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowIllegalArgumentExceptionIfNoClassParameterSet() {
+        //This is the point of this test.
+        //noinspection rawtypes
+        new AbstractThrowableParser() {
+            @Override
+            protected AbstractThrowableParser<Throwable> instantiate() {
+                return null;
+            }
+
+            @Override
+            protected String responseMessage() {
+                return null;
+            }
+        };
+    }
+
+    @Test
+    public void shouldSetCorrectThrowableClassType() {
+        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(new ThrowableParser());
+
+        Class<Throwable> expected = Throwable.class;
+        //This is fine for the purposes of this test.
+        //noinspection unchecked,rawtypes
+        Class<Throwable> actual = (Class) ReflectionTestUtils.getField(parserSpy, "throwableClassType");
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectThrowableClassType() {
+        AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(new ThrowableParser());
+
+        String expected = Throwable.class.getCanonicalName();
+        String actual = parserSpy.getThrowableClassType();
 
         assertEquals(expected, actual);
     }

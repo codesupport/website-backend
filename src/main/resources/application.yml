@@ -1,6 +1,10 @@
 spring:
   profiles:
     active: @active.spring.profile@
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: dev.codesupport.web.common.service.data.DataPhysicalNamingStrategy
 security:
   jwt:
     issuer: CodeSupport.dev

@@ -29,16 +29,24 @@ public class ThrowableParserFactoryTest {
 
     @Test
     public void shouldCreateExpectedParserIfExistsInMap() {
-        String throwableParserName = "throwableParser";
+        String throwableParserName = Throwable.class.getCanonicalName();
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
+        // This is fine for the purpose of this test.
+        //noinspection rawtypes
         AbstractThrowableParser mockThrowableParser = mock(AbstractThrowableParser.class);
+
+        doReturn(throwableParserName)
+                .when(mockThrowableParser)
+                .getThrowableClassType();
 
         Throwable mockThrowable = mock(Throwable.class);
 
         Throwable mockRootThrowable = mock(Throwable.class);
 
+        // This is fine for the purpose of this test.
+        //noinspection rawtypes
         AbstractThrowableParser mockInstantiatedThrowableParser = mock(AbstractThrowableParser.class);
         ReflectionTestUtils.setField(mockInstantiatedThrowableParser, "throwable", mockRootThrowable);
 
@@ -69,6 +77,8 @@ public class ThrowableParserFactoryTest {
                 .when(factorySpy)
                 .getParserNameFromException(mockRootThrowable);
 
+        // This is fine for the purpose of this test.
+        //noinspection rawtypes
         AbstractThrowableParser actual = factorySpy.createParser(mockThrowable);
 
         assertEquals(mockInstantiatedThrowableParser, actual);
@@ -80,12 +90,16 @@ public class ThrowableParserFactoryTest {
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
+        // This is fine for the purpose of this test.
+        //noinspection rawtypes
         AbstractThrowableParser mockThrowableParser = mock(AbstractThrowableParser.class);
 
         Throwable mockThrowable = mock(Throwable.class);
 
         Throwable mockRootThrowable = mock(Throwable.class);
 
+        // This is fine for the purpose of this test.
+        //noinspection rawtypes
         AbstractThrowableParser mockInstantiatedThrowableParser = mock(AbstractThrowableParser.class);
         ReflectionTestUtils.setField(mockInstantiatedThrowableParser, "throwable", mockRootThrowable);
 
@@ -111,6 +125,8 @@ public class ThrowableParserFactoryTest {
                 .when(factorySpy)
                 .getParserNameFromException(mockRootThrowable);
 
+        // This is fine for the purpose of this test.
+        //noinspection rawtypes
         AbstractThrowableParser actual = factorySpy.createParser(mockThrowable);
 
         assertEquals(new DefaultExceptionParser(), actual);
@@ -146,7 +162,7 @@ public class ThrowableParserFactoryTest {
 
     @Test
     public void shouldGetCorrectRootCauseIfFoundInMap() {
-        String throwableParserName = "throwableParser";
+        String throwableParserName = Throwable.class.getCanonicalName();
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
@@ -187,7 +203,7 @@ public class ThrowableParserFactoryTest {
 
         ThrowableParserFactory factorySpy = Mockito.spy(new ThrowableParserFactory(mockContext));
 
-        String expected = "throwableParser";
+        String expected = Throwable.class.getCanonicalName();
 
         String actual = factorySpy.getParserNameFromException(new Throwable());
 

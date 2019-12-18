@@ -14,7 +14,7 @@ import javax.persistence.PrePersist;
  * API contract with the persistent storage for the {@link dev.codesupport.web.domain.User} resource.
  */
 @Data
-@Entity(name = "User")
+@Entity
 public class UserEntity implements IdentifiableEntity<Long> {
 
     @Id

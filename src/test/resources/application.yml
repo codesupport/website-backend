@@ -9,6 +9,8 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create-drop
+      naming:
+        physical-strategy: dev.codesupport.web.common.service.data.DataPhysicalNamingStrategy
   h2:
     console:
       enabled: true

@@ -14,6 +14,7 @@ import dev.codesupport.web.common.util.MappingUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
     private final JpaRepository<E, I> jpaRepository;
     private final Class<E> entityClass;
     private final Class<D> domainClass;
-    private final AbstractPersistenceValidation<E, I, D, ? extends JpaRepository<E, I>> validation;
+    private AbstractPersistenceValidation<E, I, D, ? extends JpaRepository<E, I>> validation;
     @Setter
     private static ApplicationContext context;
 
@@ -54,17 +55,15 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
         this.jpaRepository = jpaRepository;
         this.entityClass = entityClass;
         this.domainClass = domainClass;
-
-        validation = getValidationBean();
     }
 
     /**
      * Locates the desired validation component for the given resource if one exists.
      *
-     * @return the validation component associated to the resource
      * @throws ConfigurationException when the ApplicationContext has not been configured.
      */
-    AbstractPersistenceValidation<E, I, D, JpaRepository<E, I>> getValidationBean() {
+    @PostConstruct
+    void setupValidationBean() {
         if (context == null) {
             throw new ConfigurationException("CrudOperations ApplicationContext not configured");
         }
@@ -84,7 +83,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
                 validationToReturn = validationBean;
             }
         }
-        return validationToReturn;
+        validation = validationToReturn;
     }
 
     /**

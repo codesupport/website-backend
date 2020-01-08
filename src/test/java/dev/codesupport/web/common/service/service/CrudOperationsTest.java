@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -105,9 +106,11 @@ public class CrudOperationsTest {
                 .when(mockValidator)
                 .getEntityType();
 
-        //rawtypes - This is fine for hte purposes of this test.
+        crudOperationsSpy.setupValidationBean();
+
+        //rawtypes - Fine for the purposes of this test.
         //noinspection rawtypes
-        AbstractPersistenceValidation actual = crudOperationsSpy.getValidationBean();
+        AbstractPersistenceValidation actual = (AbstractPersistenceValidation)ReflectionTestUtils.getField(crudOperationsSpy, "validation");
 
         assertEquals(mockValidator, actual);
     }

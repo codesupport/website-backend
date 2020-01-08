@@ -1,4 +1,4 @@
-package dev.codesupport.web.api.config;
+package dev.codesupport.web.common.configuration;
 
 import dev.codesupport.web.common.service.service.CrudOperations;
 import org.springframework.beans.factory.annotation.Autowired;

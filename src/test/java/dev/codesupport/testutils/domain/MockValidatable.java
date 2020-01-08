@@ -1,19 +1,17 @@
 package dev.codesupport.testutils.domain;
 
-import dev.codesupport.web.common.domain.Validatable;
-import dev.codesupport.web.common.service.data.validation.ValidationIssue;
+import dev.codesupport.web.common.domain.AbstractValidatable;
 
-import java.util.Collections;
-import java.util.List;
-
-public class MockValidatable implements Validatable<Long> {
-    @Override
-    public List<ValidationIssue> validate() {
-        return Collections.emptyList();
-    }
+public class MockValidatable extends AbstractValidatable<Long> {
 
     @Override
     public Long getId() {
         return 1L;
     }
+
+    @Override
+    public void setId(Long id) {
+
+    }
+
 }

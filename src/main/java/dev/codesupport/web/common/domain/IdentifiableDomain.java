@@ -11,4 +11,6 @@ public interface IdentifiableDomain<I> extends Serializable {
 
     I getId();
 
+    void setId(I id);
+
 }

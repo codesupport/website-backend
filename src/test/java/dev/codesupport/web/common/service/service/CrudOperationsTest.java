@@ -46,10 +46,14 @@ public class CrudOperationsTest {
         //noinspection unchecked
         mockValidator = mock(AbstractPersistenceValidation.class);
 
+        //ResultOfMethodCallIgnored - Not calling a method, making a mock
+        //noinspection ResultOfMethodCallIgnored
         doReturn(MockEntity.class)
                 .when(mockValidator)
                 .getEntityType();
 
+        //rawtypes - This is fine for hte purposes of this test.
+        //noinspection rawtypes
         Map<String, AbstractPersistenceValidation> abstractValidationMap = new HashMap<>();
         abstractValidationMap.put("mockValidator", mockValidator);
 
@@ -95,10 +99,14 @@ public class CrudOperationsTest {
 
     @Test
     public void shouldGetFirstCorrectValidationBean() {
+        //ResultOfMethodCallIgnored - Not calling a method, making a mock
+        //noinspection ResultOfMethodCallIgnored
         doReturn(MockEntity.class)
                 .when(mockValidator)
                 .getEntityType();
 
+        //rawtypes - This is fine for hte purposes of this test.
+        //noinspection rawtypes
         AbstractPersistenceValidation actual = crudOperationsSpy.getValidationBean();
 
         assertEquals(mockValidator, actual);
@@ -109,7 +117,7 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -123,7 +131,7 @@ public class CrudOperationsTest {
 
         List<MockDomain> actual = crudOperationsSpy.getById(id);
 
-        assertEquals(returnedDomains, actual);
+        assertEquals(domainsToReturn, actual);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -142,7 +150,7 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -156,66 +164,7 @@ public class CrudOperationsTest {
 
         List<MockDomain> actual = crudOperationsSpy.getAll();
 
-        assertEquals(returnedDomains, actual);
-    }
-
-    @Test
-    public void shouldInvokeResourcesAlreadyExistsCheckOnCreateEntities() {
-        long id = 1L;
-        String value = "value";
-
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
-        );
-
-        List<MockDomain> returnedDomains = Collections.singletonList(
-                new MockDomain(id, value)
-        );
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .resourcesAlreadyExistCheck(domainsToSave);
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
-
-        doReturn(returnedDomains)
-                .when(crudOperationsSpy)
-                .saveEntities(domainsToSave);
-
-        crudOperationsSpy.createEntities(domainsToSave);
-
-        verify(crudOperationsSpy, times(1))
-                .resourcesAlreadyExistCheck(domainsToSave);
-    }
-
-    @Test(expected = ServiceLayerException.class)
-    public void shouldBubbleServiceLayerExceptionFromResourcesAlreadyExistCheckOnCreateEntities() {
-        long id = 1L;
-        String value = "value";
-
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
-        );
-
-        List<MockDomain> returnedDomains = Collections.singletonList(
-                new MockDomain(id, value)
-        );
-
-        doThrow(ServiceLayerException.class)
-                .when(crudOperationsSpy)
-                .resourcesAlreadyExistCheck(domainsToSave);
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
-
-        doReturn(returnedDomains)
-                .when(crudOperationsSpy)
-                .saveEntities(domainsToSave);
-
-        crudOperationsSpy.createEntities(domainsToSave);
+        assertEquals(domainsToReturn, actual);
     }
 
     @Test
@@ -227,7 +176,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -239,7 +188,7 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
@@ -258,7 +207,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -270,11 +219,31 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
         crudOperationsSpy.createEntities(domainsToSave);
+    }
+
+    @Test
+    public void shouldCallCreateEntitiesOnCreateEntity() {
+        long id = 1L;
+        String value = "value";
+
+        MockDomain domainToSave = new MockDomain(id, value);
+
+        List<MockDomain> domainsToReturn = Collections.singletonList(
+                new MockDomain(id, value)
+        );
+
+        doReturn(domainsToReturn)
+                .when(crudOperationsSpy)
+                .createEntities(Collections.singletonList(domainToSave));
+
+        List<MockDomain> actual = crudOperationsSpy.createEntity(domainToSave);
+
+        assertEquals(domainsToReturn, actual);
     }
 
     @Test
@@ -286,7 +255,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -298,13 +267,13 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
         List<MockDomain> actual = crudOperationsSpy.createEntities(domainsToSave);
 
-        assertEquals(returnedDomains, actual);
+        assertEquals(domainsToReturn, actual);
     }
 
     @Test
@@ -316,7 +285,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -328,7 +297,7 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
@@ -347,7 +316,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -359,7 +328,7 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
@@ -375,7 +344,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -387,7 +356,7 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
@@ -406,7 +375,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -418,7 +387,7 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
@@ -434,7 +403,7 @@ public class CrudOperationsTest {
                 new MockDomain(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -446,13 +415,13 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .validationCheck(domainsToSave);
 
-        doReturn(returnedDomains)
+        doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
         List<MockDomain> actual = crudOperationsSpy.updateEntities(domainsToSave);
 
-        assertEquals(returnedDomains, actual);
+        assertEquals(domainsToReturn, actual);
     }
 
     @Test
@@ -495,7 +464,7 @@ public class CrudOperationsTest {
                 new MockEntity(id, value)
         );
 
-        List<MockDomain> returnedDomains = Collections.singletonList(
+        List<MockDomain> domainsToReturn = Collections.singletonList(
                 new MockDomain(id, value)
         );
 
@@ -509,7 +478,7 @@ public class CrudOperationsTest {
 
         List<MockDomain> actual = crudOperationsSpy.saveEntities(domainsToSave);
 
-        assertEquals(returnedDomains, actual);
+        assertEquals(domainsToReturn, actual);
     }
 
     @Test(expected = ResourceNotFoundException.class)

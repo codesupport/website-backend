@@ -21,12 +21,13 @@ public class ValidationUtils {
     /**
      * Validates a string as a username
      * <p>
-     *     Validates the provided string as a username using a hardcoded set of conditions
+     * Validates the provided string as a username using a hardcoded set of conditions
      * </p>
+     *
      * @param username The string to validate
      * @return true if valid, false otherwise
      */
-    public static boolean isValidUsername(String username) {
+    public static boolean isValidAlias(String username) {
         return !StringUtils.isEmpty(username) &&
                 username.length() > 4 &&
                 username.length() < 15 &&
@@ -37,8 +38,9 @@ public class ValidationUtils {
     /**
      * Validates a string as a password
      * <p>
-     *     Validates the provided string as a password using a hardcoded set of conditions
+     * Validates the provided string as a password using a hardcoded set of conditions
      * </p>
+     *
      * @param password The string to validate
      * @return true if valid, false otherwise
      */
@@ -51,8 +53,9 @@ public class ValidationUtils {
     /**
      * Validates a string as a email
      * <p>
-     *     Validates the provided string as a email using a hardcoded set of conditions
+     * Validates the provided string as a email using a hardcoded set of conditions
      * </p>
+     *
      * @param email The string to validate
      * @return true if valid, false otherwise
      */

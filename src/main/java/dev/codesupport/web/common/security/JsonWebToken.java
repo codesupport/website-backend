@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 public class JsonWebToken {
 
     private final String username;
+    private final String email;
     private final Long expiration;
     private final String issuer;
 
@@ -22,10 +23,12 @@ public class JsonWebToken {
             // Store values to be accessible later.
             issuer = decodedJWT.getIssuer();
             username = decodedJWT.getUsername();
+            email = decodedJWT.getEmail();
             expiration = decodedJWT.getExpiration();
 
             // If any of these are null, this is a bad token.
             if (getUsername() == null ||
+                    getEmail() == null ||
                     getExpiration() == null ||
                     getIssuer() == null) {
                 throw new InvalidTokenException(InvalidTokenException.Reason.INVALID);

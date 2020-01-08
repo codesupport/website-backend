@@ -12,6 +12,7 @@ public class JsonWebTokenFactoryTest {
     public void shouldCreateCorrectJsonWebToken() {
         String issuer = "issuer";
         String username = "user";
+        String email = "user@user.us";
         long expiration = 0L;
 
         String token = "token";
@@ -21,6 +22,10 @@ public class JsonWebTokenFactoryTest {
         doReturn(issuer)
                 .when(mockDecodedJWT)
                 .getIssuer();
+
+        doReturn(email)
+                .when(mockDecodedJWT)
+                .getEmail();
 
         doReturn(username)
                 .when(mockDecodedJWT)
@@ -36,7 +41,7 @@ public class JsonWebTokenFactoryTest {
 
         JsonWebTokenFactory jsonWebTokenFactory = new JsonWebTokenFactory(mockJwtUtility);
 
-        String expected = "JsonWebToken(username=user, expiration=0, issuer=issuer)";
+        String expected = "JsonWebToken(username=user, email=user@user.us, expiration=0, issuer=issuer)";
         String actual = jsonWebTokenFactory.createToken(token).toString();
 
         assertEquals(expected, actual);

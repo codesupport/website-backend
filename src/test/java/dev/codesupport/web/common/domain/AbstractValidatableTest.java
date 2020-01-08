@@ -9,67 +9,67 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ValidatableTest {
+public class AbstractValidatableTest {
 
     @Test
     public void shouldReturnCorectValidationIssueForMissingParameters() {
-        Validatable<Long> validatable = new MockValidatable();
+        AbstractValidatable<Long> abstractValidatable = new MockValidatable();
 
         String id = "1";
         String paramName = "param";
 
         ValidationIssue expected = new ValidationIssue(id, ValidationIssue.ValidationType.MISSING, paramName, "Missing parameter");
-        ValidationIssue actual = validatable.createMissingParameter(id, paramName);
+        ValidationIssue actual = abstractValidatable.createMissingParameter(id, paramName);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorectValidationIssueForInvalidParameters() {
-        Validatable<Long> validatable = new MockValidatable();
+        AbstractValidatable<Long> abstractValidatable = new MockValidatable();
 
         String id = "1";
         String paramName = "param";
         String hint = "hint";
 
         ValidationIssue expected = new ValidationIssue(id, ValidationIssue.ValidationType.INVALID, paramName, "Invalid parameter (" + hint + ")");
-        ValidationIssue actual = validatable.createInvalidParameter(id, paramName, hint);
+        ValidationIssue actual = abstractValidatable.createInvalidParameter(id, paramName, hint);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorectValidationIssueForDuplicateModel() {
-        Validatable<Long> validatable = new MockValidatable();
+        AbstractValidatable<Long> abstractValidatable = new MockValidatable();
 
         String id = "1";
         String paramName = "param";
 
         ValidationIssue expected = new ValidationIssue(id, ValidationIssue.ValidationType.DUPLICATE, paramName, "Must be unique in database");
-        ValidationIssue actual = validatable.createDuplicateParameter(id, paramName);
+        ValidationIssue actual = abstractValidatable.createDuplicateParameter(id, paramName);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorectValidationIssueForValidationIssue() {
-        Validatable<Long> validatable = new MockValidatable();
+        AbstractValidatable<Long> abstractValidatable = new MockValidatable();
 
         String id = "1";
         String paramName = "param";
         String message = "some validation message";
 
         ValidationIssue expected = new ValidationIssue(id, ValidationIssue.ValidationType.INVALID, paramName, message);
-        ValidationIssue actual = validatable.createValidationIssue(id, ValidationIssue.ValidationType.INVALID, paramName, message);
+        ValidationIssue actual = abstractValidatable.createValidationIssue(id, ValidationIssue.ValidationType.INVALID, paramName, message);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldHaveAValidateMethod() {
-        Validatable<Long> validatable = new MockValidatable();
+        AbstractValidatable<Long> abstractValidatable = new MockValidatable();
 
-        List<ValidationIssue> actual = validatable.validate();
+        List<ValidationIssue> actual = abstractValidatable.validate();
 
         assertEquals(Collections.emptyList(), actual);
     }

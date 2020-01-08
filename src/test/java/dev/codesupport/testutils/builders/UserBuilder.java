@@ -8,11 +8,10 @@ import dev.codesupport.web.domain.User;
 public class UserBuilder {
 
     private Long id;
-    private String username;
-    private String password;
+    private String alias;
+    private String hashPassword;
     private String email;
     private String avatarLink;
-    private Long addedBy;
     private Long joinDate;
 
     private UserBuilder() {
@@ -26,11 +25,10 @@ public class UserBuilder {
     public User buildDomain() {
         User user = new User();
         user.setId(id);
-        user.setUsername(username);
-        user.setPassword(password);
+        user.setAlias(alias);
+        user.setHashPassword(hashPassword);
         user.setEmail(email);
         user.setAvatarLink(avatarLink);
-        user.setAddedBy(addedBy);
         user.setJoinDate(joinDate);
         return user;
     }
@@ -38,11 +36,10 @@ public class UserBuilder {
     public UserEntity buildEntity() {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(id);
-        userEntity.setUsername(username);
-        userEntity.setPassword(password);
+        userEntity.setAlias(alias);
+        userEntity.setHashPassword(hashPassword);
         userEntity.setEmail(email);
         userEntity.setAvatarLink(avatarLink);
-        userEntity.setAddedBy(addedBy);
         userEntity.setJoinDate(joinDate);
         return userEntity;
     }
@@ -52,13 +49,13 @@ public class UserBuilder {
         return this;
     }
 
-    public UserBuilder username(String username) {
-        this.username = username;
+    public UserBuilder alias(String alias) {
+        this.alias = alias;
         return this;
     }
 
-    public UserBuilder password(String password) {
-        this.password = password;
+    public UserBuilder hashPassword(String hashPassword) {
+        this.hashPassword = hashPassword;
         return this;
     }
 
@@ -69,11 +66,6 @@ public class UserBuilder {
 
     public UserBuilder avatarLink(String avatarLink) {
         this.avatarLink = avatarLink;
-        return this;
-    }
-
-    public UserBuilder addedBy(Long addedBy) {
-        this.addedBy = addedBy;
         return this;
     }
 

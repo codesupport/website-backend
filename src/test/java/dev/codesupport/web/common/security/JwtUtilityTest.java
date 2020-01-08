@@ -14,7 +14,7 @@ public class JwtUtilityTest {
         JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
         JwtUtility jwtUtility = new JwtUtility(mockJwtConfiguration) {
             @Override
-            public String generateToken(String username) {
+            public String generateToken(String username, String email) {
                 return null;
             }
 
@@ -35,7 +35,7 @@ public class JwtUtilityTest {
         JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
         JwtUtility jwtUtility = new JwtUtility(mockJwtConfiguration) {
             @Override
-            public String generateToken(String username) {
+            public String generateToken(String username, String email) {
                 return null;
             }
 

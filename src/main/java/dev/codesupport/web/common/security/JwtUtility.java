@@ -19,6 +19,10 @@ public abstract class JwtUtility {
      * JWT property name for username
      */
     protected static final String USERNAME = "username";
+    /**
+     * JWT property name for email
+     */
+    protected static final String EMAIL = "email";
 
     public JwtUtility(JwtConfiguration jwtConfiguration) {
         this.jwtConfiguration = jwtConfiguration;
@@ -33,7 +37,7 @@ public abstract class JwtUtility {
         return jwtConfiguration;
     }
 
-    public abstract String generateToken(String username);
+    public abstract String generateToken(String username, String email);
 
     abstract DecodedJWT decode(String tokenString);
 
@@ -56,6 +60,8 @@ public abstract class JwtUtility {
     protected interface DecodedJWT {
 
         String getUsername();
+
+        String getEmail();
 
         Long getExpiration();
 

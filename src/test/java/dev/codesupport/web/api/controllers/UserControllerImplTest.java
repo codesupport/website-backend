@@ -1,10 +1,15 @@
 package dev.codesupport.web.api.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.controller.UserControllerImpl;
 import dev.codesupport.web.api.service.UserService;
+import dev.codesupport.web.domain.UserRegistration;
+import dev.codesupport.web.domain.UserStripped;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,6 +25,8 @@ import static org.mockito.Mockito.mock;
 
 public class UserControllerImplTest {
 
+    private static ObjectMapper mapper;
+
     private static UserControllerImpl controller;
 
     private static UserService mockService;
@@ -28,14 +35,17 @@ public class UserControllerImplTest {
 
     @BeforeClass
     public static void init() {
+        mapper = new ObjectMapper()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
         userBuilders = Collections.singletonList(
                 UserBuilder.builder()
                         .id(5L)
-                        .username("timmy")
-                        .password("1234567890abcdef")
+                        .alias("timmy")
+                        .hashPassword("1234567890abcdef")
                         .email("valid@email.com")
-                        .addedBy(2L)
                         .avatarLink("timmeh.jpg")
+                        .joinDate(1L)
         );
 
         mockService = mock(UserService.class);
@@ -50,17 +60,24 @@ public class UserControllerImplTest {
         );
     }
 
+    private ObjectMapper mapper() {
+        return mapper;
+    }
+
     @Test
     public void shouldReturnCorrectResultsForGetAllUsers() {
-        List<User> returnedUsers = userBuilders.stream()
+        List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
+
+        List<UserStripped> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
+        });
 
         doReturn(returnedUsers)
                 .when(mockService)
                 .findAllUsers();
 
-        RestResponse<User> expected = new RestResponse<>(returnedUsers);
-        RestResponse<User> actual = controller.getAllUsers();
+        RestResponse<UserStripped> expected = new RestResponse<>(returnedUsers);
+        RestResponse<UserStripped> actual = controller.getAllUsers();
 
         assertEquals(expected.getResponse(), actual.getResponse());
     }
@@ -69,66 +86,39 @@ public class UserControllerImplTest {
     public void shouldReturnCorrectResultsForGetUserById() {
         long id = 1L;
 
-        List<User> returnedUsers = userBuilders.stream()
+        List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
+
+        List<UserStripped> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
+        });
 
         doReturn(returnedUsers)
                 .when(mockService)
                 .getUserById(id);
 
-        RestResponse<User> expected = new RestResponse<>(returnedUsers);
-        RestResponse<User> actual = controller.getUserById(id);
+        RestResponse<UserStripped> expected = new RestResponse<>(returnedUsers);
+        RestResponse<UserStripped> actual = controller.getUserById(id);
 
         assertEquals(expected.getResponse(), actual.getResponse());
     }
 
     @Test
     public void shouldReturnCorrectListOfUsersForCreateUsers() {
-        List<User> returnedUsers = userBuilders.stream()
+        List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<User> givenUsers = userBuilders.stream()
-                .map(UserBuilder::buildDomain).collect(Collectors.toList());
+        List<UserStripped> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
+        });
+
+        UserRegistration userRegistration = new UserRegistration();
+        userRegistration.setAlias("user");
 
         doReturn(returnedUsers)
                 .when(mockService)
-                .createUsers(givenUsers);
+                .registerUser(userRegistration);
 
-        RestResponse<User> expected = new RestResponse<>(returnedUsers);
-        RestResponse<User> actual = controller.createUsers(givenUsers);
-
-        assertEquals(expected.getResponse(), actual.getResponse());
-    }
-
-    @Test
-    public void shouldReturnCorrectListOfUsersForUpdatedUsers() {
-        List<User> returnedUsers = userBuilders.stream()
-                .map(UserBuilder::buildDomain).collect(Collectors.toList());
-
-        List<User> givenUsers = userBuilders.stream()
-                .map(UserBuilder::buildDomain).collect(Collectors.toList());
-
-        doReturn(returnedUsers)
-                .when(mockService)
-                .updateUsers(givenUsers);
-
-        RestResponse<User> expected = new RestResponse<>(returnedUsers);
-        RestResponse<User> actual = controller.updateUsers(givenUsers);
-
-        assertEquals(expected.getResponse(), actual.getResponse());
-    }
-
-    @Test
-    public void shouldReturnCorrectListOfUsersForDeleted() {
-        List<User> givenUsers = userBuilders.stream()
-                .map(UserBuilder::buildDomain).collect(Collectors.toList());
-
-        doReturn(Collections.emptyList())
-                .when(mockService)
-                .updateUsers(givenUsers);
-
-        RestResponse<User> expected = new RestResponse<>(Collections.emptyList());
-        RestResponse<User> actual = controller.deleteUsers(givenUsers);
+        RestResponse<UserStripped> expected = new RestResponse<>(returnedUsers);
+        RestResponse<UserStripped> actual = controller.registerUser(userRegistration);
 
         assertEquals(expected.getResponse(), actual.getResponse());
     }

@@ -5,7 +5,8 @@ package dev.codesupport.web.common.exception;
  */
 public class ServiceLayerException extends RuntimeException {
     public enum Reason {
-        RESOURCE_ALREADY_EXISTS("Resource already exists");
+        RESOURCE_ALREADY_EXISTS("Resource already exists."),
+        EMPTY_PAYLOAD("Payload can not be an empty list.");
 
         private final String message;
 

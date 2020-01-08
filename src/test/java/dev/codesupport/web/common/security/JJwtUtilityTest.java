@@ -21,6 +21,7 @@ public class JJwtUtilityTest {
     @Test
     public void shouldReturnCorrectJWToken() {
         String username = "user";
+        String email = "user@user.us";
         String issuer = "issuer";
         long expiration = 0L;
         JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
@@ -49,10 +50,11 @@ public class JJwtUtilityTest {
                 .setIssuer(issuer)
                 .claim("username", username)
                 .claim("expiration", expiration)
+                .claim("email", email)
                 .signWith(key)
                 .compact();
 
-        String actual = jJwtUtilitySpy.generateToken(username);
+        String actual = jJwtUtilitySpy.generateToken(username, email);
 
         assertEquals(expected, actual);
     }
@@ -60,6 +62,7 @@ public class JJwtUtilityTest {
     @Test
     public void shouldProduceDifferentHashIfUsingDifferentKeyInstance() {
         String username = "user";
+        String email = "user@user.us";
         String issuer = "issuer";
         long expiration = 0L;
         JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
@@ -88,10 +91,11 @@ public class JJwtUtilityTest {
                 .setIssuer(issuer)
                 .claim("username", username)
                 .claim("expiration", expiration)
+                .claim("email", email)
                 .signWith(key)
                 .compact();
 
-        String actual = jJwtUtilitySpy.generateToken(username);
+        String actual = jJwtUtilitySpy.generateToken(username, email);
 
         assertNotEquals(expected, actual);
     }

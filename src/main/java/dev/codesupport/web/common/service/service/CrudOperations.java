@@ -5,8 +5,9 @@ import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.exception.ValidationException;
 import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidation;
+import dev.codesupport.web.common.util.ListUtils;
 import lombok.Setter;
-import dev.codesupport.web.common.domain.Validatable;
+import dev.codesupport.web.common.domain.AbstractValidatable;
 import dev.codesupport.web.common.service.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
 import dev.codesupport.web.common.util.MappingUtils;
@@ -26,9 +27,9 @@ import java.util.Optional;
  * @param <I> Associated type of the Id property on the given resource.
  * @param <D> Domain class associated to the respected resource. Must implement Validatable interface.
  * @see IdentifiableEntity
- * @see Validatable
+ * @see AbstractValidatable
  */
-public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Validatable<I>> {
+public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends AbstractValidatable<I>> {
 
     private final JpaRepository<E, I> jpaRepository;
     private final Class<E> entityClass;
@@ -41,8 +42,8 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * Creates a new crudOperations object for a given resource.
      *
      * @param jpaRepository Reference to the jpaRepository associated with the resource.
-     * @param entityClass Reference to the entity class associated with the resource.
-     * @param domainClass Reference to the domain class associated with the resource.
+     * @param entityClass   Reference to the entity class associated with the resource.
+     * @param domainClass   Reference to the domain class associated with the resource.
      * @throws ConfigurationException when the ApplicationContext has not been configured.
      */
     public CrudOperations(
@@ -116,12 +117,26 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * <p>In creating data, first it is validated that the data does not already exist, (In the case of specified IDs)
      * and that the provided data is valid.</p>
      *
+     * @param domainObject The resource data to persist
+     * @return List of the persisted data including fields added at the time of persistence
+     * @throws ServiceLayerException if the data already exists.
+     */
+    public List<D> createEntity(D domainObject) {
+        return createEntities(Collections.singletonList(domainObject));
+    }
+
+    /**
+     * Attempts to persist new resource data
+     * <p>In creating data, first it is validated that the data does not already exist, (In the case of specified IDs)
+     * and that the provided data is valid.</p>
+     *
      * @param domainObjects The list of resource data to persist
      * @return List of the persisted data including fields added at the time of persistence
      * @throws ServiceLayerException if the data already exists.
      */
     public List<D> createEntities(List<D> domainObjects) {
-        resourcesAlreadyExistCheck(domainObjects);
+        emptyArgumentListCheck(domainObjects);
+        domainObjects.forEach(object -> object.setId(null));
         validationCheck(domainObjects);
 
         return saveEntities(domainObjects);
@@ -137,6 +152,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * @throws ResourceNotFoundException if the data does not exist.
      */
     public List<D> updateEntities(List<D> domainObjects) {
+        emptyArgumentListCheck(domainObjects);
         resourcesDontExistCheck(domainObjects);
         validationCheck(domainObjects);
 
@@ -165,6 +181,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
      * @throws ResourceNotFoundException if the data does not exist.
      */
     public void deleteEntities(List<D> domainObjects) {
+        emptyArgumentListCheck(domainObjects);
         resourcesDontExistCheck(domainObjects);
 
         List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
@@ -244,4 +261,9 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Valida
         }
     }
 
+    void emptyArgumentListCheck(List<D> domainObjects) {
+        if (ListUtils.isEmpty(domainObjects)) {
+            throw new ServiceLayerException(ServiceLayerException.Reason.EMPTY_PAYLOAD);
+        }
+    }
 }

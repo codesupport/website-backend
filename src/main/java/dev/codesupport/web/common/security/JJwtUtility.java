@@ -43,11 +43,12 @@ public class JJwtUtility extends JwtUtility {
      * @see JwtConfiguration
      */
     @Override
-    public String generateToken(String username) {
+    public String generateToken(String username, String email) {
         return Jwts.builder()
                 .setIssuer(configuration().getIssuer())
                 .claim(USERNAME, username)
                 .claim(EXPIRATION, calculateExpiration(configuration().getExpiration()))
+                .claim(EMAIL, email)
                 .signWith(KEY)
                 .compact();
     }
@@ -105,6 +106,11 @@ public class JJwtUtility extends JwtUtility {
         @Override
         public String getUsername() {
             return jwtBody.get(USERNAME, String.class);
+        }
+
+        @Override
+        public String getEmail() {
+            return jwtBody.get(EMAIL, String.class);
         }
 
         @Override

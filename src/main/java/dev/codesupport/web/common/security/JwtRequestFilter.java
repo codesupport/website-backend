@@ -7,13 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dev.codesupport.web.common.exception.InvalidTokenException;
-import dev.codesupport.web.common.service.service.AuthenticationUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -26,16 +24,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private AuthenticationUserDetailsService userDetailsService;
-    private JsonWebTokenFactory jsonWebTokenFactory;
+    private final JsonWebTokenFactory jsonWebTokenFactory;
+    private final AuthorizationService authorizationService;
 
     @Autowired
     public JwtRequestFilter(
-            AuthenticationUserDetailsService userDetailsService,
-            JsonWebTokenFactory jsonWebTokenFactory
+            JsonWebTokenFactory jsonWebTokenFactory,
+            AuthorizationService authorizationService
     ) {
-        this.userDetailsService = userDetailsService;
         this.jsonWebTokenFactory = jsonWebTokenFactory;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -85,9 +83,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             // Get token from request, throws InvalidTokenException if invalid
             JsonWebToken jwToken = jsonWebTokenFactory.createToken(tokenString);
 
-            String username = jwToken.getUsername();
+            String email = jwToken.getEmail();
 
-            configureSpringSecurityContext(username, request);
+            configureSpringSecurityContext(email, request);
         } catch (InvalidTokenException e) {
             // Doesn't matter, just log it for debugging and the service with return an unauthorized error.
             if (log.isDebugEnabled()) {
@@ -101,15 +99,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
      * <p>If not already configured, this method configures the Spring Security Context, which is
      * used later by the framework for access checks, etc.</p>
      *
-     * @param username The user to be configured in the security context
-     * @param request  The requested associated to the configuration
+     * @param email   The user to be configured in the security context
+     * @param request The requested associated to the configuration
      */
-    void configureSpringSecurityContext(String username, HttpServletRequest request) {
-        Assert.notNull(username, "username can not be null");
+    void configureSpringSecurityContext(String email, HttpServletRequest request) {
+        Assert.notNull(email, "email can not be null");
 
         // If authentication is not already configured
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = authorizationService.getUserDetailsByEmail(email);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());

@@ -9,4 +9,9 @@ public class MockIdentifiableDomain implements IdentifiableDomain<Long> {
         return 1L;
     }
 
+    @Override
+    public void setId(Long id) {
+
+    }
+
 }

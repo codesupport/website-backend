@@ -123,6 +123,7 @@ public class JsonWebTokenTest {
     public void shouldReturnCorrectJsonWebTokenIfValid() {
         String issuer = "issuer";
         String username = "user";
+        String email = "user@user.us";
         long expiration = 0L;
 
         String token = "token";
@@ -132,6 +133,10 @@ public class JsonWebTokenTest {
         doReturn(issuer)
                 .when(mockDecodedJWT)
                 .getIssuer();
+
+        doReturn(email)
+                .when(mockDecodedJWT)
+                .getEmail();
 
         doReturn(username)
                 .when(mockDecodedJWT)
@@ -145,7 +150,7 @@ public class JsonWebTokenTest {
                 .when(mockJwtUtility)
                 .decode(token);
 
-        String expected = "JsonWebToken(username=user, expiration=0, issuer=issuer)";
+        String expected = "JsonWebToken(username=user, email=user@user.us, expiration=0, issuer=issuer)";
         String actual = new JsonWebToken(mockJwtUtility, token).toString();
 
         assertEquals(expected, actual);

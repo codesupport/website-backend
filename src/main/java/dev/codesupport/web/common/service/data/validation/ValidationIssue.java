@@ -1,11 +1,13 @@
 package dev.codesupport.web.common.service.data.validation;
 
+import dev.codesupport.web.common.domain.AbstractValidatable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * Used to define a specific validation issue for domain level and persistence level validations
- * @see dev.codesupport.web.common.domain.Validatable
+ *
+ * @see AbstractValidatable
  * @see dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidation
  */
 @Data

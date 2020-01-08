@@ -1,5 +1,7 @@
 package dev.codesupport.web.common.security;
 
+import dev.codesupport.web.domain.validation.annotation.EmailConstraint;
+import dev.codesupport.web.domain.validation.annotation.PasswordConstraint;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,9 +14,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class AuthenticationRequest implements Serializable {
 
-    private static final long serialVersionUID = 4690455532399413757L;
-
-    private String username;
+    @EmailConstraint
+    private String email;
+    @PasswordConstraint
     private String password;
 
 }

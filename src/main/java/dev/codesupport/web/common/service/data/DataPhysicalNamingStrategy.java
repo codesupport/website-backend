@@ -1,9 +1,15 @@
 package dev.codesupport.web.common.service.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+//unused - This is called dynamically by spring boot, reference set by app property.
+@SuppressWarnings("unused")
 public class DataPhysicalNamingStrategy implements PhysicalNamingStrategy {
 
     @Override
@@ -18,7 +24,11 @@ public class DataPhysicalNamingStrategy implements PhysicalNamingStrategy {
 
     @Override
     public Identifier toPhysicalTableName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
-        String tableName = identifier.getText().replaceFirst("Entity$", "");
+        String tableName = Arrays.stream(identifier.getText()
+                .split("Entity_")) // Break up mapping table names
+                .map(StringUtils::capitalize) // Set appropriate camelCase
+                .collect(Collectors.joining("To")) // Add mapping table "To" connecting syntax
+                .replaceFirst("Entity$", ""); // Remove any "Entity" suffix
         return convertToSnakeCase(Identifier.toIdentifier(tableName));
     }
 
@@ -29,7 +39,9 @@ public class DataPhysicalNamingStrategy implements PhysicalNamingStrategy {
 
     @Override
     public Identifier toPhysicalColumnName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
-        return convertToSnakeCase(identifier);
+        String columnName = identifier.getText()
+                .replaceFirst("Entity_id$", "Id"); // Remove Entity joiner from mapping table column names
+        return convertToSnakeCase(Identifier.toIdentifier(columnName));
     }
 
     private Identifier convertToSnakeCase(final Identifier identifier) {

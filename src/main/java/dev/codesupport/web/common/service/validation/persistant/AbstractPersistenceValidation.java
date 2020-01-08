@@ -3,8 +3,11 @@ package dev.codesupport.web.common.service.validation.persistant;
 import dev.codesupport.web.common.service.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
 import dev.codesupport.web.common.domain.IdentifiableDomain;
+import lombok.Data;
 import org.springframework.data.repository.CrudRepository;
 
+import java.lang.reflect.ParameterizedType;
+import java.security.InvalidParameterException;
 import java.util.List;
 
 /**
@@ -20,7 +23,10 @@ import java.util.List;
  * @see IdentifiableEntity
  * @see IdentifiableDomain
  */
+@Data
 public abstract class AbstractPersistenceValidation<E extends IdentifiableEntity<I>, I, D extends IdentifiableDomain<I>, C extends CrudRepository<E, I>> {
+
+    private final Class<E> entityType;
 
     /**
      * The associated repository for the given resource
@@ -29,6 +35,22 @@ public abstract class AbstractPersistenceValidation<E extends IdentifiableEntity
 
     public AbstractPersistenceValidation(C repository) {
         this.repository = repository;
+
+        Object type = this.getClass().getGenericSuperclass();
+
+        // Gets the Entity type defined by the child class.
+        if (type instanceof ParameterizedType) {
+            Object clazz = ((ParameterizedType) type).getActualTypeArguments()[0];
+            if (clazz instanceof Class) {
+                //unchecked - We can be sure it's the right one.
+                //noinspection unchecked
+                entityType = (Class<E>) clazz;
+            } else {
+                throw new InvalidParameterException("Invalid class parameter type for generic.");
+            }
+        } else {
+            throw new InvalidParameterException("Invalid class parameter type for generic.");
+        }
     }
 
     /**
@@ -39,14 +61,5 @@ public abstract class AbstractPersistenceValidation<E extends IdentifiableEntity
      * @see ValidationIssue
      */
     public abstract List<ValidationIssue> validate(D domainObject);
-
-    /**
-     * Returns the Entity type associated with the validation.
-     * <p>Used when looking for a validation component in the {@link dev.codesupport.web.common.service.service.CrudOperations}
-     * class for the correct Entity type.</p>
-     *
-     * @return The associated Entity for the Validation subclass.
-     */
-    public abstract Class<E> getEntityType();
 
 }

@@ -91,11 +91,13 @@ public class CrudOperationsTest {
     @Test(expected = ConfigurationException.class)
     public void shouldThrowConfigurationExceptionIfNoContextConfigured() {
         CrudOperations.setContext(null);
-        new CrudOperations<>(
+        CrudOperations<MockEntity, Long, MockDomain> crudOperations = new CrudOperations<>(
                 mockRepository,
                 MockEntity.class,
                 MockDomain.class
         );
+
+        crudOperations.setupValidationBean();
     }
 
     @Test

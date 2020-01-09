@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
+/**
+ * Used internally by service to perform actions on a User.  Not to be returned by API.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractValidatable<Long> {

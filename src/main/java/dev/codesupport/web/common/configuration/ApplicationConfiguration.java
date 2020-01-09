@@ -13,8 +13,7 @@ class ApplicationConfiguration {
 
     /**
      * Performs configurations requires for the application to function.
-     *
-     * This is automatically found and executed by Spring.
+     * <p>This is automatically found and executed by Spring.</p>
      *
      * @param context Spring's ApplicationContext
      */

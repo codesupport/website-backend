@@ -1,10 +1,15 @@
-package dev.codesupport.web.common.security;
+package dev.codesupport.web.common.security.hashing;
 
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Spring implementation for the {@link HashingUtility}
+ *
+ * <p>Uses basic spring mechanics to perform required password hashing operations</p>
+ */
 @Component
 @EqualsAndHashCode(callSuper = true)
 public class SpringHashingUtility extends HashingUtility {

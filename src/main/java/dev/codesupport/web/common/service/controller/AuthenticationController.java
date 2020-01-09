@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.service.controller;
 
-import dev.codesupport.web.common.security.AuthenticationRequest;
+import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.service.service.RestResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +12,10 @@ import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Controller interface for defining mappings and annotations.
+ * <p>Spring requires this to be an interface to work.</p>
+ */
 @RestController
 @Validated
 public interface AuthenticationController {

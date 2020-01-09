@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.security;
+package dev.codesupport.web.common.security.jwt;
 
 import dev.codesupport.web.common.configuration.JwtConfiguration;
 import dev.codesupport.web.common.exception.InvalidTokenException;
@@ -54,14 +54,14 @@ public class JJwtUtility extends JwtUtility {
     }
 
     /**
-     * Decodes a token string to a {@link dev.codesupport.web.common.security.JwtUtility.DecodedJWT}
+     * Decodes a token string to a {@link JwtUtility.DecodedJWT}
      * <p>Validates and decodes a token string.
      * Throws an exception if the token is a bad format, expired, or otherwise invalid.</p>
      *
      * @param tokenString The token string to decode.
-     * @return The {@link dev.codesupport.web.common.security.JwtUtility.DecodedJWT}
+     * @return The {@link JwtUtility.DecodedJWT}
      * @throws InvalidTokenException Thrown if any token validations fail.
-     * @see dev.codesupport.web.common.security.JwtUtility.DecodedJWT
+     * @see JwtUtility.DecodedJWT
      * @see DecodedJJWT
      */
     @Override
@@ -91,9 +91,9 @@ public class JJwtUtility extends JwtUtility {
     }
 
     /**
-     * {@link JJwtUtility} specific implementation for {@link dev.codesupport.web.common.security.JwtUtility.DecodedJWT}
+     * {@link JJwtUtility} specific implementation for {@link JwtUtility.DecodedJWT}
      * <p>Handles the io.jsonwebtoken library specific logic for the
-     * {@link dev.codesupport.web.common.security.JwtUtility.DecodedJWT} api methods</p>
+     * {@link JwtUtility.DecodedJWT} api methods</p>
      */
     private static class DecodedJJWT implements DecodedJWT {
 

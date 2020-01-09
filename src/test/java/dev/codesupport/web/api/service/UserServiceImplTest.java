@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
-import dev.codesupport.web.common.security.HashingUtility;
+import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;

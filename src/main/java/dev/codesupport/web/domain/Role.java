@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.Set;
 
+/**
+ * Used to store Role resource data
+ */
 @Data
 public class Role implements IdentifiableDomain<Long> {
 

@@ -7,6 +7,9 @@ import dev.codesupport.web.domain.validation.annotation.PasswordConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Used for user registration post requests.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserRegistration extends AbstractValidatable<Long> {

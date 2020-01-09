@@ -1,7 +1,7 @@
 package dev.codesupport.web.common.service.controller;
 
 import dev.codesupport.web.common.exception.InvalidUserException;
-import dev.codesupport.web.common.security.AuthenticationRequest;
+import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.security.AuthorizationService;
 import dev.codesupport.web.common.service.service.RestResponse;
 import org.junit.Test;

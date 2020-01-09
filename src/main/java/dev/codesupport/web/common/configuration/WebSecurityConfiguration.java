@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.configuration;
 
-import dev.codesupport.web.common.security.JwtRequestFilter;
+import dev.codesupport.web.common.security.HttpRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,15 +23,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private SimpleAuthenticationEntryPoint simpleAuthenticationEntryPoint;
-    private JwtRequestFilter jwtRequestFilter;
+    private HttpRequestFilter httpRequestFilter;
 
     @Autowired
     public WebSecurityConfiguration(
             SimpleAuthenticationEntryPoint simpleAuthenticationEntryPoint,
-            JwtRequestFilter jwtRequestFilter
+            HttpRequestFilter httpRequestFilter
     ) {
         this.simpleAuthenticationEntryPoint = simpleAuthenticationEntryPoint;
-        this.jwtRequestFilter = jwtRequestFilter;
+        this.httpRequestFilter = httpRequestFilter;
     }
 
     /**
@@ -52,6 +52,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // Add JWT filter to apply to incoming requests.
-        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(httpRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

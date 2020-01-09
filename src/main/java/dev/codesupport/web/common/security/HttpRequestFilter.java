@@ -1,12 +1,9 @@
 package dev.codesupport.web.common.security;
 
-import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import dev.codesupport.web.common.exception.InvalidTokenException;
+import dev.codesupport.web.common.security.jwt.JsonWebToken;
+import dev.codesupport.web.common.security.jwt.JsonWebTokenFactory;
+import dev.codesupport.web.common.security.models.UserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +14,24 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * Intercepts all incoming requests, checking for and validating any present JWT
  */
 @Component
 @Slf4j
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class HttpRequestFilter extends OncePerRequestFilter {
 
     private final JsonWebTokenFactory jsonWebTokenFactory;
     private final AuthorizationService authorizationService;
 
     @Autowired
-    public JwtRequestFilter(
+    public HttpRequestFilter(
             JsonWebTokenFactory jsonWebTokenFactory,
             AuthorizationService authorizationService
     ) {

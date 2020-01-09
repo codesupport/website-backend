@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.security;
+package dev.codesupport.web.common.security.jwt;
 
 import dev.codesupport.web.common.configuration.JwtConfiguration;
 import dev.codesupport.web.common.exception.InvalidTokenException;

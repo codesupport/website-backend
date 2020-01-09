@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.security;
+package dev.codesupport.web.common.security.models;
 
 import dev.codesupport.web.domain.validation.annotation.EmailConstraint;
 import dev.codesupport.web.domain.validation.annotation.PasswordConstraint;

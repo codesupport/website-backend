@@ -3,6 +3,9 @@ package dev.codesupport.web.domain;
 import dev.codesupport.web.common.domain.IdentifiableDomain;
 import lombok.Data;
 
+/**
+ * Used to store Country resource data
+ */
 @Data
 public class Country implements IdentifiableDomain<Long> {
 

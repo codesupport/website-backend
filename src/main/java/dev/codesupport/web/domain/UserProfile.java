@@ -6,6 +6,11 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
+/**
+ * Used for returning basic User Profile information.
+ * No additional permissions
+ * No password.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserProfile extends AbstractValidatable<Long> {

@@ -6,6 +6,11 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
+/**
+ * Used for returning a stripped version of user details.
+ * No profile info
+ * No password
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserStripped extends AbstractValidatable<Long> {

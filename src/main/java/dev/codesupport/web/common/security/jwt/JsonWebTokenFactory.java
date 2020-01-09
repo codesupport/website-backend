@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.security;
+package dev.codesupport.web.common.security.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

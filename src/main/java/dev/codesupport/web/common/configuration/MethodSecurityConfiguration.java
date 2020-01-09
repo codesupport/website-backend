@@ -7,10 +7,18 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 
+/**
+ * Sets the evaluator to use for method access security
+ */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)//, proxyTargetClass = true)//jsr250Enabled = true)
 public class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
+    /**
+     * Creates  MethodSecurityExpressionHandler for access control logic
+     *
+     * @return The MethodSecurityExpressionHandler used for access logic
+     */
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler =

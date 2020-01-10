@@ -15,4 +15,3 @@ spring:
 security:
   jwt:
     issuer: test.CodeSupport.dev
-    expiration: 10m

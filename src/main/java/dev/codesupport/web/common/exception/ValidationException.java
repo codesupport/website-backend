@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.exception;
 
+import dev.codesupport.web.common.domain.AbstractValidatable;
 import lombok.Getter;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
 
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Used to indicate domain level or persistence level validation issues.
  *
- * @see dev.codesupport.web.common.domain.Validatable
+ * @see AbstractValidatable
  * @see dev.codesupport.web.common.service.service.CrudOperations
  */
 public class ValidationException extends ServiceLayerException {

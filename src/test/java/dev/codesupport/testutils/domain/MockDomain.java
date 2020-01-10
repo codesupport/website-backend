@@ -1,24 +1,18 @@
 package dev.codesupport.testutils.domain;
 
+import dev.codesupport.web.common.domain.AbstractValidatable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import dev.codesupport.web.common.domain.Validatable;
-import dev.codesupport.web.common.service.data.validation.ValidationIssue;
-
-import java.util.Collections;
-import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class MockDomain implements Validatable<Long> {
+public class MockDomain extends AbstractValidatable<Long> {
 
     private Long id;
     private String propertyA;
 
-    @Override
-    public List<ValidationIssue> validate() {
-        return Collections.emptyList();
-    }
 }

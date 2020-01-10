@@ -17,9 +17,6 @@ spring:
 logging:
   level:
     root: ERROR
-    org.springframework: INFO
-    dev.codesupport: INFO
-  pattern:
-    console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
+    dev.codesupport: ${log.local.level:INFO}
 server:
   port: 8080

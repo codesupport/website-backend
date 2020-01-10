@@ -9,42 +9,42 @@ public class ValidationUtilsTest {
 
     @Test
     public void shouldReturnFalseForUsernameNull() {
-        assertFalse(ValidationUtils.isValidUsername(null));
+        assertFalse(ValidationUtils.isValidAlias(null));
     }
 
     @Test
     public void shouldReturnFalseForUsernameShorterThanFiveCharacters() {
         String username = "abc";
 
-        assertFalse(ValidationUtils.isValidUsername(username));
+        assertFalse(ValidationUtils.isValidAlias(username));
     }
 
     @Test
     public void shouldReturnFalseForUsernameLongerThanFourteenCharacters() {
         String username = "abcdefghijklmno";
 
-        assertFalse(ValidationUtils.isValidUsername(username));
+        assertFalse(ValidationUtils.isValidAlias(username));
     }
 
     @Test
     public void shouldReturnFalseForUsernameStartingWithNonAlpha() {
         String username = "1abcdefg";
 
-        assertFalse(ValidationUtils.isValidUsername(username));
+        assertFalse(ValidationUtils.isValidAlias(username));
     }
 
     @Test
     public void shouldReturnFalseForUsernameNotAlphanumeric() {
         String username = "abcd1234-";
 
-        assertFalse(ValidationUtils.isValidUsername(username));
+        assertFalse(ValidationUtils.isValidAlias(username));
     }
 
     @Test
     public void shouldReturnTrueForValidUsername() {
         String username = "abcdef1";
 
-        assertTrue(ValidationUtils.isValidUsername(username));
+        assertTrue(ValidationUtils.isValidAlias(username));
     }
 
     @Test

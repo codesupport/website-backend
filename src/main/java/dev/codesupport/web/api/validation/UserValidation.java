@@ -30,16 +30,17 @@ public class UserValidation extends AbstractPersistenceValidation<UserEntity, Lo
     public List<ValidationIssue> validate(User domainObject) {
         List<ValidationIssue> validationIssues = new ArrayList<>();
 
-        if (repository.existsByUsername(domainObject.getUsername())) {
-            validationIssues.add(domainObject.createDuplicateParameter(null, UserEntity_.USERNAME));
+        if (repository.existsByAlias(domainObject.getAlias())) {
+            validationIssues.add(domainObject.createDuplicateParameter(null, UserEntity_.ALIAS));
         }
 
-        return validationIssues;
-    }
+        if (repository.existsByEmail(domainObject.getEmail())) {
+            validationIssues.add(domainObject.createDuplicateParameter(null, UserEntity_.EMAIL));
+        }
 
-    @Override
-    public Class<UserEntity> getEntityType() {
-        return UserEntity.class;
+        //TODO: Check if avatar image exists
+
+        return validationIssues;
     }
 
 }

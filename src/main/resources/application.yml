@@ -7,13 +7,14 @@ spring:
         physical-strategy: dev.codesupport.web.common.service.data.DataPhysicalNamingStrategy
 security:
   jwt:
-    issuer: CodeSupport.dev
-    expiration: 10m
+    issuer: ${jwt.issuer:CodeSupport.dev}
+    expiration: ${jwt.expiration:10m}
 logging:
   level:
-    root: ERROR
-    org.springframework: INFO
-    dev.codesupport: DEBUG
+    root: WARN
+    org.springframework: ${log.root.level:INFO}
+    dev.codesupport: ${log.local.level:DEBUG}
+#    org.springframework.transaction: TRACE
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
 server:

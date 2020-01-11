@@ -5,7 +5,6 @@ import dev.codesupport.web.common.exception.HttpRequestException;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.service.service.ObjectToUrlEncodedConverter;
-import dev.codesupport.web.common.service.service.RequestResponseLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -69,9 +68,6 @@ class ApplicationConfiguration {
 
         restTemplate.getMessageConverters()
                 .add(new ObjectToUrlEncodedConverter());
-
-        restTemplate.getInterceptors()
-                .add(new RequestResponseLoggingInterceptor());
 
         restTemplate.setErrorHandler(new ResponseErrorHandler() {
             @Override

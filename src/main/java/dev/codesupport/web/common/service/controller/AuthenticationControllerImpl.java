@@ -1,8 +1,9 @@
 package dev.codesupport.web.common.service.controller;
 
-import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.security.AuthorizationService;
+import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.service.service.RestResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.Collections;
  * to then be validated, resulting in returned JWT if found valid.
  */
 @Component
+@Slf4j
 public class AuthenticationControllerImpl implements AuthenticationController {
 
     private final AuthorizationService authorizationService;
@@ -44,6 +46,15 @@ public class AuthenticationControllerImpl implements AuthenticationController {
 
         return ResponseEntity.ok(
                 getRestResponse(Collections.singletonList(token))
+        );
+    }
+
+    @Override
+    public ResponseEntity<RestResponse<Serializable>> linkDiscord(String code) {
+        authorizationService.linkDiscord(code);
+
+        return ResponseEntity.ok(
+                RestResponse.restResponse(Collections.singletonList("Ok"))
         );
     }
 

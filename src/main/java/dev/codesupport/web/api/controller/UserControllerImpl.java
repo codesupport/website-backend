@@ -36,7 +36,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public RestResponse<UserStripped> registerUser(UserRegistration userRegistration) {
+    public RestResponse<String> registerUser(UserRegistration userRegistration) {
         return restResponse(service.registerUser(userRegistration));
     }
 

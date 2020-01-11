@@ -9,6 +9,10 @@ security:
   jwt:
     issuer: ${jwt.issuer:CodeSupport.dev}
     expiration: ${jwt.expiration:10m}
+  discord:
+    client-id: ${discord.app.app_id:}
+    secret: ${discord.app.secret:}
+    redirect-uri: ${discord.app.redirect:}
 logging:
   level:
     root: WARN

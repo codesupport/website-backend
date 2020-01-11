@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
@@ -19,9 +20,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-public class AuthorizationServiceTest {
+public class AuthorizationServiceImplTest {
 
-    private static AuthorizationService spyService;
+    private static AuthorizationServiceImpl spyService;
 
     private static UserRepository mockUserRepository;
 
@@ -29,13 +30,16 @@ public class AuthorizationServiceTest {
 
     private static JwtUtility mockJwtUtility;
 
+    private static RestTemplate mockRestTemplate;
+
     @BeforeClass
     public static void init() {
         mockUserRepository = mock(UserRepository.class);
         mockHashingUtility = mock(HashingUtility.class);
         mockJwtUtility = mock(JwtUtility.class);
+        mockRestTemplate = mock(RestTemplate.class);
 
-        spyService = spy(new AuthorizationService(mockUserRepository, mockHashingUtility, mockJwtUtility));
+        spyService = spy(new AuthorizationServiceImpl(mockUserRepository, mockHashingUtility, mockJwtUtility, mockRestTemplate));
     }
 
     @Before
@@ -44,6 +48,7 @@ public class AuthorizationServiceTest {
                 mockUserRepository,
                 mockHashingUtility,
                 mockJwtUtility,
+                mockRestTemplate,
                 spyService
         );
     }
@@ -189,6 +194,11 @@ public class AuthorizationServiceTest {
         UserDetails actual = spyService.getUserDetailsByEmail(email);
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldCorrectlyLinkDiscordAccount() {
+        //TODO: Make this test when the method is finalized.
     }
 
 }

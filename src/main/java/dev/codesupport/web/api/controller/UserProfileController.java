@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public interface UserProfileController {
 
-    @GetMapping("/userprofiles")
+    @GetMapping("/profiles")
     RestResponse<UserProfile> getAllUserProfiles();
 
-    @GetMapping("/userprofiles/{id}")
+    @GetMapping("/profiles/{id}")
     RestResponse<UserProfile> getUserProfileById(@PathVariable Long id);
 
 }

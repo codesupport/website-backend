@@ -14,8 +14,8 @@ import static dev.codesupport.web.common.service.service.RestResponse.restRespon
 @RestController
 public class HealthcheckController {
 
-    @GetMapping("/health")
-    public RestResponse<Serializable> getHealthCheck(){
+    @GetMapping("/healthcheck")
+    public RestResponse<Serializable> getHealthCheck() {
         return restResponse(null);
     }
 

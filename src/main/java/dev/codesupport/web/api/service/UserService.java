@@ -21,6 +21,6 @@ public interface UserService {
 
     List<UserStripped> findAllUsers();
 
-    List<UserStripped> registerUser(UserRegistration userRegistration);
+    List<String> registerUser(UserRegistration userRegistration);
 
 }

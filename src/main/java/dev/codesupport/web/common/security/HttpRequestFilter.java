@@ -54,6 +54,7 @@ public class HttpRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Headers", "*");
 
         checkForJWToken(request);
 

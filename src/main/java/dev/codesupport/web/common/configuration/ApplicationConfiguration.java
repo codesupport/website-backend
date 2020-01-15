@@ -70,9 +70,6 @@ class ApplicationConfiguration {
         restTemplate.getMessageConverters()
                 .add(new ObjectToUrlEncodedConverter());
 
-        restTemplate.getInterceptors()
-                .add(new RequestResponseLoggingInterceptor());
-
         // Set a handler to decide if and how errors are handled.
         restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
 

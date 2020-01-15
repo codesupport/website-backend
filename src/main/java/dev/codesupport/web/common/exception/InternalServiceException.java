@@ -1,5 +1,8 @@
 package dev.codesupport.web.common.exception;
 
+/**
+ * Thrown for internal service exceptions, used to consolidate exceptions.
+ */
 public class InternalServiceException extends RuntimeException {
     public enum Reason {
         INTERNAL("Internal service issue"),

@@ -29,3 +29,4 @@ dependency-reduced-pom.xml
 # System Files
 .DS_Store
 Thumbs.db
+*.log

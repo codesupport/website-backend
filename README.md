@@ -12,6 +12,26 @@
 
 ``./mvn clean package`` - Deletes `target/` folder and repackages (preferred way to build)
 
+## Endpoints
+#### Resources
+
+`GET */api/user/v1/users` - Get all user info
+
+`GET */api/user/v1/users/{id}` - Get user info for specific user with id = {id}
+
+`POST */api/user/v1/users/` - Create (register) user.
+
+`GET */api/user/v1/profiles` - Get all user profiles
+
+`GET */api/user/v1/profiles/{id}` - Get user profile info for specific user with id = {id}
+
+#### Other
+
+`GET */healthcheck` - Perform app health check
+
+`POST */authenticate` - Authenticate credentials, returns a JWT
+
+`GET */authenticate/discord` - Link discord account, requires code (url param) and JWT (Authentication header) 
 
 ## Usage
 ### Build the App

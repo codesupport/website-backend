@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @EqualsAndHashCode
 @ToString
-abstract class RestRequest<S extends Serializable, T extends Serializable> {
+public abstract class RestRequest<S extends Serializable, T extends Serializable> {
 
     protected String url;
     protected Map<String, String> headers;
@@ -51,8 +51,9 @@ abstract class RestRequest<S extends Serializable, T extends Serializable> {
 
     /**
      * Add parameter to be used in request
+     *
      * @param parameter Parameter name
-     * @param value Parameter value
+     * @param value     Parameter value
      * @return The class instance (builder pattern)
      */
     public RestRequest<S, T> withParameter(String parameter, String value) {
@@ -62,6 +63,7 @@ abstract class RestRequest<S extends Serializable, T extends Serializable> {
 
     /**
      * Add map of parameters to be used in request
+     *
      * @param parameters Map of parameters to add
      * @return The class instance (builder pattern)
      */
@@ -74,7 +76,7 @@ abstract class RestRequest<S extends Serializable, T extends Serializable> {
      * Add header to be used in request
      *
      * @param header Header name
-     * @param value Header value
+     * @param value  Header value
      * @return The class instance (builder pattern)
      */
     public RestRequest<S, T> withHeader(String header, String value) {

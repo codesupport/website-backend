@@ -35,8 +35,14 @@ public class UserControllerImpl implements UserController {
         return restResponse(service.getUserById(id));
     }
 
+    /**
+     * Registers a user, creating a user entry and returning a valid JWT
+     *
+     * @param userRegistration The user registration object with appriate information.
+     * @return A valid JWT for the created user.
+     */
     @Override
-    public RestResponse<UserStripped> registerUser(UserRegistration userRegistration) {
+    public RestResponse<String> registerUser(UserRegistration userRegistration) {
         return restResponse(service.registerUser(userRegistration));
     }
 

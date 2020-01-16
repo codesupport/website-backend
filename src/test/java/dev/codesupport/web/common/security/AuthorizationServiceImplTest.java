@@ -19,9 +19,12 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-public class AuthorizationServiceTest {
+//S1192 - DRY is not applicable to unit tests.
+//S2068 - This is not a real password
+@SuppressWarnings({"squid:S1192", "squid:S2068"})
+public class AuthorizationServiceImplTest {
 
-    private static AuthorizationService spyService;
+    private static AuthorizationServiceImpl spyService;
 
     private static UserRepository mockUserRepository;
 
@@ -35,7 +38,7 @@ public class AuthorizationServiceTest {
         mockHashingUtility = mock(HashingUtility.class);
         mockJwtUtility = mock(JwtUtility.class);
 
-        spyService = spy(new AuthorizationService(mockUserRepository, mockHashingUtility, mockJwtUtility));
+        spyService = spy(new AuthorizationServiceImpl(mockUserRepository, mockHashingUtility, mockJwtUtility));
     }
 
     @Before

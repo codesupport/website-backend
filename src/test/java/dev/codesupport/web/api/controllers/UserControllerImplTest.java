@@ -103,22 +103,18 @@ public class UserControllerImplTest {
     }
 
     @Test
-    public void shouldReturnCorrectListOfUsersForCreateUsers() {
-        List<User> userList = userBuilders.stream()
-                .map(UserBuilder::buildDomain).collect(Collectors.toList());
-
-        List<UserStripped> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
-        });
+    public void shouldReturnCorrectResponseForRegisterUser() {
+        List<String> token = Collections.singletonList("Tokentokentoken");
 
         UserRegistration userRegistration = new UserRegistration();
         userRegistration.setAlias("user");
 
-        doReturn(returnedUsers)
+        doReturn(token)
                 .when(mockService)
                 .registerUser(userRegistration);
 
-        RestResponse<UserStripped> expected = new RestResponse<>(returnedUsers);
-        RestResponse<UserStripped> actual = controller.registerUser(userRegistration);
+        RestResponse<String> expected = new RestResponse<>(token);
+        RestResponse<String> actual = controller.registerUser(userRegistration);
 
         assertEquals(expected.getResponse(), actual.getResponse());
     }

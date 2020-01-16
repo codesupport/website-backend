@@ -3,6 +3,7 @@ package dev.codesupport.web.api.service;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
+import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
 import dev.codesupport.web.domain.User;
@@ -12,6 +13,7 @@ import dev.codesupport.web.domain.UserStripped;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,15 +27,20 @@ public class UserServiceImpl implements UserService {
 
     private final HashingUtility hashingUtility;
 
+    private final JwtUtility jwtUtility;
+
     @Autowired
     UserServiceImpl(
             UserRepository userRepository,
-            HashingUtility hashingUtility
+            HashingUtility hashingUtility,
+            JwtUtility jwtUtility
     ) {
         userCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, User.class);
         userProfileCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, UserProfile.class);
 
         this.hashingUtility = hashingUtility;
+
+        this.jwtUtility = jwtUtility;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserStripped> registerUser(UserRegistration userRegistration) {
+    public List<String> registerUser(UserRegistration userRegistration) {
         User user = MappingUtils.convertToType(userRegistration, User.class);
 
         user.setHashPassword(
@@ -70,7 +77,9 @@ public class UserServiceImpl implements UserService {
 
         List<User> users = userCrudOperations.createEntity(user);
 
-        return MappingUtils.convertToType(users, UserStripped.class);
+        final String token = jwtUtility.generateToken(users.get(0).getAlias(), users.get(0).getEmail());
+
+        return Collections.singletonList(token);
     }
 
 }

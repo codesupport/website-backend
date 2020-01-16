@@ -16,6 +16,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+//S2068 - This is not a real password
+@SuppressWarnings("squid:S2068")
 public class AuthenticationControllerImplTest {
 
     @Test(expected = InvalidUserException.class)

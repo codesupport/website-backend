@@ -53,6 +53,9 @@ public class HttpRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Headers", "*");
+
         checkForJWToken(request);
 
         // Boilerplate call, invokes subsequent filter layers

@@ -7,6 +7,7 @@ import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
+import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
@@ -40,6 +41,8 @@ public class UserServiceImplTest {
 
     private static List<User> getUserList;
 
+    private static JwtUtility mockJwtUtility;
+
     @BeforeClass
     public static void init() {
         mapper = new ObjectMapper()
@@ -52,6 +55,8 @@ public class UserServiceImplTest {
         //noinspection unchecked
         mockUserProfileCrudOperations = mock(CrudOperations.class);
 
+        mockJwtUtility = mock(JwtUtility.class);
+
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
         ReflectionTestUtils.setField(mockUserCrudOperations, "context", mockContext);
@@ -61,7 +66,7 @@ public class UserServiceImplTest {
 
         mockHashingUtility = mock(HashingUtility.class);
 
-        service = new UserServiceImpl(mockUserRepository, mockHashingUtility);
+        service = new UserServiceImpl(mockUserRepository, mockHashingUtility, mockJwtUtility);
         ReflectionTestUtils.setField(service, "userCrudOperations", mockUserCrudOperations);
         ReflectionTestUtils.setField(service, "userProfileCrudOperations", mockUserProfileCrudOperations);
 
@@ -83,7 +88,8 @@ public class UserServiceImplTest {
         Mockito.reset(
                 mockUserCrudOperations,
                 mockUserProfileCrudOperations,
-                mockHashingUtility
+                mockHashingUtility,
+                mockJwtUtility
         );
     }
 
@@ -157,9 +163,7 @@ public class UserServiceImplTest {
 
     @Test
     public void shouldReturnCorrectUsersWithRegisterUsers() {
-        List<UserStripped> returnedUsers = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserStripped>>() {
-                });
+        String token = "tokentokentokentoken";
 
         UserRegistration userRegistration = new UserRegistration();
         userRegistration.setAlias("timmy");
@@ -172,9 +176,13 @@ public class UserServiceImplTest {
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 
-        List<UserStripped> actual = service.registerUser(userRegistration);
+        doReturn(token)
+                .when(mockJwtUtility)
+                .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
 
-        assertEquals(returnedUsers, actual);
+        List<String> actual = service.registerUser(userRegistration);
+
+        assertEquals(Collections.singletonList(token), actual);
     }
 
 }

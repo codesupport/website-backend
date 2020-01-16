@@ -12,10 +12,10 @@ import static dev.codesupport.web.common.service.service.RestResponse.restRespon
  * Provides a simple healthcheck endpoint to check that the service is running.
  */
 @RestController
-public class HealthcheckController {
+public class HealthCheckController {
 
-    @GetMapping("/health")
-    public RestResponse<Serializable> getHealthCheck(){
+    @GetMapping("/healthcheck")
+    public RestResponse<Serializable> getHealthCheck() {
         return restResponse(null);
     }
 

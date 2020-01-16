@@ -29,6 +29,6 @@ public interface UserController {
     RestResponse<UserStripped> getUserById(@PathVariable Long id);
 
     @PostMapping("/users")
-    RestResponse<UserStripped> registerUser(@RequestBody @Valid UserRegistration userRegistration);
+    RestResponse<String> registerUser(@RequestBody @Valid UserRegistration userRegistration);
 
 }

@@ -28,7 +28,7 @@ public class UserEntity implements IdentifiableEntity<Long> {
     private String alias;
     @Column(nullable = false)
     private String hashPassword;
-    private Long discordId;
+    private String discordId;
     @Column(nullable = false)
     private String email;
     private String avatarLink;

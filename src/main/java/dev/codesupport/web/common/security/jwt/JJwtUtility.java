@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.security.jwt;
 
-import dev.codesupport.web.common.configuration.JwtConfiguration;
+import dev.codesupport.web.common.configuration.JwtProperties;
 import dev.codesupport.web.common.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -30,8 +30,8 @@ public class JJwtUtility extends JwtUtility {
     private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     @Autowired
-    public JJwtUtility(JwtConfiguration jwtConfiguration) {
-        super(jwtConfiguration);
+    public JJwtUtility(JwtProperties jwtProperties) {
+        super(jwtProperties);
     }
 
     /**
@@ -40,7 +40,7 @@ public class JJwtUtility extends JwtUtility {
      *
      * @param username The username to use in the token
      * @return The encoded token string
-     * @see JwtConfiguration
+     * @see JwtProperties
      */
     @Override
     public String generateToken(String username, String email) {

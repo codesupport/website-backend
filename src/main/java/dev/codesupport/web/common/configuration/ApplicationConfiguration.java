@@ -2,7 +2,6 @@ package dev.codesupport.web.common.configuration;
 
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.ObjectToUrlEncodedConverter;
-import dev.codesupport.web.common.service.http.RequestResponseLoggingInterceptor;
 import dev.codesupport.web.common.service.http.RestTemplateResponseErrorHandler;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import org.springframework.beans.factory.annotation.Autowired;

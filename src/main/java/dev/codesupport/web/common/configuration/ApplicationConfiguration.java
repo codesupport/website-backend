@@ -32,8 +32,10 @@ class ApplicationConfiguration {
             ApplicationContext context,
             DiscordAppProperties discordAppProperties
     ) {
+        // Set ApplicationContext for all CrudOperation instances
         CrudOperations.setContext(context);
 
+        // Set discord app properties as static (default) values of DiscordOAuthTokenRequest
         DiscordOAuthTokenRequest.setClient_id(discordAppProperties.getClientId());
         DiscordOAuthTokenRequest.setSecret(discordAppProperties.getSecret());
         DiscordOAuthTokenRequest.setRedirect_uri(discordAppProperties.getRedirectUri());

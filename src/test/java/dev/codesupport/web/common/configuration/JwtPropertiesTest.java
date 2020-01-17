@@ -6,67 +6,67 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 
-public class JwtConfigurationTest {
+public class JwtPropertiesTest {
 
     @Test
     public void shouldCorrectlyParseExpirationSeconds() {
-        JwtConfiguration jwtConfigurationSpy = spy(new JwtConfiguration());
+        JwtProperties jwtPropertiesSpy = spy(new JwtProperties());
 
-        jwtConfigurationSpy.setExpiration("5s");
+        jwtPropertiesSpy.setExpiration("5s");
 
         Long expected = 5 * 1000L;
-        Long actual = jwtConfigurationSpy.getExpiration();
+        Long actual = jwtPropertiesSpy.getExpiration();
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldCorrectlyParseExpirationMinutes() {
-        JwtConfiguration jwtConfigurationSpy = spy(new JwtConfiguration());
+        JwtProperties jwtPropertiesSpy = spy(new JwtProperties());
 
-        jwtConfigurationSpy.setExpiration("5m");
+        jwtPropertiesSpy.setExpiration("5m");
 
         Long expected = 5 * 60 * 1000L;
-        Long actual = jwtConfigurationSpy.getExpiration();
+        Long actual = jwtPropertiesSpy.getExpiration();
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldCorrectlyParseExpirationHours() {
-        JwtConfiguration jwtConfigurationSpy = spy(new JwtConfiguration());
+        JwtProperties jwtPropertiesSpy = spy(new JwtProperties());
 
-        jwtConfigurationSpy.setExpiration("5h");
+        jwtPropertiesSpy.setExpiration("5h");
 
         Long expected = 5 * 60 * 60 * 1000L;
-        Long actual = jwtConfigurationSpy.getExpiration();
+        Long actual = jwtPropertiesSpy.getExpiration();
 
         assertEquals(expected, actual);
     }
 
     @Test(expected = ConfigurationException.class)
     public void shouldThrowConfigurationExceptionForInvalidTimeFormat() {
-        JwtConfiguration jwtConfiguration = new JwtConfiguration();
+        JwtProperties jwtProperties = new JwtProperties();
 
-        jwtConfiguration.setExpiration("-2m");
+        jwtProperties.setExpiration("-2m");
     }
 
     @Test(expected = ConfigurationException.class)
     public void shouldThrowConfigurationExceptionForInvalidUnitFormat() {
-        JwtConfiguration jwtConfiguration = new JwtConfiguration();
+        JwtProperties jwtProperties = new JwtProperties();
 
-        jwtConfiguration.setExpiration("2r");
+        jwtProperties.setExpiration("2r");
     }
 
     @Test
     public void shouldLeaveDefaultTimeIfExpirationEmpty() {
-        JwtConfiguration jwtConfiguration = new JwtConfiguration();
+        JwtProperties jwtProperties = new JwtProperties();
 
-        Long expected = jwtConfiguration.getExpiration();
+        Long expected = jwtProperties.getExpiration();
 
-        jwtConfiguration.setExpiration(" ");
+        jwtProperties.setExpiration(" ");
 
-        Long actual = jwtConfiguration.getExpiration();
+        Long actual = jwtProperties.getExpiration();
 
         assertEquals(expected, actual);
     }

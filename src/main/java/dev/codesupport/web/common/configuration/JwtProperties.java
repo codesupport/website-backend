@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @Configuration
 // This sets the class to use values from the application.yml files.
 @ConfigurationProperties(prefix = "security.jwt")
-public class JwtConfiguration {
+public class JwtProperties {
 
     /**
      * The acceptable value pattern for expiration time expressions, ex:

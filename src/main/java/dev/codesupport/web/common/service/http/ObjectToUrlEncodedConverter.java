@@ -34,7 +34,7 @@ public class ObjectToUrlEncodedConverter implements HttpMessageConverter<Object>
      * This is stubbed to always be false, as it's not currently a needed feature.
      * <p>Determines if the particular media type can be read and transformed into the given class type</p>
      *
-     * @param clazz The class type we wish to transform to.
+     * @param clazz     The class type we wish to transform to.
      * @param mediaType The media type of the message body we wish to transform.
      * @return True if the transformation is possible, False otherwise.
      */
@@ -47,9 +47,9 @@ public class ObjectToUrlEncodedConverter implements HttpMessageConverter<Object>
      * Only supports one media type for this class, to keep it simple.
      * <p>Determines if the particular class can be transformed into the given media type.</p>
      *
-     * @param clazz
-     * @param mediaType
-     * @return
+     * @param clazz     The class type to be written from
+     * @param mediaType The mediaType to be written to
+     * @return True if the class type can be written to the media type, False otherwise
      */
     @Override
     public boolean canWrite(Class clazz, MediaType mediaType) {
@@ -70,11 +70,11 @@ public class ObjectToUrlEncodedConverter implements HttpMessageConverter<Object>
      * Not implemented, not needed, required to define.
      * <p>Reads the input message and transforms it into an object of the given class type.</p>
      *
-     * @param clazz The class type to transform into.
+     * @param clazz        The class type to transform into.
      * @param inputMessage The input message to transform.
      * @return An object of the given class type, populated with data from the input message.
      * @throws HttpMessageNotReadableException If the message is otherwise unreadable.
-     * @throws NotImplementedException This method is not implemented, as it is not needed.
+     * @throws NotImplementedException         This method is not implemented, as it is not needed.
      */
     @Override
     public Object read(Class clazz, HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
@@ -85,11 +85,11 @@ public class ObjectToUrlEncodedConverter implements HttpMessageConverter<Object>
      * Always assumes x-www-form-urlencoded, as it's the only thing canWrite() returns true for.
      * <p>Writes the given object to the desired content type and stores it in the HttpOutputMessage</p>
      *
-     * @param o The object to transform.
-     * @param contentType The media type to transform the object to.
+     * @param o             The object to transform.
+     * @param contentType   The media type to transform the object to.
      * @param outputMessage The output message to write the transformed object to.
      * @throws HttpMessageNotWritableException If the message can not be written to.
-     * @throws InternalServiceException If their was a failure writing to the message body.
+     * @throws InternalServiceException        If their was a failure writing to the message body.
      */
     @Override
     public void write(Object o, MediaType contentType, HttpOutputMessage outputMessage) throws HttpMessageNotWritableException {
@@ -116,7 +116,7 @@ public class ObjectToUrlEncodedConverter implements HttpMessageConverter<Object>
          * The @JsonAnySetter causes every property transformation to use this setter.
          * <p>Sets the parameter and it's value, to be used in generating the urlencoded string.</p>
          *
-         * @param name The name of the parameter
+         * @param name  The name of the parameter
          * @param value The value of the parameter
          */
         @JsonAnySetter

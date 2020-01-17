@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.security.jwt;
 
-import dev.codesupport.web.common.configuration.JwtConfiguration;
+import dev.codesupport.web.common.configuration.JwtProperties;
 import dev.codesupport.web.common.exception.InvalidTokenException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,21 +24,21 @@ public class JJwtUtilityTest {
         String email = "user@user.us";
         String issuer = "issuer";
         long expiration = 0L;
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
 
         //ResultOfMethodCallIgnored - Not using results, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(expiration)
-                .when(mockJwtConfiguration)
+                .when(mockJwtProperties)
                 .getExpiration();
 
         //ResultOfMethodCallIgnored - Not using results, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(issuer)
-                .when(mockJwtConfiguration)
+                .when(mockJwtProperties)
                 .getIssuer();
 
-        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtConfiguration));
+        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtProperties));
 
         doReturn(expiration)
                 .when(jJwtUtilitySpy)
@@ -65,21 +65,21 @@ public class JJwtUtilityTest {
         String email = "user@user.us";
         String issuer = "issuer";
         long expiration = 0L;
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
 
         //ResultOfMethodCallIgnored - Not using results, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(expiration)
-                .when(mockJwtConfiguration)
+                .when(mockJwtProperties)
                 .getExpiration();
 
         //ResultOfMethodCallIgnored - Not using results, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(issuer)
-                .when(mockJwtConfiguration)
+                .when(mockJwtProperties)
                 .getIssuer();
 
-        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtConfiguration));
+        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtProperties));
 
         doReturn(expiration)
                 .when(jJwtUtilitySpy)
@@ -105,9 +105,9 @@ public class JJwtUtilityTest {
         String username = "user";
         String issuer = "issuer";
         long expiration = 0L;
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
 
-        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtConfiguration));
+        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtProperties));
 
         Key key = (Key) ReflectionTestUtils.getField(jJwtUtilitySpy, "KEY");
 
@@ -123,9 +123,9 @@ public class JJwtUtilityTest {
 
     @Test(expected = InvalidTokenException.class)
     public void shouldProduceInvalidTokenExceptionDueToMalformedJwtException() {
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
 
-        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtConfiguration));
+        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtProperties));
 
         String testToken = "123.123";
 
@@ -137,9 +137,9 @@ public class JJwtUtilityTest {
         String username = "user";
         String issuer = "issuer";
         long expiration = 0L;
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
 
-        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtConfiguration));
+        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtProperties));
 
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
@@ -155,9 +155,9 @@ public class JJwtUtilityTest {
 
     @Test(expected = InvalidTokenException.class)
     public void shouldProduceInvalidTokenExceptionDueToIllegalArgumentException() {
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
 
-        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtConfiguration));
+        JJwtUtility jJwtUtilitySpy = spy(new JJwtUtility(mockJwtProperties));
 
         jJwtUtilitySpy.decode(null);
     }

@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.security;
 
 import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 import java.io.Serializable;
@@ -19,7 +20,18 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(
             Authentication auth, Object targetDomainObject, Object permission) {
-        return false;
+        //TODO: This is ugly, and temporary.
+        boolean hasPermission = false;
+        switch (permission.toString()) {
+            case "link_account":
+                if (auth != null && !(auth instanceof AnonymousAuthenticationToken)) {
+                    hasPermission = true;
+                }
+                break;
+            default:
+                break;
+        }
+        return hasPermission;
     }
 
     /**

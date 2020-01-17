@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.security.jwt;
 
-import dev.codesupport.web.common.configuration.JwtConfiguration;
+import dev.codesupport.web.common.configuration.JwtProperties;
 
 /**
  * Abstract utility to define implementation of specific utility.
@@ -9,7 +9,7 @@ import dev.codesupport.web.common.configuration.JwtConfiguration;
  */
 public abstract class JwtUtility {
 
-    private JwtConfiguration jwtConfiguration;
+    private JwtProperties jwtProperties;
 
     /**
      * JWT property name for expiration
@@ -24,17 +24,17 @@ public abstract class JwtUtility {
      */
     protected static final String EMAIL = "email";
 
-    public JwtUtility(JwtConfiguration jwtConfiguration) {
-        this.jwtConfiguration = jwtConfiguration;
+    public JwtUtility(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
     }
 
     /**
-     * Gets the {@link JwtConfiguration}
+     * Gets the {@link JwtProperties}
      *
-     * @return The stored {@link JwtConfiguration}
+     * @return The stored {@link JwtProperties}
      */
-    protected JwtConfiguration configuration() {
-        return jwtConfiguration;
+    protected JwtProperties configuration() {
+        return jwtProperties;
     }
 
     public abstract String generateToken(String username, String email);

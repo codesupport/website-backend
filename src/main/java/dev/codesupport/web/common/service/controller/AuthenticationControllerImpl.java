@@ -47,4 +47,21 @@ public class AuthenticationControllerImpl implements AuthenticationController {
         );
     }
 
+    /**
+     * Link the discord id associated with the given code
+     * <p>Attempts to acquire a Discord Id associated with the given code and link it to
+     * the user authentication currently set in the Security Context</p>
+     *
+     * @param code The code associated to the discord user
+     * @return Returns simple OK - 200 response if successful
+     */
+    @Override
+    public ResponseEntity<RestResponse<Serializable>> linkDiscord(String code) {
+        authorizationService.linkDiscord(code);
+
+        return ResponseEntity.ok(
+                RestResponse.restResponse(Collections.singletonList("Ok"))
+        );
+    }
+
 }

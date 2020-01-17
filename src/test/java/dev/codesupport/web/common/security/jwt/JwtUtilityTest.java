@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.security.jwt;
 
-import dev.codesupport.web.common.configuration.JwtConfiguration;
+import dev.codesupport.web.common.configuration.JwtProperties;
 import org.junit.Test;
 
 import static org.junit.Assert.assertSame;
@@ -11,8 +11,8 @@ public class JwtUtilityTest {
 
     @Test
     public void shouldReturnCorrectJwtConfiguration() {
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
-        JwtUtility jwtUtility = new JwtUtility(mockJwtConfiguration) {
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
+        JwtUtility jwtUtility = new JwtUtility(mockJwtProperties) {
             @Override
             public String generateToken(String username, String email) {
                 return null;
@@ -24,16 +24,16 @@ public class JwtUtilityTest {
             }
         };
 
-        JwtConfiguration actual = jwtUtility.configuration();
+        JwtProperties actual = jwtUtility.configuration();
 
-        assertSame(mockJwtConfiguration, actual);
+        assertSame(mockJwtProperties, actual);
     }
 
     @Test
     public void shouldCalculateCorrectExpirationTime() {
         long msToExpire = 5000L;
-        JwtConfiguration mockJwtConfiguration = mock(JwtConfiguration.class);
-        JwtUtility jwtUtility = new JwtUtility(mockJwtConfiguration) {
+        JwtProperties mockJwtProperties = mock(JwtProperties.class);
+        JwtUtility jwtUtility = new JwtUtility(mockJwtProperties) {
             @Override
             public String generateToken(String username, String email) {
                 return null;

@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.service.controller;
 
 import dev.codesupport.web.common.exception.InvalidUserException;
+import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.security.AuthorizationService;
 import dev.codesupport.web.common.service.service.RestResponse;
@@ -9,12 +10,15 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 //S2068 - This is not a real password
 @SuppressWarnings("squid:S2068")
@@ -75,6 +79,52 @@ public class AuthenticationControllerImplTest {
         ResponseEntity<RestResponse<Serializable>> response = spyController.authenticate(request);
 
         assertEquals(mockRestResponse, response.getBody());
+    }
+
+    @Test(expected = ServiceLayerException.class)
+    public void shouldBubbleUpExceptionThrownByAuthorizationService() {
+        String code = "code";
+
+        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+
+        doThrow(ServiceLayerException.class)
+                .when(mockAuthorizationService)
+                .linkDiscord(code);
+
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+
+        controller.linkDiscord(code);
+    }
+
+    @Test
+    public void shouldInvokeLinkDiscord() {
+        String code = "code";
+
+        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+
+        controller.linkDiscord(code);
+
+        verify(mockAuthorizationService, times(1))
+                .linkDiscord(code);
+    }
+
+    @Test
+    public void shouldReturnOkForLinkDiscord() {
+        String code = "code";
+
+        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+
+        List<String> expected = Collections.singletonList("Ok");
+
+        ResponseEntity<RestResponse<Serializable>> responseEntity = controller.linkDiscord(code);
+
+        //ConstantConditions - This is fine for the context of this test.
+        //noinspection ConstantConditions
+        assertEquals(expected, responseEntity.getBody().getResponse());
     }
 
 }

@@ -1,10 +1,10 @@
-package dev.codesupport.web.common.security;
+package dev.codesupport.web.common.security.acess;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class CustomPermissionEvaluatorTest {
+public class AccessPermissionEvaluatorTest {
 
     @Test
     public void shouldCorrectlyEvaluatePermissions() {

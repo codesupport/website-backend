@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Used to perform access validation through use of @PreAuthorize and @PostAuthorize.
  */
-public class CustomPermissionEvaluator implements PermissionEvaluator {
+public class AccessPermissionEvaluator implements PermissionEvaluator {
 
     /**
      * @param auth               The stored authentication from the security context.

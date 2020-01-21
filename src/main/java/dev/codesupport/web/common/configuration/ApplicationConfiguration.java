@@ -2,7 +2,6 @@ package dev.codesupport.web.common.configuration;
 
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.ObjectToUrlEncodedConverter;
-import dev.codesupport.web.common.service.http.RequestResponseLoggingInterceptor;
 import dev.codesupport.web.common.service.http.RestTemplateResponseErrorHandler;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,9 +76,6 @@ class ApplicationConfiguration {
         // Add message converters - Ex: converting to urlencoded messages
         restTemplate.getMessageConverters()
                 .add(new ObjectToUrlEncodedConverter());
-
-        restTemplate.getInterceptors()
-                .add(new RequestResponseLoggingInterceptor());
 
         // Set a handler to decide if and how errors are handled.
         restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());

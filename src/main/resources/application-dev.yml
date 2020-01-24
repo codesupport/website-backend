@@ -15,3 +15,6 @@ spring:
 security:
   jwt:
     issuer: test.CodeSupport.dev
+logging:
+  level:
+    dev.codesupport: ${log.local.level:DEBUG}

@@ -1,7 +1,6 @@
-package dev.codesupport.web.common.security.acess.evaluator;
+package dev.codesupport.web.common.security.access.evaluator;
 
 import dev.codesupport.web.common.security.access.Accessor;
-import dev.codesupport.web.common.security.access.evaluator.LinkAccountEvaluator;
 import org.junit.Test;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

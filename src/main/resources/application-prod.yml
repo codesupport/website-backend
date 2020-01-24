@@ -3,14 +3,14 @@ spring:
     url: ${database.url}
     username: ${database.username}
     password: ${database.password}
-    driver-class-name: ${database.driver}
+    driver-class-name: ${database.driver:com.mysql.jdbc.Driver}
     hikari:
-      maximum-pool-size: ${db.pool.size:4}
-      minimum-idle: ${db.pool.idle:2}
+      maximum-pool-size: ${database.pool.size:4}
+      minimum-idle: ${database.pool.idle:2}
   jpa:
     properties:
       hibernate:
-        dialect: ${database.dialect}
+        dialect: ${database.dialect:org.hibernate.dialect.MySQLDialect}
     open-in-view: false
     hibernate:
       ddl-auto: none
@@ -19,4 +19,4 @@ logging:
     root: ERROR
     dev.codesupport: ${log.local.level:INFO}
 server:
-  port: 8080
+  port: ${server.port:8080}

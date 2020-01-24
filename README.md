@@ -51,16 +51,30 @@
 
 ``java -jar target/api-service-0.0.1-SNAPSHOT.jar``
 
-### Hit the endpoints
+### Environment Variables
 
-#### Get user by ID
+#### JWT
+- JWT_ISSUER - (default: codesupport.dev)
+- JWT_EXPIRATION - (default: 10m)
 
-``http://localhost:8082/api/v1/users/2``
+#### Discord
+- DISCORD_APP_ID
+- DISCORD_APP_SECRET
+- DISCORD_APP_REDIRECT
 
-#### Get all users
+#### App
+- LOG_ROOT_LEVEL - (default: INFO)
+- LOG_LOCAL_LEVEL - (default: ERROR) - Log level for app specific
+- SERVER_PORT - (default: 8080)
 
-``http://localhost:8082/api/v1/users``
-
+#### Database
+- DATABASE_URL
+- DATABASE_USERNAME
+- DATABASE_PASSWORD
+- DATABASE_DRIVER - (default: com.mysql.jdbc.Driver)
+- DATABASE_DIALECT - (default: org.hibernate.dialect.MySQLDialect)
+- DATABASE_POOL_SIZE - (default: 4) - Max number of allowed db connections
+- DATABASE_POOL_IDLE - (default: 2) - Minimum number of db connections to keep open
 
 ## Structure
 

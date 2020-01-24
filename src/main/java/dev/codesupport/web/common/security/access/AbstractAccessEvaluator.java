@@ -23,7 +23,9 @@ public abstract class AbstractAccessEvaluator<T> {
         if (superClass instanceof ParameterizedType) {
             Type parameterizedType = ((ParameterizedType) superClass).getActualTypeArguments()[0];
             if (parameterizedType instanceof Class) {
-                classType = (Class) parameterizedType;
+                //unchecked - We should be good here, the type is derived from the instance itself.
+                //noinspection unchecked
+                classType = (Class<T>) parameterizedType;
             } else {
                 // This is really not possible.
                 throw new IllegalArgumentException("Internal error: Parameter was not a class.");
@@ -34,6 +36,14 @@ public abstract class AbstractAccessEvaluator<T> {
         }
     }
 
+    /**
+     * Specific sub class implementation for permission checks
+     *
+     * @param auth               The Authentication associated with the access evaluation
+     * @param targetDomainObject The object associated with the access evaluation
+     * @param permission         The permission associated with the access evaluation
+     * @return True if the user has access for the given permission on the given object, False otherwise
+     */
     protected abstract boolean hasPermissionCheck(Authentication auth, T targetDomainObject, String permission);
 
     /**
@@ -41,16 +51,16 @@ public abstract class AbstractAccessEvaluator<T> {
      *
      * @return String value of the class in canonical format
      */
-    String getEvaluatorClassType() {
+    public String getEvaluatorClassType() {
         return classType.getCanonicalName();
     }
 
     /**
-     * Used for evaluating permissions when there is no associated object or class type for the type of access
+     * Used for evaluating permissions when there is no associated object or class type for permission evaluation
      *
-     * @return The accessor type associated with the evaluation
+     * @return The Accessor associated with this permission evaluation.
      */
-    protected Accessor getAccessor() {
+    public Accessor getAccessor() {
         return Accessor.NONE;
     }
 
@@ -59,14 +69,14 @@ public abstract class AbstractAccessEvaluator<T> {
      * <p>Checks if given object is not null and is the same type as expected by the evaluator prior to
      * invoking the evaluator's hasPermission() method</p>
      *
-     * @param auth The Authentication associated with the access evaluation
+     * @param auth               The Authentication associated with the access evaluation
      * @param targetDomainObject The object associated with the access evaluation
-     * @param permission The permission associated with the access evaluation
+     * @param permission         The permission associated with the access evaluation
      * @return True if the user has access for the givne permission on the given object, False otherwise
      */
-    public boolean hasPermission(Authentication auth, @NonNull Object targetDomainObject, String permission){
-        boolean hasPermission = false;
-        if(classType.isInstance(targetDomainObject)) {
+    public boolean hasPermission(Authentication auth, @NonNull Object targetDomainObject, String permission) {
+        boolean hasPermission;
+        if (classType.isInstance(targetDomainObject)) {
             hasPermission = hasPermissionCheck(auth, classType.cast(targetDomainObject), permission);
         } else {
             throw new InvalidArgumentException("Given target object type '" + targetDomainObject.getClass().getSimpleName() + "' must be '" + classType.getSimpleName() + "'");

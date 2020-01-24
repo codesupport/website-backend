@@ -150,16 +150,20 @@
                 <active.spring.profile>prod</active.spring.profile>
             </properties>
             <dependencies>
-                <!-- TODO: Need DB Driver for prod -->
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>8.0.18</version>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>h2</id>
+            <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <active.spring.profile>h2</active.spring.profile>
+                <active.spring.profile>dev</active.spring.profile>
             </properties>
             <build>
                 <resources>
@@ -174,7 +178,7 @@
                         <directory>src/test/resources</directory>
                         <filtering>true</filtering>
                         <includes>
-                            <include>application-h2.yml</include>
+                            <include>application-dev.yml</include>
                         </includes>
                     </resource>
                 </resources>

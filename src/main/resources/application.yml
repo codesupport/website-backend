@@ -7,17 +7,16 @@ spring:
         physical-strategy: dev.codesupport.web.common.service.data.DataPhysicalNamingStrategy
 security:
   jwt:
-    issuer: ${jwt.issuer:CodeSupport.dev}
+    issuer: ${jwt.issuer:codesupport.dev}
     expiration: ${jwt.expiration:10m}
   discord:
-    client-id: ${discord.app.app_id:}
+    client-id: ${discord.app.id:}
     secret: ${discord.app.secret:}
     redirect-uri: ${discord.app.redirect:}
 logging:
   level:
     root: WARN
     org.springframework: ${log.root.level:INFO}
-    dev.codesupport: ${log.local.level:DEBUG}
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] | %-28c{1} | - %m%n"
 server:

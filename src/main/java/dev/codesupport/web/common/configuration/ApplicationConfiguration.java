@@ -49,7 +49,6 @@ class ApplicationConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-
     /**
      * Offers various configurations for the http requests.
      *

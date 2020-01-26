@@ -1,8 +1,6 @@
-package dev.codesupport.web.common.security.acess;
+package dev.codesupport.web.common.security.access;
 
 import dev.codesupport.web.common.exception.InvalidArgumentException;
-import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
-import dev.codesupport.web.common.security.access.Accessor;
 import org.junit.Test;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +15,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 public class AbstractAccessEvaluatorTest {
+
+    private static final String CLASS_TYPE = "classType";
 
     private static class TestAccessEvaluator extends AbstractAccessEvaluator<Long> {
 
@@ -45,7 +45,7 @@ public class AbstractAccessEvaluatorTest {
 
         Class<?> classType = (Class<?>) ReflectionTestUtils.getField(
                 evaluator,
-                "classType"
+                CLASS_TYPE
         );
 
         assertEquals(Long.class, classType);
@@ -57,7 +57,7 @@ public class AbstractAccessEvaluatorTest {
 
         ReflectionTestUtils.setField(
                 evaluator,
-                "classType",
+                CLASS_TYPE,
                 Long.class
         );
 
@@ -88,7 +88,7 @@ public class AbstractAccessEvaluatorTest {
 
         ReflectionTestUtils.setField(
                 evaluatorSpy,
-                "classType",
+                CLASS_TYPE,
                 longClass
         );
 
@@ -107,7 +107,7 @@ public class AbstractAccessEvaluatorTest {
 
         ReflectionTestUtils.setField(
                 evaluatorSpy,
-                "classType",
+                CLASS_TYPE,
                 longClass
         );
 
@@ -124,15 +124,7 @@ public class AbstractAccessEvaluatorTest {
     public void shouldReturnFalseIfAuthenticationNull() {
         TestAccessEvaluator evaluator = new TestAccessEvaluator();
 
-        //ConstantConditions - This is fine for the purposes of this test.
-        //noinspection ConstantConditions
-        boolean actual = ReflectionTestUtils.invokeMethod(
-                evaluator,
-                "isValidAuth",
-                new Object[]{null}
-        );
-
-        assertFalse(actual);
+        assertFalse(evaluator.isValidAuth(null));
     }
 
     @Test
@@ -141,15 +133,7 @@ public class AbstractAccessEvaluatorTest {
 
         Authentication mockAuthentication = mock(AnonymousAuthenticationToken.class);
 
-        //ConstantConditions - This is fine for the purposes of this test.
-        //noinspection ConstantConditions
-        boolean actual = ReflectionTestUtils.invokeMethod(
-                evaluator,
-                "isValidAuth",
-                mockAuthentication
-        );
-
-        assertFalse(actual);
+        assertFalse(evaluator.isValidAuth(mockAuthentication));
     }
 
     @Test
@@ -158,15 +142,7 @@ public class AbstractAccessEvaluatorTest {
 
         Authentication mockAuthentication = mock(UsernamePasswordAuthenticationToken.class);
 
-        //ConstantConditions - This is fine for the purposes of this test.
-        //noinspection ConstantConditions
-        boolean actual = ReflectionTestUtils.invokeMethod(
-                evaluator,
-                "isValidAuth",
-                mockAuthentication
-        );
-
-        assertTrue(actual);
+        assertTrue(evaluator.isValidAuth(mockAuthentication));
     }
 
 }

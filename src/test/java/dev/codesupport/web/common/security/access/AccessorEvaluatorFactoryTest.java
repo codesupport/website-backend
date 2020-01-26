@@ -1,9 +1,6 @@
-package dev.codesupport.web.common.security.acess;
+package dev.codesupport.web.common.security.access;
 
 import dev.codesupport.web.common.exception.InvalidArgumentException;
-import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
-import dev.codesupport.web.common.security.access.AccessEvaluatorFactory;
-import dev.codesupport.web.common.security.access.Accessor;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -19,6 +16,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 public class AccessorEvaluatorFactoryTest {
+
+    private static final String STRING_EVALUATOR_MAP = "stringEvaluatorMap";
+    private static final String CLASS_EVALUATOR_MAP = "evaluatorMap";
 
     @Test
     public void shouldPopulateStringEvaluatorMap() {
@@ -64,7 +64,7 @@ public class AccessorEvaluatorFactoryTest {
         //noinspection unchecked,rawtypes
         Map<String, AbstractAccessEvaluator> actual = (Map<String, AbstractAccessEvaluator>) ReflectionTestUtils.getField(
                 accessEvaluatorFactory,
-                "stringEvaluatorMap"
+                STRING_EVALUATOR_MAP
         );
 
         assertEquals(expected, actual);
@@ -114,7 +114,7 @@ public class AccessorEvaluatorFactoryTest {
         //noinspection unchecked,rawtypes
         Map<String, AbstractAccessEvaluator> actual = (Map<String, AbstractAccessEvaluator>) ReflectionTestUtils.getField(
                 accessEvaluatorFactory,
-                "evaluatorMap"
+                CLASS_EVALUATOR_MAP
         );
 
         assertEquals(expected, actual);
@@ -145,13 +145,13 @@ public class AccessorEvaluatorFactoryTest {
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "evaluatorMap",
+                CLASS_EVALUATOR_MAP,
                 mockClassEvaluatorMap
         );
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "stringEvaluatorMap",
+                STRING_EVALUATOR_MAP,
                 mockStringEvaluatorMap
         );
 
@@ -187,13 +187,13 @@ public class AccessorEvaluatorFactoryTest {
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "evaluatorMap",
+                CLASS_EVALUATOR_MAP,
                 mockClassEvaluatorMap
         );
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "stringEvaluatorMap",
+                STRING_EVALUATOR_MAP,
                 mockStringEvaluatorMap
         );
 
@@ -229,13 +229,13 @@ public class AccessorEvaluatorFactoryTest {
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "evaluatorMap",
+                CLASS_EVALUATOR_MAP,
                 mockClassEvaluatorMap
         );
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "stringEvaluatorMap",
+                STRING_EVALUATOR_MAP,
                 mockStringEvaluatorMap
         );
 
@@ -267,13 +267,13 @@ public class AccessorEvaluatorFactoryTest {
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "evaluatorMap",
+                CLASS_EVALUATOR_MAP,
                 mockClassEvaluatorMap
         );
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "stringEvaluatorMap",
+                STRING_EVALUATOR_MAP,
                 mockStringEvaluatorMap
         );
 
@@ -309,13 +309,13 @@ public class AccessorEvaluatorFactoryTest {
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "evaluatorMap",
+                CLASS_EVALUATOR_MAP,
                 mockClassEvaluatorMap
         );
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                "stringEvaluatorMap",
+                STRING_EVALUATOR_MAP,
                 mockStringEvaluatorMap
         );
 

@@ -13,25 +13,7 @@
 ``./mvn clean package`` - Deletes `target/` folder and repackages (preferred way to build)
 
 ## Endpoints
-#### Resources
-
-`GET */api/user/v1/users` - Get all user info
-
-`GET */api/user/v1/users/{id}` - Get user info for specific user with id = {id}
-
-`POST */api/user/v1/users/` - Create (register) user.
-
-`GET */api/user/v1/profiles` - Get all user profiles
-
-`GET */api/user/v1/profiles/{id}` - Get user profile info for specific user with id = {id}
-
-#### Other
-
-`GET */healthcheck` - Perform app health check
-
-`POST */authenticate` - Authenticate credentials, returns a JWT
-
-`GET */authenticate/discord` - Link discord account, requires code (url param) and JWT (Authentication header) 
+Swagger UI - `*/swagger-ui.html`
 
 ## Usage
 ### Build the App
@@ -51,17 +33,35 @@
 
 ``java -jar target/api-service-0.0.1-SNAPSHOT.jar``
 
-### Hit the endpoints
+### Environment Variables
 
-#### Get user by ID
-
-``http://localhost:8082/api/v1/users/2``
-
-#### Get all users
-
-``http://localhost:8082/api/v1/users``
-
-
+#### JWT
+```
+JWT_ISSUER - (default: codesupport.dev)
+JWT_EXPIRATION - (default: 10m)
+```
+#### Discord
+```
+DISCORD_APP_ID
+DISCORD_APP_SECRET
+DISCORD_APP_REDIRECT
+```
+#### App
+```
+LOG_ROOT_LEVEL - (default: INFO)
+LOG_LOCAL_LEVEL - (default: ERROR) - Log level for app specific
+SERVICE_PORT - (default: 8080)
+```
+#### Database
+```
+DATABASE_URL
+DATABASE_USERNAME
+DATABASE_PASSWORD
+DATABASE_DRIVER - (default: com.mysql.jdbc.Driver)
+DATABASE_DIALECT - (default: org.hibernate.dialect.MySQLDialect)
+DATABASE_POOL_SIZE - (default: 4) - Max number of allowed db connections
+DATABASE_POOL_IDLE - (default: 2) - Minimum number of db connections to keep open
+```
 ## Structure
 
 #### Layer Separation

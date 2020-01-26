@@ -27,10 +27,12 @@ public class AccessEvaluatorFactory {
         evaluatorMap = new HashMap<>();
         stringEvaluatorMap = new HashMap<>();
 
+        //rawtypes - No choice here.
+        //noinspection rawtypes
         Map<String, AbstractAccessEvaluator> beanMap = context.getBeansOfType(AbstractAccessEvaluator.class);
 
         for (AbstractAccessEvaluator<?> evaluator : beanMap.values()) {
-            if (evaluator.getEvaluatorClassType().equals(String.class.getCanonicalName())){
+            if (evaluator.getEvaluatorClassType().equals(String.class.getCanonicalName())) {
                 stringEvaluatorMap.put(evaluator.getAccessor().toString().toLowerCase(), evaluator);
             } else {
                 evaluatorMap.put(evaluator.getEvaluatorClassType(), evaluator);
@@ -44,13 +46,15 @@ public class AccessEvaluatorFactory {
      * @param targetDomainObject Object related to access evaluation
      * @return Evaluator that evaluates the type of the given targetDomainObject
      */
+    //S1452 - No way to know what type of evaluator it will be.
+    @SuppressWarnings("squid:S1452")
     public AbstractAccessEvaluator<?> getEvaluator(Object targetDomainObject) {
         String evaluatorName = targetDomainObject.getClass().getCanonicalName();
 
         AbstractAccessEvaluator<?> evaluator;
 
         if (targetDomainObject instanceof String) {
-            String accessorName = (String)targetDomainObject;
+            String accessorName = (String) targetDomainObject;
             if (stringEvaluatorMap.containsKey(accessorName)) {
                 evaluator = stringEvaluatorMap.get(accessorName);
             } else {
@@ -69,10 +73,12 @@ public class AccessEvaluatorFactory {
      * @param canonicalClassName Canonical class name of class associated with access evaluation
      * @return Evaluator that evaluates the given canonical class name
      */
-    public AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName) {
+    //S1452 - No way to know what type of evaluator it will be.
+    @SuppressWarnings("squid:S1452")
+    AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName) {
         AbstractAccessEvaluator<?> evaluator;
 
-        if (evaluatorMap.containsKey(canonicalClassName)){
+        if (evaluatorMap.containsKey(canonicalClassName)) {
             evaluator = evaluatorMap.get(canonicalClassName);
         } else {
             throw new InvalidArgumentException("No access evaluator for class type '" + canonicalClassName + "'");

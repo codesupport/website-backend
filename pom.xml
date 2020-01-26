@@ -48,12 +48,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <!-- Firebase -->
-        <dependency>
-            <groupId>com.google.firebase</groupId>
-            <artifactId>firebase-admin</artifactId>
-            <version>6.11.0</version>
-        </dependency>
         <!-- Common Libs -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -102,11 +96,10 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>${swagger2.version}</version>
         </dependency>
-        <!-- Logging -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger2.version}</version>
         </dependency>
         <!-- Testing -->
         <!-- TODO: Need to sort out junit/mockito/powermock deps & versions -->
@@ -150,16 +143,20 @@
                 <active.spring.profile>prod</active.spring.profile>
             </properties>
             <dependencies>
-                <!-- TODO: Need DB Driver for prod -->
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>8.0.18</version>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>h2</id>
+            <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <active.spring.profile>h2</active.spring.profile>
+                <active.spring.profile>dev</active.spring.profile>
             </properties>
             <build>
                 <resources>
@@ -174,7 +171,7 @@
                         <directory>src/test/resources</directory>
                         <filtering>true</filtering>
                         <includes>
-                            <include>application-h2.yml</include>
+                            <include>application-dev.yml</include>
                         </includes>
                     </resource>
                 </resources>

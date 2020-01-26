@@ -37,7 +37,7 @@ public class AccessPermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication auth, Serializable targetId, String targetType, Object permission) {
-        AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluatorByName(targetType);
+        AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluator(targetType);
 
         return evaluator.hasPermission(auth, targetId, permission.toString());
     }

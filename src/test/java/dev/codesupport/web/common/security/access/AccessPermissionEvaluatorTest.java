@@ -1,8 +1,5 @@
-package dev.codesupport.web.common.security.acess;
+package dev.codesupport.web.common.security.access;
 
-import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
-import dev.codesupport.web.common.security.access.AccessEvaluatorFactory;
-import dev.codesupport.web.common.security.access.AccessPermissionEvaluator;
 import org.junit.Test;
 import org.springframework.security.core.Authentication;
 
@@ -56,7 +53,7 @@ public class AccessPermissionEvaluatorTest {
 
         doReturn(mockAccessEvaluator)
                 .when(mockFactory)
-                .getEvaluatorByName(targetType);
+                .getEvaluator(targetType);
 
         AccessPermissionEvaluator permissionEvaluator = new AccessPermissionEvaluator(mockFactory);
 

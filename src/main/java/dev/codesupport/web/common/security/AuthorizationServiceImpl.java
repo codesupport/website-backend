@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security;
 
+import com.google.common.net.HttpHeaders;
 import dev.codesupport.web.api.data.entity.PermissionEntity;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
@@ -13,9 +14,8 @@ import dev.codesupport.web.common.security.models.DiscordUser;
 import dev.codesupport.web.common.security.models.UserDetails;
 import dev.codesupport.web.common.service.http.HttpClient;
 import dev.codesupport.web.common.service.http.HttpMethod;
-import org.apache.http.HttpHeaders;
-import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -159,7 +159,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         DiscordOAuthTokenRequest tokenRequest = DiscordOAuthTokenRequest.create(code);
 
         Map<String, String> httpHeaders = new HashMap<>();
-        httpHeaders.put(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+        httpHeaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         return httpClient
                 .rest(DiscordOAuthTokenRequest.class, DiscordOAuthTokenResponse.class)

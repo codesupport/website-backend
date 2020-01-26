@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.security.models;
 
-import com.google.api.client.util.Lists;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

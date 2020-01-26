@@ -70,13 +70,13 @@ public class AuthenticationControllerImplTest {
 
         //unchecked - This is fine for creating mocks.
         //noinspection unchecked
-        RestResponse<Serializable> mockRestResponse = mock(RestResponse.class);
+        RestResponse<String> mockRestResponse = mock(RestResponse.class);
 
         doReturn(mockRestResponse)
                 .when(spyController)
                 .getRestResponse(Collections.singletonList(token));
 
-        ResponseEntity<RestResponse<Serializable>> response = spyController.authenticate(request);
+        ResponseEntity<RestResponse<String>> response = spyController.authenticate(request);
 
         assertEquals(mockRestResponse, response.getBody());
     }
@@ -125,6 +125,26 @@ public class AuthenticationControllerImplTest {
         //ConstantConditions - This is fine for the context of this test.
         //noinspection ConstantConditions
         assertEquals(expected, responseEntity.getBody().getResponse());
+    }
+
+    @Test
+    public void shouldCreateCorrectRestResponseObject() {
+        String referenceId = "1234";
+
+        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+
+        List<String> token = Collections.singletonList("tokentokentoken");
+
+        RestResponse<String> expected = new RestResponse<>();
+        expected.setReferenceId(referenceId);
+        expected.setResponse(token);
+
+        RestResponse<String> actual = controller.getRestResponse(token);
+        actual.setReferenceId(referenceId);
+
+        assertEquals(expected, actual);
     }
 
 }

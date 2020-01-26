@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.DispatcherServlet;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Nullable;
 import javax.servlet.RequestDispatcher;
@@ -24,6 +25,7 @@ import java.io.Serializable;
  */
 @Slf4j
 @Controller
+@ApiIgnore
 public class ErrorHandlerController implements ErrorController {
 
     /**

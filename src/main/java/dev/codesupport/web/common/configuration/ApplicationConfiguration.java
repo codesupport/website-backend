@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.configuration;
 
+import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.ObjectToUrlEncodedConverter;
 import dev.codesupport.web.common.service.http.RestTemplateResponseErrorHandler;
@@ -34,6 +35,16 @@ class ApplicationConfiguration {
     ) {
         // Set ApplicationContext for all CrudOperation instances
         CrudOperations.setContext(context);
+
+        // Configure discord requests with developer app values.
+        configureDiscordClient(discordAppProperties);
+    }
+
+    private void configureDiscordClient(DiscordAppProperties discordAppProperties) {
+        // If properties are not valid, fail startup.
+        if (!discordAppProperties.isValid()) {
+            throw new ConfigurationException("Discord app properties not set.");
+        }
 
         // Set discord app properties as static (default) values of DiscordOAuthTokenRequest
         DiscordOAuthTokenRequest.setClient_id(discordAppProperties.getClientId());

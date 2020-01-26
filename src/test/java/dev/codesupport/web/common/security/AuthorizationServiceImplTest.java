@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security;
 
+import com.google.common.net.HttpHeaders;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.exception.InvalidUserException;
@@ -12,12 +13,11 @@ import dev.codesupport.web.common.security.models.UserDetails;
 import dev.codesupport.web.common.service.http.HttpClient;
 import dev.codesupport.web.common.service.http.HttpMethod;
 import dev.codesupport.web.common.service.http.RestRequest;
-import org.apache.http.HttpHeaders;
-import org.apache.http.entity.ContentType;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -379,7 +379,7 @@ public class AuthorizationServiceImplTest {
 
         Map<String, String> httpHeaders = new HashMap<>();
         httpHeaders.put("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-        httpHeaders.put(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+        httpHeaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         //unchecked - This is fine for the purposes of this test
         //noinspection unchecked

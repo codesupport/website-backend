@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.configuration;
 
+import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.ObjectToUrlEncodedConverter;
 import dev.codesupport.web.common.service.http.RestTemplateResponseErrorHandler;
@@ -51,6 +52,10 @@ public class ApplicationConfigurationTest {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
 
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
+
         new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
 
         Object actualContext = ReflectionTestUtils.getField(CrudOperations.class, "context");
@@ -73,6 +78,18 @@ public class ApplicationConfigurationTest {
         assertEquals(expected, actual);
     }
 
+    @Test(expected = ConfigurationException.class)
+    public void shouldThrowConfigurationExceptionIfDiscordAppPropertiesNotSet() {
+        ApplicationContext mockContext = mock(ApplicationContext.class);
+        DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+
+        doReturn(false)
+                .when(mockDiscordAppProperties)
+                .isValid();
+
+        new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+    }
+
     @Test
     public void shouldHaveDiscordAppPropertiesSetOnTokenRequestModel() {
         String code = "myCode";
@@ -82,6 +99,10 @@ public class ApplicationConfigurationTest {
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
 
         //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
         //noinspection ResultOfMethodCallIgnored
@@ -119,6 +140,10 @@ public class ApplicationConfigurationTest {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
 
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
+
         ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
 
         PasswordEncoder actual = configuration.passwordEncoder();
@@ -131,6 +156,10 @@ public class ApplicationConfigurationTest {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
 
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
+
         ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
 
         ClientHttpRequestFactory requestFactory = configuration.clientHttpRequestFactory();
@@ -142,6 +171,10 @@ public class ApplicationConfigurationTest {
     public void shouldReturnCorrectInteriorFactoryType() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
 
         ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
 
@@ -156,6 +189,10 @@ public class ApplicationConfigurationTest {
     public void shouldCorrectlySetInteriorFactoryTimeoutProperty() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
 
         ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
 
@@ -174,6 +211,10 @@ public class ApplicationConfigurationTest {
     public void shouldReturnRestTemplateWithUrlEncodedConverter() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
 
         ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
 
@@ -199,6 +240,10 @@ public class ApplicationConfigurationTest {
     public void shouldReturnRestTemplateWithCorrectErrorHandler() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
 
         ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
 

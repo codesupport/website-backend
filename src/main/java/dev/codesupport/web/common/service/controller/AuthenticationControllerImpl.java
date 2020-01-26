@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Accepts post requests containing username/password credentials
@@ -36,7 +37,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
      * @param authenticationRequest The {@link AuthenticationRequest} body
      * @return The encoded JWT string if authentication passes.
      */
-    public ResponseEntity<RestResponse<Serializable>> authenticate(AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<RestResponse<String>> authenticate(AuthenticationRequest authenticationRequest) {
         String email = authenticationRequest.getEmail();
         String password = authenticationRequest.getPassword();
 
@@ -62,6 +63,17 @@ public class AuthenticationControllerImpl implements AuthenticationController {
         return ResponseEntity.ok(
                 RestResponse.restResponse(Collections.singletonList("Ok"))
         );
+    }
+
+    /**
+     * Returns a new instance of {@link RestResponse}
+     * <p>This exists to make unit testing easier</p>
+     *
+     * @param objectList The resources to include in the {@link RestResponse}
+     * @return The expected {@link RestResponse}
+     */
+    RestResponse<String> getRestResponse(List<String> objectList) {
+        return new RestResponse<>(objectList);
     }
 
 }

@@ -54,7 +54,7 @@ public class HttpRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "*");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         checkForJWToken(request);
 
@@ -95,7 +95,7 @@ public class HttpRequestFilter extends OncePerRequestFilter {
         } catch (InvalidTokenException e) {
             // Doesn't matter, just log it for debugging and the service with return an unauthorized error.
             if (log.isDebugEnabled()) {
-                log.debug("Failed to validate token", e);
+                log.debug("Failed    to validate token", e);
             }
         }
     }

@@ -25,6 +25,7 @@
 
         <google-guava.version>28.1-jre</google-guava.version>
         <apache-commons-lang3.version>3.9</apache-commons-lang3.version>
+        <apache-commons-collections4.version>4.0</apache-commons-collections4.version>
         <lombok.version>1.18.8</lombok.version>
         <hibernate-jpamodelgen.version>6.0.0.Alpha2</hibernate-jpamodelgen.version>
         <swagger2.version>2.9.2</swagger2.version>
@@ -58,6 +59,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${apache-commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${apache-commons-collections4.version}</version>
         </dependency>
         <!-- Utilities -->
         <dependency>

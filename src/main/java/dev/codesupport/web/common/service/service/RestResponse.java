@@ -4,6 +4,7 @@ import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ public class RestResponse<T extends Serializable> {
 
     /**
      * The success status of the request
+     *
      * @see RestStatus
      */
     private RestStatus status;
@@ -42,6 +44,7 @@ public class RestResponse<T extends Serializable> {
 
     /**
      * Adds the provided resource list and automatically sets {@link RestStatus} and referenceId
+     *
      * @param response The resource list to add to the object
      */
     public RestResponse(List<T> response) {
@@ -50,11 +53,20 @@ public class RestResponse<T extends Serializable> {
     }
 
     /**
+     * Adds the provided resource as a list and automatically sets {@link RestStatus} and referenceId
+     *
+     * @param response The resource to add to the object
+     */
+    public RestResponse(T response) {
+        this(Collections.singletonList(response));
+    }
+
+    /**
      * Shortcut static method to generate a rest response
      * <p></p>
      *
      * @param response The resulting resource list following execution of the request
-     * @param <R> The serializable resource type associated with the request
+     * @param <R>      The serializable resource type associated with the request
      * @return a new {@link RestResponse} object, populated with the associated resource.
      */
     public static <R extends Serializable> RestResponse<R> restResponse(List<R> response) {
@@ -62,7 +74,20 @@ public class RestResponse<T extends Serializable> {
     }
 
     /**
+     * Shortcut static method to generate a rest response
+     * <p></p>
+     *
+     * @param response The resulting resource list following execution of the request
+     * @param <R>      The serializable resource type associated with the request
+     * @return a new {@link RestResponse} object, populated with the associated resource.
+     */
+    public static <R extends Serializable> RestResponse<R> restResponse(R response) {
+        return new RestResponse<>(response);
+    }
+
+    /**
      * Generates a random referenceId to associate to the request/response
+     *
      * @return a random referenceId, prepended with the time of the request in EPOCH
      */
     private String generateReferenceId() {

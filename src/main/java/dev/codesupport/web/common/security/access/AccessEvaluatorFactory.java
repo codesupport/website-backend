@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +16,6 @@ import java.util.Map;
 public class AccessEvaluatorFactory {
 
     private Map<String, AbstractAccessEvaluator<?>> evaluatorMap;
-    private Map<String, AbstractAccessEvaluator<?>> stringEvaluatorMap;
 
     /**
      * Builds evaluator maps for all found AccessEvaluator components
@@ -25,18 +25,13 @@ public class AccessEvaluatorFactory {
     @Autowired
     public AccessEvaluatorFactory(ApplicationContext context) {
         evaluatorMap = new HashMap<>();
-        stringEvaluatorMap = new HashMap<>();
 
         //rawtypes - No choice here.
         //noinspection rawtypes
         Map<String, AbstractAccessEvaluator> beanMap = context.getBeansOfType(AbstractAccessEvaluator.class);
 
         for (AbstractAccessEvaluator<?> evaluator : beanMap.values()) {
-            if (evaluator.getEvaluatorClassType().equals(String.class.getCanonicalName())) {
-                stringEvaluatorMap.put(evaluator.getAccessor().toString().toLowerCase(), evaluator);
-            } else {
-                evaluatorMap.put(evaluator.getEvaluatorClassType(), evaluator);
-            }
+            evaluatorMap.put(evaluator.getEvaluatorName(), evaluator);
         }
     }
 
@@ -48,20 +43,24 @@ public class AccessEvaluatorFactory {
      */
     //S1452 - No way to know what type of evaluator it will be.
     @SuppressWarnings("squid:S1452")
-    public AbstractAccessEvaluator<?> getEvaluator(Object targetDomainObject) {
-        String evaluatorName = targetDomainObject.getClass().getCanonicalName();
-
+    public AbstractAccessEvaluator<?> getEvaluator(Object targetDomainObject, String permission) {
         AbstractAccessEvaluator<?> evaluator;
 
         if (targetDomainObject instanceof String) {
-            String accessorName = (String) targetDomainObject;
-            if (stringEvaluatorMap.containsKey(accessorName)) {
-                evaluator = stringEvaluatorMap.get(accessorName);
-            } else {
-                throw new InvalidArgumentException("No access evaluator for class type '" + accessorName + "'");
-            }
+            evaluator = getEvaluatorByName(targetDomainObject.toString(), permission);
         } else {
-            evaluator = getEvaluatorByName(evaluatorName);
+            String domainObjectClassName;
+
+            // If list, we use first element to find class type, else we use the base object
+            if (targetDomainObject == null) {
+                domainObjectClassName = null;
+            } else if (targetDomainObject instanceof List) {
+                domainObjectClassName = ((List<?>) targetDomainObject).get(0).getClass().getCanonicalName();
+            } else {
+                domainObjectClassName = targetDomainObject.getClass().getCanonicalName();
+            }
+
+            evaluator = getEvaluatorByName(domainObjectClassName, permission);
         }
 
         return evaluator;
@@ -75,13 +74,15 @@ public class AccessEvaluatorFactory {
      */
     //S1452 - No way to know what type of evaluator it will be.
     @SuppressWarnings("squid:S1452")
-    AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName) {
+    AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName, String permission) {
         AbstractAccessEvaluator<?> evaluator;
 
-        if (evaluatorMap.containsKey(canonicalClassName)) {
-            evaluator = evaluatorMap.get(canonicalClassName);
+        String evaluatorName = permission + " " + canonicalClassName;
+
+        if (evaluatorMap.containsKey(evaluatorName)) {
+            evaluator = evaluatorMap.get(evaluatorName);
         } else {
-            throw new InvalidArgumentException("No access evaluator for class type '" + canonicalClassName + "'");
+            throw new InvalidArgumentException("No '" + permission + "' access evaluator for class type '" + canonicalClassName + "'");
         }
 
         return evaluator;

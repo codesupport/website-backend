@@ -1,8 +1,10 @@
 package dev.codesupport.web.api.service;
 
 import dev.codesupport.web.domain.UserProfile;
+import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.UserRegistration;
 import dev.codesupport.web.domain.UserStripped;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,12 @@ import java.util.List;
 @Service
 public interface UserService {
 
-    List<UserProfile> getUserProfileById(Long id);
+    @PostAuthorize("hasPermission(returnObject, 'read')")
+    UserProfile getUserProfileByAlias(String alias);
 
-    List<UserProfile> findAllUserProfiles();
+    List<UserProfileStripped> getUserProfileById(Long id);
+
+    List<UserProfileStripped> findAllUserProfiles();
 
     List<UserStripped> getUserById(Long id);
 

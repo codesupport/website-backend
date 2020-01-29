@@ -8,6 +8,7 @@ import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
+import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.UserRegistration;
 import dev.codesupport.web.domain.UserStripped;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final CrudOperations<UserEntity, Long, User> userCrudOperations;
-    private final CrudOperations<UserEntity, Long, UserProfile> userProfileCrudOperations;
+    private final CrudOperations<UserEntity, Long, UserProfileStripped> userProfileCrudOperations;
+
+    private final UserRepository userRepository;
 
     private final HashingUtility hashingUtility;
 
@@ -36,7 +39,8 @@ public class UserServiceImpl implements UserService {
             JwtUtility jwtUtility
     ) {
         userCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, User.class);
-        userProfileCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, UserProfile.class);
+        userProfileCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, UserProfileStripped.class);
+        this.userRepository = userRepository;
 
         this.hashingUtility = hashingUtility;
 
@@ -44,12 +48,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserProfile> getUserProfileById(Long id) {
+    public UserProfile getUserProfileByAlias(String alias) {
+        UserEntity userEntity = userRepository.findByAlias(alias);
+
+        return MappingUtils.convertToType(userEntity, UserProfile.class);
+    }
+
+    @Override
+    public List<UserProfileStripped> getUserProfileById(Long id) {
         return userProfileCrudOperations.getById(id);
     }
 
     @Override
-    public List<UserProfile> findAllUserProfiles() {
+    public List<UserProfileStripped> findAllUserProfiles() {
         return userProfileCrudOperations.getAll();
     }
 

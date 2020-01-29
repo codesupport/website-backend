@@ -1,23 +1,30 @@
 package dev.codesupport.web.common.security.access;
 
 import dev.codesupport.web.common.exception.InvalidArgumentException;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Parent evaluator from which all children are created.
  *
  * @param <T> The class type associated with the evaluator
  */
+@EqualsAndHashCode
 public abstract class AbstractAccessEvaluator<T> {
 
     private final Class<T> classType;
+    private final Permission permission;
 
-    public AbstractAccessEvaluator() {
+    public AbstractAccessEvaluator(Permission permission) {
+        this.permission = permission;
+
         // Finds the type of the class parameter and stores it for later mappings.
         Type superClass = this.getClass().getGenericSuperclass();
         if (superClass instanceof ParameterizedType) {
@@ -27,12 +34,12 @@ public abstract class AbstractAccessEvaluator<T> {
                 //noinspection unchecked
                 classType = (Class<T>) parameterizedType;
             } else {
-                // This is really not possible.
-                throw new IllegalArgumentException("Internal error: Parameter was not a class.");
+                // Not allowing nested paramaterized types
+                throw new IllegalArgumentException("Internal error: Invalid parameter type.");
             }
         } else {
             // Must not have a class parameter, throw an exception.
-            throw new IllegalArgumentException("Internal error: Cannot instantiate AbstractThrowableParser without exception type.");
+            throw new IllegalArgumentException("Internal error: Cannot instantiate AbstractAccessEvaluator without a type.");
         }
     }
 
@@ -41,18 +48,22 @@ public abstract class AbstractAccessEvaluator<T> {
      *
      * @param auth               The Authentication associated with the access evaluation
      * @param targetDomainObject The object associated with the access evaluation
-     * @param permission         The permission associated with the access evaluation
      * @return True if the user has access for the given permission on the given object, False otherwise
      */
-    protected abstract boolean hasPermissionCheck(Authentication auth, T targetDomainObject, String permission);
+    protected abstract boolean hasPermissionCheck(Authentication auth, T targetDomainObject);
 
     /**
-     * Gets the canonical class name of the class type
+     * Returns the derived evaluator name based on permission and associated class type
      *
-     * @return String value of the class in canonical format
+     * @return Derived evaluator name
      */
-    public String getEvaluatorClassType() {
-        return classType.getCanonicalName();
+    public String getEvaluatorName() {
+        return permission.toString().toLowerCase() + " " +
+                (
+                        getAccessor() == Accessor.NONE ?
+                                classType.getCanonicalName() :
+                                getAccessor().toString().toLowerCase()
+                );
     }
 
     /**
@@ -71,15 +82,31 @@ public abstract class AbstractAccessEvaluator<T> {
      *
      * @param auth               The Authentication associated with the access evaluation
      * @param targetDomainObject The object associated with the access evaluation
-     * @param permission         The permission associated with the access evaluation
      * @return True if the user has access for the givne permission on the given object, False otherwise
      */
-    public boolean hasPermission(Authentication auth, @NonNull Object targetDomainObject, String permission) {
+    public boolean hasPermission(Authentication auth, @NonNull Object targetDomainObject) {
         boolean hasPermission;
         if (classType.isInstance(targetDomainObject)) {
-            hasPermission = hasPermissionCheck(auth, classType.cast(targetDomainObject), permission);
+            hasPermission = hasPermissionCheck(auth, classType.cast(targetDomainObject));
+            // Check if targetDomainObject was a list of class objects.
+        } else if (targetDomainObject instanceof List) {
+            hasPermission = true;
+            //unchecked - This should be fine, type was checked in evaluator factory
+            //noinspection unchecked
+            Iterator<Object> iterator = ((List<Object>) targetDomainObject).iterator();
+            // Cycle through until one fails, or they all pass.
+            while (hasPermission && iterator.hasNext()) {
+                Object domainObject = iterator.next();
+                if (classType.isInstance(domainObject)) {
+                    hasPermission = hasPermissionCheck(auth, classType.cast(domainObject));
+                } else {
+                    throw new InvalidArgumentException("List has invalid element class types, Expecting '" +
+                            classType.getCanonicalName() + "', found '" +
+                            domainObject.getClass().getSimpleName() + "'");
+                }
+            }
         } else {
-            throw new InvalidArgumentException("Given target object type '" + targetDomainObject.getClass().getSimpleName() + "' must be '" + classType.getSimpleName() + "'");
+            throw new InvalidArgumentException("Expecting '" + classType.getCanonicalName() + "', found '" + targetDomainObject.getClass().getSimpleName() + "'");
         }
         return hasPermission;
     }

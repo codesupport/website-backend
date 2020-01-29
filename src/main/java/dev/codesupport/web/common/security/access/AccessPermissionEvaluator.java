@@ -24,9 +24,13 @@ public class AccessPermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
-        AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluator(targetDomainObject);
+        boolean hasPermission = targetDomainObject == null;
+        if (!hasPermission) {
+            AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluator(targetDomainObject, permission.toString().toLowerCase());
 
-        return evaluator.hasPermission(auth, targetDomainObject, permission.toString());
+            hasPermission = evaluator.hasPermission(auth, targetDomainObject);
+        }
+        return hasPermission;
     }
 
     /**
@@ -37,8 +41,12 @@ public class AccessPermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication auth, Serializable targetId, String targetType, Object permission) {
-        AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluator(targetType);
+        boolean hasPermission = targetId == null;
+        if (!hasPermission) {
+            AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluatorByName(targetType.toLowerCase(), permission.toString().toLowerCase());
 
-        return evaluator.hasPermission(auth, targetId, permission.toString());
+            hasPermission = evaluator.hasPermission(auth, targetId);
+        }
+        return hasPermission;
     }
 }

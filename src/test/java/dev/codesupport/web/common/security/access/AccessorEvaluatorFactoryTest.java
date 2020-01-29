@@ -7,78 +7,31 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 public class AccessorEvaluatorFactoryTest {
 
-    private static final String STRING_EVALUATOR_MAP = "stringEvaluatorMap";
-    private static final String CLASS_EVALUATOR_MAP = "evaluatorMap";
+    private static final String EVALUATOR_MAP = "evaluatorMap";
 
     @Test
-    public void shouldPopulateStringEvaluatorMap() {
+    public void shouldPopulateEvaluatorMap() {
+        String evaluatorName1 = "evaluator 1";
+        String evaluatorName2 = "evaluator 2";
+
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
         AbstractAccessEvaluator<?> mockStringEvaluator = mock(AbstractAccessEvaluator.class);
 
-        doReturn(String.class.getCanonicalName())
+        doReturn(evaluatorName1)
                 .when(mockStringEvaluator)
-                .getEvaluatorClassType();
-
-        doReturn(Accessor.NONE)
-                .when(mockStringEvaluator)
-                .getAccessor();
-
-        AbstractAccessEvaluator<?> mockEvaluator = mock(AbstractAccessEvaluator.class);
-
-        doReturn(Object.class.getCanonicalName())
-                .when(mockEvaluator)
-                .getEvaluatorClassType();
-
-        //rawtypes - This is fine for the purposes of this test
-        //noinspection rawtypes
-        Map<String, AbstractAccessEvaluator> evaluatorMap = new HashMap<>();
-        evaluatorMap.put("SomeAbstractAccessEvaluator", mockStringEvaluator);
-        evaluatorMap.put("SomeOtherEvaluator", mockEvaluator);
-
-        doReturn(evaluatorMap)
-                .when(mockContext)
-                .getBeansOfType(AbstractAccessEvaluator.class);
-
-        AccessEvaluatorFactory accessEvaluatorFactory = new AccessEvaluatorFactory(mockContext);
-
-        //rawtypes - This is fine for the purposes of this test
-        //noinspection rawtypes
-        Map<String, AbstractAccessEvaluator> expected = Collections.singletonMap(
-                "none",
-                mockStringEvaluator
-        );
-
-        //unchecked - This is fine for the purposes of this test
-        //rawtypes - This is fine for the purposes of this test
-        //noinspection unchecked,rawtypes
-        Map<String, AbstractAccessEvaluator> actual = (Map<String, AbstractAccessEvaluator>) ReflectionTestUtils.getField(
-                accessEvaluatorFactory,
-                STRING_EVALUATOR_MAP
-        );
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void shouldPopulateClassEvaluatorMap() {
-        ApplicationContext mockContext = mock(ApplicationContext.class);
-
-        AbstractAccessEvaluator<?> mockStringEvaluator = mock(AbstractAccessEvaluator.class);
-
-        doReturn(String.class.getCanonicalName())
-                .when(mockStringEvaluator)
-                .getEvaluatorClassType();
+                .getEvaluatorName();
 
         doReturn(Accessor.NONE)
                 .when(mockStringEvaluator)
@@ -86,9 +39,9 @@ public class AccessorEvaluatorFactoryTest {
 
         AbstractAccessEvaluator<?> mockClassEvaluator = mock(AbstractAccessEvaluator.class);
 
-        doReturn(Object.class.getCanonicalName())
+        doReturn(evaluatorName2)
                 .when(mockClassEvaluator)
-                .getEvaluatorClassType();
+                .getEvaluatorName();
 
         //rawtypes - This is fine for the purposes of this test
         //noinspection rawtypes
@@ -104,8 +57,13 @@ public class AccessorEvaluatorFactoryTest {
 
         //rawtypes - This is fine for the purposes of this test
         //noinspection rawtypes
-        Map<String, AbstractAccessEvaluator> expected = Collections.singletonMap(
-                Object.class.getCanonicalName(),
+        Map<String, AbstractAccessEvaluator> expected = new HashMap<>();
+        expected.put(
+                evaluatorName1,
+                mockStringEvaluator
+        );
+        expected.put(
+                evaluatorName2,
                 mockClassEvaluator
         );
 
@@ -114,175 +72,142 @@ public class AccessorEvaluatorFactoryTest {
         //noinspection unchecked,rawtypes
         Map<String, AbstractAccessEvaluator> actual = (Map<String, AbstractAccessEvaluator>) ReflectionTestUtils.getField(
                 accessEvaluatorFactory,
-                CLASS_EVALUATOR_MAP
+                EVALUATOR_MAP
         );
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void shouldGetCorrectEvaluatorByObjectClassType() {
-        Long object = 5L;
+    public void shouldGetCorrectEvaluatorForStringObject() {
+        String object = "String";
+        String permission = "read";
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
         AbstractAccessEvaluator<?> mockClassEvaluator = mock(AbstractAccessEvaluator.class);
 
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockClassEvaluatorMap = mock(HashMap.class);
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockStringEvaluatorMap = mock(HashMap.class);
-
-        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock.
-        //noinspection ResultOfMethodCallIgnored
-        doReturn(false)
-                .when(mockStringEvaluatorMap)
-                .containsKey(anyString());
-
         AccessEvaluatorFactory accessEvaluatorFactorySpy = spy(new AccessEvaluatorFactory(mockContext));
-
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                CLASS_EVALUATOR_MAP,
-                mockClassEvaluatorMap
-        );
-
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                STRING_EVALUATOR_MAP,
-                mockStringEvaluatorMap
-        );
 
         doReturn(mockClassEvaluator)
                 .when(accessEvaluatorFactorySpy)
-                .getEvaluatorByName(object.getClass().getCanonicalName());
+                .getEvaluatorByName(
+                        object,
+                        permission
+                );
 
-        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluator(object);
+        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluator(object, permission);
 
         assertEquals(mockClassEvaluator, actual);
     }
 
     @Test(expected = InvalidArgumentException.class)
-    public void shouldThrowInvalidArgumentExceptionIfEvaluatorDoesntExist() {
-        String object = "string";
+    public void shouldBubbleInvalidArgumentExceptionForNullObject() {
+        String permission = "read";
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockClassEvaluatorMap = mock(HashMap.class);
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockStringEvaluatorMap = mock(HashMap.class);
-
-        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock.
-        //noinspection ResultOfMethodCallIgnored
-        doReturn(false)
-                .when(mockStringEvaluatorMap)
-                .containsKey(object);
+        AbstractAccessEvaluator<?> mockClassEvaluator = mock(AbstractAccessEvaluator.class);
 
         AccessEvaluatorFactory accessEvaluatorFactorySpy = spy(new AccessEvaluatorFactory(mockContext));
 
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                CLASS_EVALUATOR_MAP,
-                mockClassEvaluatorMap
-        );
+        doThrow(InvalidArgumentException.class)
+                .when(accessEvaluatorFactorySpy)
+                .getEvaluatorByName(
+                        null,
+                        permission
+                );
 
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                STRING_EVALUATOR_MAP,
-                mockStringEvaluatorMap
-        );
+        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluator(null, permission);
 
-        accessEvaluatorFactorySpy.getEvaluator(object);
+        assertEquals(mockClassEvaluator, actual);
     }
 
     @Test
-    public void shouldGetCorrectEvaluatorByObjectClassTypeIfString() {
-        String object = "string";
+    public void shouldGetCorrectEvaluatorForListObject() {
+        List<Long> objects = Collections.singletonList(5L);
+        String permission = "read";
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
-        AbstractAccessEvaluator<?> mockStringEvaluator = mock(AbstractAccessEvaluator.class);
-
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockClassEvaluatorMap = mock(HashMap.class);
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockStringEvaluatorMap = mock(HashMap.class);
-
-        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock.
-        //noinspection ResultOfMethodCallIgnored
-        doReturn(true)
-                .when(mockStringEvaluatorMap)
-                .containsKey(object);
-
-        doReturn(mockStringEvaluator)
-                .when(mockStringEvaluatorMap)
-                .get(object);
+        AbstractAccessEvaluator<?> mockClassEvaluator = mock(AbstractAccessEvaluator.class);
 
         AccessEvaluatorFactory accessEvaluatorFactorySpy = spy(new AccessEvaluatorFactory(mockContext));
 
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                CLASS_EVALUATOR_MAP,
-                mockClassEvaluatorMap
-        );
+        doReturn(mockClassEvaluator)
+                .when(accessEvaluatorFactorySpy)
+                .getEvaluatorByName(
+                        objects.get(0).getClass().getCanonicalName(),
+                        permission
+                );
 
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                STRING_EVALUATOR_MAP,
-                mockStringEvaluatorMap
-        );
+        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluator(objects, permission);
 
-        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluator(object);
+        assertEquals(mockClassEvaluator, actual);
+    }
 
-        assertEquals(mockStringEvaluator, actual);
+    @Test
+    public void shouldGetCorrectEvaluatorForNonStringObject() {
+        Long object = 5L;
+        String permission = "read";
+
+        ApplicationContext mockContext = mock(ApplicationContext.class);
+
+        AbstractAccessEvaluator<?> mockClassEvaluator = mock(AbstractAccessEvaluator.class);
+
+        AccessEvaluatorFactory accessEvaluatorFactorySpy = spy(new AccessEvaluatorFactory(mockContext));
+
+        doReturn(mockClassEvaluator)
+                .when(accessEvaluatorFactorySpy)
+                .getEvaluatorByName(
+                        object.getClass().getCanonicalName(),
+                        permission
+                );
+
+        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluator(object, permission);
+
+        assertEquals(mockClassEvaluator, actual);
     }
 
     @Test(expected = InvalidArgumentException.class)
-    public void shouldThrowInvalidArgumentExceptionIfCanonicalClassNameNotInMap() {
-        String object = "java.lang.String";
+    public void shouldThrowInvalidArgumentExceptionIfEvaluatorNameNotInMap() {
+        String object = String.class.getCanonicalName();
+        String permission = "read";
+
+        String evaluatorName = permission + " " + object;
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
         //unchecked - This is fine for the purposes of this test.
         //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockClassEvaluatorMap = mock(HashMap.class);
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockStringEvaluatorMap = mock(HashMap.class);
+        Map<String, AbstractAccessEvaluator<?>> mockEvaluatorMap = mock(HashMap.class);
 
         //ResultOfMethodCallIgnored - Not invoking a method, creating a mock.
         //noinspection ResultOfMethodCallIgnored
         doReturn(false)
-                .when(mockClassEvaluatorMap)
-                .containsKey(object);
+                .when(mockEvaluatorMap)
+                .containsKey(evaluatorName);
 
         AccessEvaluatorFactory accessEvaluatorFactorySpy = spy(new AccessEvaluatorFactory(mockContext));
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                CLASS_EVALUATOR_MAP,
-                mockClassEvaluatorMap
+                EVALUATOR_MAP,
+                mockEvaluatorMap
         );
 
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                STRING_EVALUATOR_MAP,
-                mockStringEvaluatorMap
+        accessEvaluatorFactorySpy.getEvaluatorByName(
+                object,
+                permission
         );
-
-        accessEvaluatorFactorySpy.getEvaluatorByName(object);
     }
 
     @Test
-    public void shouldGetCorrectEvaluatorByCanonicalClassName() {
-        String object = "java.lang.String";
+    public void shouldGetCorrectEvaluatorByName() {
+        String object = String.class.getCanonicalName();
+        String permission = "read";
+
+        String evaluatorName = permission + " " + object;
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
@@ -290,36 +215,31 @@ public class AccessorEvaluatorFactoryTest {
 
         //unchecked - This is fine for the purposes of this test.
         //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockClassEvaluatorMap = mock(HashMap.class);
-        //unchecked - This is fine for the purposes of this test.
-        //noinspection unchecked
-        Map<String, AbstractAccessEvaluator<?>> mockStringEvaluatorMap = mock(HashMap.class);
+        Map<String, AbstractAccessEvaluator<?>> mockEvaluatorMap = mock(HashMap.class);
 
         //ResultOfMethodCallIgnored - Not invoking a method, creating a mock.
         //noinspection ResultOfMethodCallIgnored
         doReturn(true)
-                .when(mockClassEvaluatorMap)
-                .containsKey(object);
+                .when(mockEvaluatorMap)
+                .containsKey(evaluatorName);
 
         doReturn(mockClassEvaluator)
-                .when(mockClassEvaluatorMap)
-                .get(object);
+                .when(mockEvaluatorMap)
+                .get(evaluatorName);
 
         AccessEvaluatorFactory accessEvaluatorFactorySpy = spy(new AccessEvaluatorFactory(mockContext));
 
         ReflectionTestUtils.setField(
                 accessEvaluatorFactorySpy,
-                CLASS_EVALUATOR_MAP,
-                mockClassEvaluatorMap
+                EVALUATOR_MAP,
+                mockEvaluatorMap
         );
 
-        ReflectionTestUtils.setField(
-                accessEvaluatorFactorySpy,
-                STRING_EVALUATOR_MAP,
-                mockStringEvaluatorMap
-        );
-
-        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluatorByName(object);
+        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy
+                .getEvaluatorByName(
+                        object,
+                        permission
+                );
 
         assertEquals(mockClassEvaluator, actual);
     }

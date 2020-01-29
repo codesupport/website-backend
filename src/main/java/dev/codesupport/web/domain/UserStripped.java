@@ -17,7 +17,6 @@ public class UserStripped extends AbstractValidatable<Long> {
 
     private Long id;
     private String alias;
-    private String email;
     private Long discordId;
     private String avatarLink;
     private boolean disabled;

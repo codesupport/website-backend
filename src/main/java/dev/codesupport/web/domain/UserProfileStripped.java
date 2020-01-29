@@ -7,17 +7,17 @@ import lombok.EqualsAndHashCode;
 import java.util.Set;
 
 /**
- * Used for returning basic User Profile information.
- * No additional permissions.
+ * Used for returning User Profile information.
+ * No additional permissions
  * No password.
+ * No email.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UserProfile extends AbstractValidatable<Long> {
+public class UserProfileStripped extends AbstractValidatable<Long> {
 
     private Long id;
     private String alias;
-    private String email;
     private Long discordId;
     private String avatarLink;
     private boolean disabled;

@@ -223,7 +223,6 @@ public class AuthorizationServiceImplTest {
     public void shouldCorrectlyLinkUserDiscordAccount() {
         String code = "myCode";
         String email = "user@email.com";
-        String id = "discordid";
         String token = "myToken";
 
         UserRepository mockRepository = mock(UserRepository.class);
@@ -251,12 +250,6 @@ public class AuthorizationServiceImplTest {
 
         DiscordUser mockDiscordUser = mock(DiscordUser.class);
 
-        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
-        //noinspection ResultOfMethodCallIgnored
-        doReturn(id)
-                .when(mockDiscordUser)
-                .getId();
-
         doReturn(mockDiscordUser)
                 .when(serviceSpy)
                 .getDiscordUserDetailsFromDiscordApi(token);
@@ -268,13 +261,15 @@ public class AuthorizationServiceImplTest {
         serviceSpy.linkDiscord(code);
 
         verify(serviceSpy, times(1))
-                .saveDiscordIdToUser(email, id);
+                .saveDiscordIdToUser(email, mockDiscordUser);
     }
 
     @Test
     public void shouldSaveDiscordIdToUser() {
         String email = "user@email.com";
         String id = "discordid";
+        String discordUser = "user";
+        String discordDiscriminator = "5455";
 
         UserRepository mockRepository = mock(UserRepository.class);
         HashingUtility mockHashingUtility = mock(HashingUtility.class);
@@ -283,6 +278,7 @@ public class AuthorizationServiceImplTest {
 
         UserEntity expectedUserEntity = new UserEntity();
         expectedUserEntity.setDiscordId(id);
+        expectedUserEntity.setDiscordUsername(discordUser + "#" + discordDiscriminator);
 
         UserEntity userEntity = new UserEntity();
 
@@ -296,7 +292,27 @@ public class AuthorizationServiceImplTest {
 
         AuthorizationServiceImpl service = new AuthorizationServiceImpl(mockRepository, mockHashingUtility, mockJwtUtility, mockHttpClient);
 
-        service.saveDiscordIdToUser(email, id);
+        DiscordUser mockDiscordUser = mock(DiscordUser.class);
+
+        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(id)
+                .when(mockDiscordUser)
+                .getId();
+
+        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(discordUser)
+                .when(mockDiscordUser)
+                .getUsername();
+
+        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(discordDiscriminator)
+                .when(mockDiscordUser)
+                .getDiscriminator();
+
+        service.saveDiscordIdToUser(email, mockDiscordUser);
 
         verify(mockRepository, times(1))
                 .save(expectedUserEntity);

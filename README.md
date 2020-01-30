@@ -1,5 +1,7 @@
 # CodeSupport Website Backend
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/448f0a0fbf14480ca9735246d3ade25f)](https://app.codacy.com/gh/codesupport/website-backend?utm_source=github.com&utm_medium=referral&utm_content=codesupport/website-backend&utm_campaign=Badge_Grade_Settings)
+
 ## Maven commands
 
 ``./mvnw clean`` - Deletes `target/` folder (build folder)

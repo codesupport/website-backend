@@ -7,6 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -20,8 +23,12 @@ public class AbstractAccessEvaluatorTest {
 
     private static class TestAccessEvaluator extends AbstractAccessEvaluator<Long> {
 
+        public TestAccessEvaluator() {
+            super(Permission.READ);
+        }
+
         @Override
-        protected boolean hasPermissionCheck(Authentication auth, Long targetDomainObject, String permission) {
+        protected boolean hasPermissionCheck(Authentication auth, Long targetDomainObject) {
             return false;
         }
 
@@ -31,9 +38,19 @@ public class AbstractAccessEvaluatorTest {
     public void shouldThrowIllegalArgumentExceptionIfParameterClassNotDefined() {
         //rawtypes - This is what we are testing.
         //noinspection rawtypes
-        new AbstractAccessEvaluator() {
+        new AbstractAccessEvaluator(Permission.READ) {
             @Override
-            protected boolean hasPermissionCheck(Authentication auth, Object targetDomainObject, String permission) {
+            protected boolean hasPermissionCheck(Authentication auth, Object targetDomainObject) {
+                return false;
+            }
+        };
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowIllegalArgumentExceptionIfParameterIsList() {
+        new AbstractAccessEvaluator<List<Long>>(Permission.READ) {
+            @Override
+            protected boolean hasPermissionCheck(Authentication auth, List<Long> targetDomainObject) {
                 return false;
             }
         };
@@ -52,7 +69,7 @@ public class AbstractAccessEvaluatorTest {
     }
 
     @Test
-    public void shouldReturnCorrectCanonicalClassName() {
+    public void shouldReturnCorrectEvaluatorNameWithNoAccessor() {
         TestAccessEvaluator evaluator = new TestAccessEvaluator();
 
         ReflectionTestUtils.setField(
@@ -61,8 +78,28 @@ public class AbstractAccessEvaluatorTest {
                 Long.class
         );
 
-        String expected = Long.class.getCanonicalName();
-        String actual = evaluator.getEvaluatorClassType();
+        String expected = Permission.READ.toString().toLowerCase() + " " + Long.class.getCanonicalName();
+        String actual = evaluator.getEvaluatorName();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectEvaluatorNameWithAccessor() {
+        TestAccessEvaluator evaluatorSpy = spy(new TestAccessEvaluator());
+
+        doReturn(Accessor.DISCORD)
+                .when(evaluatorSpy)
+                .getAccessor();
+
+        ReflectionTestUtils.setField(
+                evaluatorSpy,
+                CLASS_TYPE,
+                Long.class
+        );
+
+        String expected = Permission.READ.toString().toLowerCase() + " " + Accessor.DISCORD.toString().toLowerCase();
+        String actual = evaluatorSpy.getEvaluatorName();
 
         assertEquals(expected, actual);
     }
@@ -80,7 +117,6 @@ public class AbstractAccessEvaluatorTest {
     public void shouldThrowInvalidArgumentExceptionIfIncorrectObject() {
         Authentication mockAuthentication = mock(Authentication.class);
         Object object = "string";
-        String permission = "permission";
 
         TestAccessEvaluator evaluatorSpy = spy(new TestAccessEvaluator());
 
@@ -92,14 +128,67 @@ public class AbstractAccessEvaluatorTest {
                 longClass
         );
 
-        evaluatorSpy.hasPermission(mockAuthentication, object, permission);
+        evaluatorSpy.hasPermission(mockAuthentication, object);
+    }
+
+    @Test(expected = InvalidArgumentException.class)
+    public void shouldThrowInvalidArgumentExceptionIfListWithInvalidObject() {
+        Long longVal = 5L;
+
+        Authentication mockAuthentication = mock(Authentication.class);
+        List<Object> objects = new ArrayList<>();
+        objects.add(longVal);
+        objects.add("String");
+
+        TestAccessEvaluator evaluatorSpy = spy(new TestAccessEvaluator());
+
+        doReturn(true)
+                .when(evaluatorSpy)
+                .hasPermissionCheck(mockAuthentication, longVal);
+
+        Class<Long> longClass = Long.class;
+
+        ReflectionTestUtils.setField(
+                evaluatorSpy,
+                CLASS_TYPE,
+                longClass
+        );
+
+        evaluatorSpy.hasPermission(mockAuthentication, objects);
+    }
+
+    @Test
+    public void shouldReturnCorrectPermissionIfCorrectObjectList() {
+        Long longVal = 5L;
+
+        Authentication mockAuthentication = mock(Authentication.class);
+        List<Object> objects = new ArrayList<>();
+        objects.add(longVal);
+        objects.add(longVal);
+
+        TestAccessEvaluator evaluatorSpy = spy(new TestAccessEvaluator());
+
+        doReturn(true)
+                .when(evaluatorSpy)
+                .hasPermissionCheck(mockAuthentication, longVal);
+
+        Class<Long> longClass = Long.class;
+
+        ReflectionTestUtils.setField(
+                evaluatorSpy,
+                CLASS_TYPE,
+                longClass
+        );
+
+        assertTrue(
+                evaluatorSpy.hasPermission(mockAuthentication, objects)
+        );
     }
 
     @Test
     public void shouldReturnCorrectPermissionIfCorrectObject() {
         Authentication mockAuthentication = mock(Authentication.class);
         Long object = 5L;
-        String permission = "permission";
 
         TestAccessEvaluator evaluatorSpy = spy(new TestAccessEvaluator());
 
@@ -113,10 +202,10 @@ public class AbstractAccessEvaluatorTest {
 
         doReturn(true)
                 .when(evaluatorSpy)
-                .hasPermissionCheck(mockAuthentication, object, permission);
+                .hasPermissionCheck(mockAuthentication, object);
 
         assertTrue(
-                evaluatorSpy.hasPermission(mockAuthentication, object, permission)
+                evaluatorSpy.hasPermission(mockAuthentication, object)
         );
     }
 

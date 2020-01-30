@@ -11,6 +11,7 @@ import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
+import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.UserRegistration;
 import dev.codesupport.web.domain.UserStripped;
 import org.junit.Before;
@@ -37,7 +38,9 @@ public class UserServiceImplTest {
     private static HashingUtility mockHashingUtility;
 
     private static CrudOperations<UserEntity, Long, User> mockUserCrudOperations;
-    private static CrudOperations<UserEntity, Long, UserProfile> mockUserProfileCrudOperations;
+    private static CrudOperations<UserEntity, Long, UserProfileStripped> mockUserProfileCrudOperations;
+
+    private static UserRepository mockUserRepository;
 
     private static List<User> getUserList;
 
@@ -55,14 +58,13 @@ public class UserServiceImplTest {
         //noinspection unchecked
         mockUserProfileCrudOperations = mock(CrudOperations.class);
 
+        mockUserRepository = mock(UserRepository.class);
         mockJwtUtility = mock(JwtUtility.class);
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
         ReflectionTestUtils.setField(mockUserCrudOperations, "context", mockContext);
         ReflectionTestUtils.setField(mockUserProfileCrudOperations, "context", mockContext);
-
-        UserRepository mockUserRepository = mock(UserRepository.class);
 
         mockHashingUtility = mock(HashingUtility.class);
 
@@ -88,6 +90,7 @@ public class UserServiceImplTest {
         Mockito.reset(
                 mockUserCrudOperations,
                 mockUserProfileCrudOperations,
+                mockUserRepository,
                 mockHashingUtility,
                 mockJwtUtility
         );
@@ -99,39 +102,58 @@ public class UserServiceImplTest {
 
     @Test
     public void shouldReturnCorrectUsersWithFindAllUserProfiles() {
-        List<UserProfile> userProfiles = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserProfile>>() {
+        List<UserProfileStripped> expected = mapper()
+                .convertValue(getUserList, new TypeReference<List<UserProfileStripped>>() {
                 });
 
-        doReturn(userProfiles)
+        doReturn(expected)
                 .when(mockUserProfileCrudOperations)
                 .getAll();
 
-        List<UserProfile> actual = service.findAllUserProfiles();
+        List<UserProfileStripped> actual = service.findAllUserProfiles();
 
-        assertEquals(userProfiles, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectUsersWithGetUserProfileByAlias() {
+        String alias = "username";
+
+        UserProfile expected = mapper()
+                .convertValue(getUserList.get(0), UserProfile.class);
+
+        UserEntity userEntity = mapper()
+                .convertValue(getUserList.get(0), UserEntity.class);
+
+        doReturn(userEntity)
+                .when(mockUserRepository)
+                .findByAlias(alias);
+
+        UserProfile actual = service.getUserProfileByAlias(alias);
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorrectUsersWithGetUserProfileById() {
         Long id = 1L;
 
-        List<UserProfile> userProfiles = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserProfile>>() {
+        List<UserProfileStripped> expected = mapper()
+                .convertValue(getUserList, new TypeReference<List<UserProfileStripped>>() {
                 });
 
-        doReturn(userProfiles)
+        doReturn(expected)
                 .when(mockUserProfileCrudOperations)
                 .getById(id);
 
-        List<UserProfile> actual = service.getUserProfileById(id);
+        List<UserProfileStripped> actual = service.getUserProfileById(id);
 
-        assertEquals(userProfiles, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorrectUsersWithFindAllUsers() {
-        List<UserStripped> returnedUsers = mapper()
+        List<UserStripped> expected = mapper()
                 .convertValue(getUserList, new TypeReference<List<UserStripped>>() {
                 });
 
@@ -141,14 +163,14 @@ public class UserServiceImplTest {
 
         List<UserStripped> actual = service.findAllUsers();
 
-        assertEquals(returnedUsers, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorrectUsersWithGetUserById() {
         Long id = 1L;
 
-        List<UserStripped> returnedUsers = mapper()
+        List<UserStripped> expected = mapper()
                 .convertValue(getUserList, new TypeReference<List<UserStripped>>() {
                 });
 
@@ -158,7 +180,7 @@ public class UserServiceImplTest {
 
         List<UserStripped> actual = service.getUserById(id);
 
-        assertEquals(returnedUsers, actual);
+        assertEquals(expected, actual);
     }
 
     @Test

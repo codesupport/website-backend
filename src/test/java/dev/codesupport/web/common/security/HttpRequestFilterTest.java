@@ -6,7 +6,6 @@ import dev.codesupport.web.common.security.jwt.JsonWebTokenFactory;
 import dev.codesupport.web.common.security.models.UserDetails;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -298,7 +297,7 @@ public class HttpRequestFilterTest {
 
         httpRequestFilterSpy.configureSpringSecurityContext(email, mockRequest);
 
-        UsernamePasswordAuthenticationToken expected = new UsernamePasswordAuthenticationToken(
+        EmailPasswordAuthenticationToken expected = new EmailPasswordAuthenticationToken(
                 mockUserDetails,
                 null,
                 mockUserDetails.getAuthorities()

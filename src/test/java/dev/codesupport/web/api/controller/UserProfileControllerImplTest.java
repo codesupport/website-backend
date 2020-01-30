@@ -1,14 +1,14 @@
-package dev.codesupport.web.api.controllers;
+package dev.codesupport.web.api.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.testutils.builders.UserBuilder;
-import dev.codesupport.web.api.controller.UserProfileControllerImpl;
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
+import dev.codesupport.web.domain.UserProfileStripped;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,15 +68,36 @@ public class UserProfileControllerImplTest {
         List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<UserProfile> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserProfile>>() {
-        });
+        List<UserProfileStripped> returnedUsers = mapper()
+                .convertValue(userList, new TypeReference<List<UserProfileStripped>>() {
+                });
 
         doReturn(returnedUsers)
                 .when(mockService)
                 .findAllUserProfiles();
 
-        RestResponse<UserProfile> expected = new RestResponse<>(returnedUsers);
-        RestResponse<UserProfile> actual = controller.getAllUserProfiles();
+        RestResponse<UserProfileStripped> expected = new RestResponse<>(returnedUsers);
+        RestResponse<UserProfileStripped> actual = controller.getAllUserProfiles();
+
+        assertEquals(expected.getResponse(), actual.getResponse());
+    }
+
+    @Test
+    public void shouldReturnCorrectResultsForGetUserProfileByAlias() {
+        String alias = "Username";
+
+        List<User> userList = userBuilders.stream()
+                .map(UserBuilder::buildDomain).collect(Collectors.toList());
+
+        UserProfile returnedUser = mapper()
+                .convertValue(userList.get(0), UserProfile.class);
+
+        doReturn(returnedUser)
+                .when(mockService)
+                .getUserProfileByAlias(alias);
+
+        RestResponse<UserProfile> expected = new RestResponse<>(returnedUser);
+        RestResponse<UserProfile> actual = controller.getUserProfileByAlias(alias);
 
         assertEquals(expected.getResponse(), actual.getResponse());
     }
@@ -88,15 +109,16 @@ public class UserProfileControllerImplTest {
         List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<UserProfile> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserProfile>>() {
-        });
+        List<UserProfileStripped> returnedUsers = mapper()
+                .convertValue(userList, new TypeReference<List<UserProfileStripped>>() {
+                });
 
         doReturn(returnedUsers)
                 .when(mockService)
                 .getUserProfileById(id);
 
-        RestResponse<UserProfile> expected = new RestResponse<>(returnedUsers);
-        RestResponse<UserProfile> actual = controller.getUserProfileById(id);
+        RestResponse<UserProfileStripped> expected = new RestResponse<>(returnedUsers);
+        RestResponse<UserProfileStripped> actual = controller.getUserProfileById(id);
 
         assertEquals(expected.getResponse(), actual.getResponse());
     }

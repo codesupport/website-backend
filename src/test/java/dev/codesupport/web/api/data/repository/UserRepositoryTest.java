@@ -41,6 +41,16 @@ public class UserRepositoryTest {
     }
 
     @Test
+    public void shouldReturnCorrectUserByAlias() {
+        UserEntity userEntity = userRepository.findByAlias("Iffy");
+
+        String expected = "UserEntity(id=3, alias=Iffy, hashPassword=$2a$10$KuNmt9tVAOvzvcjsiTFzFudhC9bpJbhJfLKiVwwRYCaAPR2LXxJKS, discordId=null, email=if.fy@cs.dev, avatarLink=iffy.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[], biography=Red sparkles and glitter, gitUrl= , country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[UserAwardEntity(id=1, code=adv_cd_2019, label=Advent of Code 2019, description=A wonderful description)], joinDate=1570492800000)";
+        String actual = userEntity.toString();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void shouldReturnCorrectUserByEmail() {
         UserEntity userEntity = userRepository.findByEmail("if.fy@cs.dev");
 

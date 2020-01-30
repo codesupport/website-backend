@@ -4,8 +4,9 @@ import dev.codesupport.web.common.service.service.RestResponse;
 import org.junit.Test;
 
 import java.io.Serializable;
+import java.util.Collections;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 
 public class HealthCheckControllerTest {
 
@@ -15,7 +16,7 @@ public class HealthCheckControllerTest {
 
         RestResponse<Serializable> actual = controller.getHealthCheck();
 
-        assertNull(actual.getResponse());
+        assertEquals(Collections.emptyList(), actual.getResponse());
     }
 
 }

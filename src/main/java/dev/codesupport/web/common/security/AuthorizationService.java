@@ -11,7 +11,7 @@ public interface AuthorizationService {
 
     UserDetails getUserDetailsByEmail(String email);
 
-    @PreAuthorize("hasPermission('discord', 'link_account')")
+    @PreAuthorize("hasPermission('discord', 'link')")
     void linkDiscord(String code);
 
 }

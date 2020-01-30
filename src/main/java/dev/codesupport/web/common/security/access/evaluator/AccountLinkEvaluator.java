@@ -2,6 +2,7 @@ package dev.codesupport.web.common.security.access.evaluator;
 
 import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
 import dev.codesupport.web.common.security.access.Accessor;
+import dev.codesupport.web.common.security.access.Permission;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +10,11 @@ import org.springframework.stereotype.Component;
  * Determines access for linking discord account
  */
 @Component
-public class LinkAccountEvaluator extends AbstractAccessEvaluator<String> {
+public class AccountLinkEvaluator extends AbstractAccessEvaluator<String> {
+
+    public AccountLinkEvaluator() {
+        super(Permission.LINK);
+    }
 
     /**
      * Checks if user has right to link an account
@@ -18,11 +23,10 @@ public class LinkAccountEvaluator extends AbstractAccessEvaluator<String> {
      *
      * @param auth               The Authentication associated with the access evaluation
      * @param targetDomainObject The object associated with the access evaluation
-     * @param permission         The permission associated with the access evaluation
      * @return True if user is authenticated, False otherwise.
      */
     @Override
-    protected boolean hasPermissionCheck(Authentication auth, String targetDomainObject, String permission) {
+    protected boolean hasPermissionCheck(Authentication auth, String targetDomainObject) {
         // If you are a valid authenticated user, you can link your account.
         return isValidAuth(auth);
     }

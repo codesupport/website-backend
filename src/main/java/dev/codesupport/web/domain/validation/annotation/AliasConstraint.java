@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Constraint(validatedBy = AliasValidator.class)
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AliasConstraint {
     /**

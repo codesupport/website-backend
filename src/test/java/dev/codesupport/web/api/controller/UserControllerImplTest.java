@@ -1,4 +1,4 @@
-package dev.codesupport.web.api.controllers;
+package dev.codesupport.web.api.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.testutils.builders.UserBuilder;
-import dev.codesupport.web.api.controller.UserControllerImpl;
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.UserRegistration;
 import dev.codesupport.web.domain.UserStripped;

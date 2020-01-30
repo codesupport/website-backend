@@ -1,25 +1,24 @@
 name: CI
 on: [pull_request]
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v1
-      - name: Runs Unit Tests
-        uses: actions/setup-java@v1
-        with:
-          java-version: '1.8.0'
-      - name: Test source code
-        run: ./mvnw test
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v1
-      - name: Builds The Source Code
+      - name: Set up java environment
         uses: actions/setup-java@v1
         with:
           java-version: '1.8.0'
       - name: Build source code
-        run: ./mvnw package -Dmaven.test.skip=true
+        run: ./mvnw clean compile
+      - name: Run Unit Tests
+        run: ./mvnw test
+      - name: Set env variable
+        run: export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }}
+      - name: Download Codacy Binary
+        run: curl -Ls -o codacy-coverage-reporter "$(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | contains("codacy-coverage-reporter-linux"))) | .[0].browser_download_url')"
+      - name: Configure Codcay Binary
+        run: chmod +x codacy-coverage-reporter
+      - name: Push unit test results to Codacy
+        run: ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml

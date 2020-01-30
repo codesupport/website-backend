@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.service.service;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
@@ -63,6 +64,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @throws ConfigurationException when the ApplicationContext has not been configured.
      */
     @PostConstruct
+    @VisibleForTesting
     void setupValidationBean() {
         if (context == null) {
             throw new ConfigurationException("CrudOperations ApplicationContext not configured");
@@ -70,9 +72,15 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
 
         AbstractPersistenceValidation<E, I, D, JpaRepository<E, I>> validationToReturn = null;
 
+        //rawtypes - Cant help it, getting them from spring.
+        //noinspection rawtypes
         Map<String, AbstractPersistenceValidation> beans = context.getBeansOfType(AbstractPersistenceValidation.class);
 
+        //rawtypes - Cant help it, getting them from spring.
+        //noinspection rawtypes
         for (Map.Entry<String, AbstractPersistenceValidation> bean : beans.entrySet()) {
+            //rawtypes - Cant help it, getting them from spring.
+            //noinspection rawtypes
             AbstractPersistenceValidation validationBean = bean.getValue();
             if (
                     validationToReturn == null &&
@@ -164,6 +172,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @param domainObjects The list of resource data to persist
      * @return List of the persisted data including fields added at the time of persistence
      */
+    @VisibleForTesting
     List<D> saveEntities(List<D> domainObjects) {
         List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
 
@@ -197,6 +206,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @throws ValidationException if any {@see ValidationIssue}s are found
      * @link ValidationIssue
      */
+    @VisibleForTesting
     void validationCheck(List<D> domainObjects) {
         List<ValidationIssue> validationIssues = new ArrayList<>();
         for (D domainObject : domainObjects) {
@@ -218,6 +228,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @param domainObjects The resource data list to check.
      * @throws ResourceNotFoundException if any resource data doesn't exist.
      */
+    @VisibleForTesting
     void resourcesDontExistCheck(List<D> domainObjects) {
         for (D domainObject : domainObjects) {
             resourceDoesntExistCheck(domainObject);
@@ -230,6 +241,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @param domainObject The resource data to check
      * @throws ResourceNotFoundException if the resource data doesn't exist.
      */
+    @VisibleForTesting
     void resourceDoesntExistCheck(D domainObject) {
         if (domainObject.getId() == null || !jpaRepository.existsById(domainObject.getId())) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
@@ -242,6 +254,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @param domainObjects The resource data list to check.
      * @throws ServiceLayerException if any resource data already exists.
      */
+    @VisibleForTesting
     void resourcesAlreadyExistCheck(List<D> domainObjects) {
         for (D domainObject : domainObjects) {
             resourceAlreadyExistsCheck(domainObject);
@@ -254,12 +267,14 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @param domainObject The resource data to check
      * @throws ServiceLayerException if the resource data already exists.
      */
+    @VisibleForTesting
     void resourceAlreadyExistsCheck(D domainObject) {
         if (domainObject.getId() != null && jpaRepository.existsById(domainObject.getId())) {
             throw new ServiceLayerException(ServiceLayerException.Reason.RESOURCE_ALREADY_EXISTS);
         }
     }
 
+    @VisibleForTesting
     void emptyArgumentListCheck(List<D> domainObjects) {
         if (ListUtils.isEmpty(domainObjects)) {
             throw new ServiceLayerException(ServiceLayerException.Reason.EMPTY_PAYLOAD);

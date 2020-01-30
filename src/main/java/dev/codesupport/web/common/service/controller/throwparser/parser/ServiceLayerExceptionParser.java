@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class ServiceLayerExceptionParser extends AbstractThrowableParser<ServiceLayerException> {
+public class ServiceLayerExceptionParser extends AbstractThrowableParser<ServiceLayerException> {
 
     @Override
     protected AbstractThrowableParser<ServiceLayerException> instantiate() {

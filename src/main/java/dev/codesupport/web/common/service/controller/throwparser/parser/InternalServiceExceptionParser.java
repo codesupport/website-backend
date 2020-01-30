@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class InternalServiceExceptionParser extends AbstractThrowableParser<InternalServiceException> {
+public class InternalServiceExceptionParser extends AbstractThrowableParser<InternalServiceException> {
 
     @Override
     protected AbstractThrowableParser<InternalServiceException> instantiate() {

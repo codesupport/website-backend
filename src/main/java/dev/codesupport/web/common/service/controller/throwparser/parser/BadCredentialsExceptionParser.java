@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class BadCredentialsExceptionParser extends AbstractThrowableParser<BadCredentialsException> {
+public class BadCredentialsExceptionParser extends AbstractThrowableParser<BadCredentialsException> {
 
     @Override
     protected AbstractThrowableParser<BadCredentialsException> instantiate() {

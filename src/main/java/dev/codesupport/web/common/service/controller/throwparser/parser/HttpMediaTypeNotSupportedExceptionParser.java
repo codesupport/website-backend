@@ -14,7 +14,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
  */
 @Component
 @NoArgsConstructor
-class HttpMediaTypeNotSupportedExceptionParser extends AbstractThrowableParser<HttpMediaTypeNotSupportedException> {
+public class HttpMediaTypeNotSupportedExceptionParser extends AbstractThrowableParser<HttpMediaTypeNotSupportedException> {
 
     @Override
     protected AbstractThrowableParser<HttpMediaTypeNotSupportedException> instantiate() {

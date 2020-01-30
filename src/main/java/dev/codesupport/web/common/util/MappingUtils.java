@@ -2,6 +2,7 @@ package dev.codesupport.web.common.util;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.annotations.VisibleForTesting;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,6 +25,7 @@ public class MappingUtils {
     /**
      * @return Single instance of transformation class for efficiency
      */
+    @VisibleForTesting
     static ObjectMapper mapper() {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();

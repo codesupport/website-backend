@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.configuration;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.ObjectToUrlEncodedConverter;
@@ -20,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
  * Configures the application.
  */
 @Configuration
-class ApplicationConfiguration {
+public class ApplicationConfiguration {
 
     /**
      * Performs configurations requires for the application to function.
@@ -40,7 +41,8 @@ class ApplicationConfiguration {
         configureDiscordClient(discordAppProperties);
     }
 
-    private void configureDiscordClient(DiscordAppProperties discordAppProperties) {
+    @VisibleForTesting
+    void configureDiscordClient(DiscordAppProperties discordAppProperties) {
         // If properties are not valid, fail startup.
         if (!discordAppProperties.isValid()) {
             throw new ConfigurationException("Discord app properties not set.");

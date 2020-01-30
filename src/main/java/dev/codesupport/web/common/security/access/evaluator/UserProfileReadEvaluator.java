@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security.access.evaluator;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
 import dev.codesupport.web.common.security.access.Permission;
 import dev.codesupport.web.domain.UserProfile;
@@ -42,6 +43,7 @@ public class UserProfileReadEvaluator extends AbstractAccessEvaluator<UserProfil
      * @param userProfile The object associated with the access evaluation
      * @return True if Authentication can see UserProfile email, False otherwise
      */
+    @VisibleForTesting
     boolean isNotAllowedToSeeEmail(Authentication auth, UserProfile userProfile) {
         return !isValidAuth(auth) ||
                 !StringUtils.equalsIgnoreCase(

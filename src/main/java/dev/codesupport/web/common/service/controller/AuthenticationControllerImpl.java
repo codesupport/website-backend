@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.service.controller;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.security.AuthorizationService;
 import dev.codesupport.web.common.service.service.RestResponse;
@@ -72,6 +73,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
      * @param objectList The resources to include in the {@link RestResponse}
      * @return The expected {@link RestResponse}
      */
+    @VisibleForTesting
     RestResponse<String> getRestResponse(List<String> objectList) {
         return new RestResponse<>(objectList);
     }

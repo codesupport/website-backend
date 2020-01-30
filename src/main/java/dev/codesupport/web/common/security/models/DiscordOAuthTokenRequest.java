@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,7 @@ public class DiscordOAuthTokenRequest implements Serializable {
     private String redirectUri;
     private final String scope = "identify guilds guild.join";
 
+    @VisibleForTesting
     DiscordOAuthTokenRequest(String code) {
         this.code = code;
         this.clientId = client_id;

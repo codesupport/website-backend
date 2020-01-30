@@ -1,9 +1,9 @@
 package dev.codesupport.web.common.service.controller.throwparser;
 
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.common.service.service.RestStatus;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -26,7 +26,9 @@ public abstract class AbstractThrowableParser<E extends Throwable> {
         if (superClass instanceof ParameterizedType) {
             Type parameterizedType = ((ParameterizedType) superClass).getActualTypeArguments()[0];
             if (parameterizedType instanceof Class) {
-                throwableClassType = (Class) parameterizedType;
+                //unchecked - This should be all set.
+                //noinspection unchecked
+                throwableClassType = (Class<E>) parameterizedType;
             } else {
                 // This is really not possible.
                 throw new IllegalArgumentException("Internal error: Parameter was not a class.");
@@ -59,6 +61,7 @@ public abstract class AbstractThrowableParser<E extends Throwable> {
      * @param throwable The throwable to be used in the parser.
      * @return Instance of the parser with the given throwable added.
      */
+    @VisibleForTesting
     AbstractThrowableParser<E> instantiate(E throwable) {
         AbstractThrowableParser<E> throwableParser = instantiate();
         throwableParser.throwable = throwable;

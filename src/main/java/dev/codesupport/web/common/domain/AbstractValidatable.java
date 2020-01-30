@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
 import lombok.EqualsAndHashCode;
 
@@ -60,6 +61,7 @@ public abstract class AbstractValidatable<I> implements IdentifiableDomain<I> {
      * @param issueMessage The message describing the associated issue.
      * @return A new {@link ValidationIssue} object.
      */
+    @VisibleForTesting
     final ValidationIssue createValidationIssue(String id, ValidationIssue.ValidationType type, String propertyName, String issueMessage) {
         return new ValidationIssue(id, type, propertyName, issueMessage);
     }

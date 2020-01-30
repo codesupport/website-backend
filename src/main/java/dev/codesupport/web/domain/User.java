@@ -18,7 +18,6 @@ public class User extends AbstractValidatable<Long> {
     private String password;
     private String hashPassword;
     private String email;
-    private Long discordId;
     private String avatarLink;
     private boolean disabled;
     private Role role;

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 public class HttpRequestFilterTest {
 
     @Before
-    public void setup() {
+    public void setUp() {
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 

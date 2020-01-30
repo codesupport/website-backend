@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.service.controller;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.controller.throwparser.ThrowableParserFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class ErrorHandlerController implements ErrorController {
     static final String SPRING_DEFAULT_ERROR = DefaultErrorAttributes.class.getName() + ".ERROR";
 
     @Autowired
-    ErrorHandlerController(ThrowableParserFactory throwableParserFactory) {
+    public ErrorHandlerController(ThrowableParserFactory throwableParserFactory) {
         this.throwableParserFactory = throwableParserFactory;
     }
 
@@ -104,6 +105,7 @@ public class ErrorHandlerController implements ErrorController {
      * @return Throwable exception if found, null otherwise.
      */
     @Nullable
+    @VisibleForTesting
     Throwable getExceptionOrReturnNull(HttpServletRequest request) {
         Object throwable = request.getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
 
@@ -124,6 +126,7 @@ public class ErrorHandlerController implements ErrorController {
      *
      * @return A new instance of a {@link RestResponse} wrapper object.
      */
+    @VisibleForTesting
     RestResponse<Serializable> createRestResponse() {
         return new RestResponse<>();
     }

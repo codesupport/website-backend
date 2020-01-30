@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
  */
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-class DefaultExceptionParser extends AbstractThrowableParser<Throwable> {
+public class DefaultExceptionParser extends AbstractThrowableParser<Throwable> {
 
     @Override
     protected AbstractThrowableParser<Throwable> instantiate() {

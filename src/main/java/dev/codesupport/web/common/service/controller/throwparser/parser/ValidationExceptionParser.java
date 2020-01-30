@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @NoArgsConstructor
-class ValidationExceptionParser extends AbstractThrowableParser<ValidationException> {
+public class ValidationExceptionParser extends AbstractThrowableParser<ValidationException> {
 
     @Override
     protected AbstractThrowableParser<ValidationException> instantiate() {

@@ -53,7 +53,7 @@ public class UserControllerImplTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         Mockito.reset(
                 mockService
         );

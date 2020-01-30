@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.InvalidTokenException;
 import dev.codesupport.web.common.security.jwt.JsonWebToken;
 import dev.codesupport.web.common.security.jwt.JsonWebTokenFactory;
@@ -68,6 +69,7 @@ public class HttpRequestFilter extends OncePerRequestFilter {
      *
      * @param request The corresponding request
      */
+    @VisibleForTesting
     void checkForJWToken(HttpServletRequest request) {
         String tokenString = getTokenFromRequest(request);
         // If token is empty, skip all this, could be an authentication post request.
@@ -82,6 +84,7 @@ public class HttpRequestFilter extends OncePerRequestFilter {
      * @param tokenString The token to validate
      * @param request     The associated request
      */
+    @VisibleForTesting
     void validateJWToken(String tokenString, HttpServletRequest request) {
         Assert.notNull(tokenString, "tokenString can not be null");
         try {
@@ -107,6 +110,7 @@ public class HttpRequestFilter extends OncePerRequestFilter {
      * @param email   The user to be configured in the security context
      * @param request The requested associated to the configuration
      */
+    @VisibleForTesting
     void configureSpringSecurityContext(String email, HttpServletRequest request) {
         Assert.notNull(email, "email can not be null");
 
@@ -129,6 +133,7 @@ public class HttpRequestFilter extends OncePerRequestFilter {
      * @param request Corresponding request to extract token from
      * @return The raw token ascii string
      */
+    @VisibleForTesting
     String getTokenFromRequest(HttpServletRequest request) {
         final String requestAuthorizationHeader = request.getHeader("Authorization");
         String jwtToken;

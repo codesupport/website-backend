@@ -64,7 +64,7 @@ public class AuthorizationServiceImplTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         SecurityContextHolder.getContext().setAuthentication(null);
 
         Mockito.reset(

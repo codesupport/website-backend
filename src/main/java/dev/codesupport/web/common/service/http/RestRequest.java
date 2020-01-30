@@ -25,14 +25,14 @@ public abstract class RestRequest<S extends Serializable, T extends Serializable
     protected Class<T> responseClass;
     protected Class<S> requestClass;
 
-    RestRequest() {
+    public RestRequest() {
         this.headers = new HashMap<>();
         this.parameters = new HashMap<>();
         // Set default User-Agent
         this.headers.put("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
     }
 
-    RestRequest(Class<S> requestClass, Class<T> responseClass) {
+    public RestRequest(Class<S> requestClass, Class<T> responseClass) {
         this();
         this.requestClass = requestClass;
         this.responseClass = responseClass;

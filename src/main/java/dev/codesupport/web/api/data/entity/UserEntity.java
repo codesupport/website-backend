@@ -29,6 +29,10 @@ public class UserEntity implements IdentifiableEntity<Long> {
     @Column(nullable = false)
     private String hashPassword;
     private String discordId;
+    private String discordUsername;
+    private String githubUsername;
+    private String jobTitle;
+    private String jobCompany;
     @Column(nullable = false)
     private String email;
     private String avatarLink;
@@ -39,7 +43,6 @@ public class UserEntity implements IdentifiableEntity<Long> {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<PermissionEntity> permission;
     private String biography;
-    private String gitUrl;
     @ManyToOne(fetch = FetchType.EAGER)
     private CountryEntity country;
     @ManyToMany(fetch = FetchType.EAGER)

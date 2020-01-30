@@ -19,11 +19,14 @@ public class UserProfile extends AbstractValidatable<Long> {
     private String alias;
     private String email;
     private Long discordId;
+    private String discordUsername;
+    private String githubUsername;
+    private String jobTitle;
+    private String jobCompany;
     private String avatarLink;
     private boolean disabled;
     private Role role;
     private String biography;
-    private String gitUrl;
     private Country country;
     private Set<UserAward> userAward;
     private Long joinDate;

@@ -13,7 +13,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  */
 @Component
 @NoArgsConstructor
-class MethodArgumentTypeMismatchExceptionParser extends AbstractThrowableParser<MethodArgumentTypeMismatchException> {
+public class MethodArgumentTypeMismatchExceptionParser extends AbstractThrowableParser<MethodArgumentTypeMismatchException> {
 
     @Override
     protected AbstractThrowableParser<MethodArgumentTypeMismatchException> instantiate() {

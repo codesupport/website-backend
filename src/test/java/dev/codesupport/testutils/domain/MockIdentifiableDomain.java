@@ -11,7 +11,7 @@ public class MockIdentifiableDomain implements IdentifiableDomain<Long> {
 
     @Override
     public void setId(Long id) {
-
+        // Not needed for tests.
     }
 
 }

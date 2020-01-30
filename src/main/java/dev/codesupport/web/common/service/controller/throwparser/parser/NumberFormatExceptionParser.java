@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class NumberFormatExceptionParser extends AbstractThrowableParser<NumberFormatException> {
+public class NumberFormatExceptionParser extends AbstractThrowableParser<NumberFormatException> {
 
     @Override
     protected AbstractThrowableParser<NumberFormatException> instantiate() {

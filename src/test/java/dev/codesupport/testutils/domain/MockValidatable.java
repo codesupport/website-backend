@@ -11,7 +11,7 @@ public class MockValidatable extends AbstractValidatable<Long> {
 
     @Override
     public void setId(Long id) {
-
+        // Not needed for tests.
     }
 
 }

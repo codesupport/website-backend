@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security.jwt;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.configuration.JwtProperties;
 import dev.codesupport.web.common.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
@@ -64,6 +65,7 @@ public class JJwtUtility extends JwtUtility {
      * @see JwtUtility.DecodedJWT
      * @see DecodedJJWT
      */
+    @VisibleForTesting
     @Override
     DecodedJWT decode(String tokenString) {
         DecodedJWT decodedJWT;

@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.net.HttpHeaders;
 import dev.codesupport.web.api.data.entity.PermissionEntity;
 import dev.codesupport.web.api.data.entity.UserEntity;
@@ -122,6 +123,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @param email       Email associated to user to link with discordId
      * @param discordUser The {@link DiscordUser} to link to the user
      */
+    @VisibleForTesting
     void saveDiscordIdToUser(String email, DiscordUser discordUser) {
         UserEntity userEntity = userRepository.findByEmail(email);
         userEntity.setDiscordId(discordUser.getId());
@@ -135,6 +137,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @param accessToken The user access token to use to retrieve data
      * @return The {@link DiscordUser} details associated with the access token
      */
+    @VisibleForTesting
     DiscordUser getDiscordUserDetailsFromDiscordApi(String accessToken) {
         String discordOAuthTokenUri = "https://discordapp.com/api/users/@me";
 
@@ -154,6 +157,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @param code The code used to acquire an access token.
      * @return The API response in a {@link DiscordOAuthTokenResponse} object
      */
+    @VisibleForTesting
     DiscordOAuthTokenResponse getTokenFromDiscordApi(String code) {
         String discordOAuthTokenUri = "https://discordapp.com/api/oauth2/token";
 
@@ -176,6 +180,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @return The email associated to the user authentication
      * @throws InvalidUserException If there is no valid user authentication in the Security Context
      */
+    @VisibleForTesting
     String getUserEmailFromAuthorization() {
         Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = userAuthentication.getPrincipal();

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @NoArgsConstructor
-class MethodArgumentNotValidExceptionParser extends AbstractThrowableParser<MethodArgumentNotValidException> {
+public class MethodArgumentNotValidExceptionParser extends AbstractThrowableParser<MethodArgumentNotValidException> {
 
     @Override
     protected AbstractThrowableParser<MethodArgumentNotValidException> instantiate() {

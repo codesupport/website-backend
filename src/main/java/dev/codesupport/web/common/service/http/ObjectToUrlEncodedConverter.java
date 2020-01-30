@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.service.http;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.InternalServiceException;
 import dev.codesupport.web.common.util.MappingUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +110,7 @@ public class ObjectToUrlEncodedConverter implements HttpMessageConverter<Object>
      * A private class used for the object to media type transformations.
      * <p>Makes use of the @JsonAnySetter annotation to map properties with ObjectMapper</p>
      */
+    @VisibleForTesting
     static class UrlEncodedWriter {
         private final Map<String, Object> properties = new HashMap<>();
 

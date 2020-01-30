@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class ResourceNotFoundExceptionParser extends AbstractThrowableParser<ResourceNotFoundException> {
+public class ResourceNotFoundExceptionParser extends AbstractThrowableParser<ResourceNotFoundException> {
 
     @Override
     protected AbstractThrowableParser<ResourceNotFoundException> instantiate() {

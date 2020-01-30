@@ -86,7 +86,7 @@ public class UserServiceImplTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         Mockito.reset(
                 mockUserCrudOperations,
                 mockUserProfileCrudOperations,

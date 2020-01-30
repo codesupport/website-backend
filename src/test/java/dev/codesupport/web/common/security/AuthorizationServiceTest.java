@@ -24,7 +24,7 @@ public class AuthorizationServiceTest {
     private AuthorizationService authorizationService;
 
     @After
-    public void setup() {
+    public void tearDown() {
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 

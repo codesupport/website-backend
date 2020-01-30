@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 public class ApplicationConfigurationTest {
 
     @Before
-    public void setup() {
+    public void setUp() {
         DiscordOAuthTokenRequest.setClient_id(null);
         DiscordOAuthTokenRequest.setSecret(null);
         DiscordOAuthTokenRequest.setRedirect_uri(null);

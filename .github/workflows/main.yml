@@ -14,11 +14,9 @@ jobs:
         run: ./mvnw clean compile
       - name: Run Unit Tests
         run: ./mvnw test
-      - name: Set env variable
-        run: export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }}
       - name: Download Codacy Binary
         run: curl -Ls -o codacy-coverage-reporter "$(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | contains("codacy-coverage-reporter-linux"))) | .[0].browser_download_url')"
-      - name: Configure Codcay Binary
+      - name: Configure Codacy Binary
         run: chmod +x codacy-coverage-reporter
       - name: Push unit test results to Codacy
-        run: ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml
+        run: CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }} && ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml

@@ -5,17 +5,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Runs Unit Tests
-        uses: actions/setup-java@v1
+        name: Checkout Code
+      - uses: actions/setup-java@v1
+        name: Runs Unit Tests
         with:
           java-version: '1.8.0'
-      - run: ./mvnw test
+        run: ./mvnw test
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Builds The Source Code
-        uses: actions/setup-java@v1
+        name: Checkout Code
+      - uses: actions/setup-java@v1
+        name: Builds The Source Code
         with:
           java-version: '1.8.0'
-      - run: ./mvnw package -Dmaven.test.skip=true
+        run: ./mvnw package -Dmaven.test.skip=true

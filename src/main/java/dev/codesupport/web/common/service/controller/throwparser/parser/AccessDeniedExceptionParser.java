@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class AccessDeniedExceptionParser extends AbstractThrowableParser<AccessDeniedException> {
+public class AccessDeniedExceptionParser extends AbstractThrowableParser<AccessDeniedException> {
 
     @Override
     protected AbstractThrowableParser<AccessDeniedException> instantiate() {

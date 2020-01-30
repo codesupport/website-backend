@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class InvalidUserExceptionParser extends AbstractThrowableParser<InvalidUserException> {
+public class InvalidUserExceptionParser extends AbstractThrowableParser<InvalidUserException> {
 
     @Override
     protected AbstractThrowableParser<InvalidUserException> instantiate() {

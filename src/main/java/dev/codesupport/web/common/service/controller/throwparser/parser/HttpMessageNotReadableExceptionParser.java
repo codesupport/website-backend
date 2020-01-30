@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @NoArgsConstructor
-class HttpMessageNotReadableExceptionParser extends AbstractThrowableParser<HttpMessageNotReadableException> {
+public class HttpMessageNotReadableExceptionParser extends AbstractThrowableParser<HttpMessageNotReadableException> {
 
     @Override
     protected AbstractThrowableParser<HttpMessageNotReadableException> instantiate() {

@@ -30,7 +30,7 @@ public class UserValidationTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         Mockito.reset(
                 mockUserRepository
         );

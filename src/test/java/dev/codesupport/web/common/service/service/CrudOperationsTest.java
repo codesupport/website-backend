@@ -78,7 +78,7 @@ public class CrudOperationsTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         CrudOperations.setContext(mockContext);
 
         Mockito.reset(

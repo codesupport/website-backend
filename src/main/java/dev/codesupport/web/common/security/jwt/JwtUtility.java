@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security.jwt;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.configuration.JwtProperties;
 
 /**
@@ -39,6 +40,7 @@ public abstract class JwtUtility {
 
     public abstract String generateToken(String username, String email);
 
+    @VisibleForTesting
     abstract DecodedJWT decode(String tokenString);
 
     /**

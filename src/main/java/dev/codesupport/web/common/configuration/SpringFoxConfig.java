@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.configuration;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -31,6 +32,7 @@ public class SpringFoxConfig {
                 .apiInfo(apiInfo());
     }
 
+    @VisibleForTesting
     ApiInfo apiInfo() {
         return new ApiInfo(
                 "CodeSupport.dev API",

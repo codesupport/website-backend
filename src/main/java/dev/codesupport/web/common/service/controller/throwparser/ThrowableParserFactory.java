@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.service.controller.throwparser;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class ThrowableParserFactory {
     private final Map<String, AbstractThrowableParser> parserMap;
 
     @Autowired
-    ThrowableParserFactory(ApplicationContext context) {
+    public ThrowableParserFactory(ApplicationContext context) {
         // This should be fine for the purpose here.
         //noinspection rawtypes
         Map<String, AbstractThrowableParser> beanMap = context.getBeansOfType(AbstractThrowableParser.class);
@@ -72,6 +73,7 @@ public class ThrowableParserFactory {
      * @param throwable The throwable to be searched.
      * @return The first parsable throwable or root cause.
      */
+    @VisibleForTesting
     Throwable getRootCause(Throwable throwable) {
         Throwable rootCause = throwable;
 
@@ -92,6 +94,7 @@ public class ThrowableParserFactory {
      * @param throwable The throwable to get the parser name for.
      * @return The map key of the parser that would be associated to the given throwable.
      */
+    @VisibleForTesting
     String getParserNameFromException(Throwable throwable) {
         return throwable.getClass().getCanonicalName();
     }

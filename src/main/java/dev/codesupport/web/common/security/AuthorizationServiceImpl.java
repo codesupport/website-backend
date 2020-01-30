@@ -113,18 +113,19 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         DiscordUser discordUser = getDiscordUserDetailsFromDiscordApi(tokenResponse.getAccessToken());
 
-        saveDiscordIdToUser(email, discordUser.getId());
+        saveDiscordIdToUser(email, discordUser);
     }
 
     /**
      * Saves the given discordId to the user with the given email
      *
-     * @param email     Email associated to user to link with discordId
-     * @param discordId The Discord Id to link to the user
+     * @param email       Email associated to user to link with discordId
+     * @param discordUser The {@link DiscordUser} to link to the user
      */
-    void saveDiscordIdToUser(String email, String discordId) {
+    void saveDiscordIdToUser(String email, DiscordUser discordUser) {
         UserEntity userEntity = userRepository.findByEmail(email);
-        userEntity.setDiscordId(discordId);
+        userEntity.setDiscordId(discordUser.getId());
+        userEntity.setDiscordUsername(discordUser.getUsername() + "#" + discordUser.getDiscriminator());
         userRepository.save(userEntity);
     }
 

@@ -18,5 +18,7 @@ jobs:
         run: curl -Ls -o codacy-coverage-reporter "$(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | contains("codacy-coverage-reporter-linux"))) | .[0].browser_download_url')"
       - name: Configure Codacy Binary
         run: chmod +x codacy-coverage-reporter
+      - name: Check Commit SHA
+        run: echo $GITHUB_SHA
       - name: Push unit test results to Codacy
-        run: CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }} ./codacy-coverage-reporter report -l Java --commit-uuid $GITHUB_SHA -r target/site/jacoco/jacoco.xml
+        run: CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }} ./codacy-coverage-reporter report -l Java --commit-uuid "$GITHUB_SHA" -r target/site/jacoco/jacoco.xml

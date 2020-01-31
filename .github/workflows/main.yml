@@ -19,4 +19,4 @@ jobs:
       - name: Configure Codacy Binary
         run: chmod +x codacy-coverage-reporter
       - name: Push unit test results to Codacy
-        run: CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }} ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml
+        run: CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }} ./codacy-coverage-reporter report -l Java --commit-uuid $GITHUB_SHA -r target/site/jacoco/jacoco.xml

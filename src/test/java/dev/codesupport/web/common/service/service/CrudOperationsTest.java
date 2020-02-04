@@ -112,7 +112,7 @@ public class CrudOperationsTest {
 
         //rawtypes - Fine for the purposes of this test.
         //noinspection rawtypes
-        AbstractPersistenceValidation actual = (AbstractPersistenceValidation)ReflectionTestUtils.getField(crudOperationsSpy, "validation");
+        AbstractPersistenceValidation actual = (AbstractPersistenceValidation) ReflectionTestUtils.getField(crudOperationsSpy, "validation");
 
         assertEquals(mockValidator, actual);
     }
@@ -134,9 +134,10 @@ public class CrudOperationsTest {
                 .when(mockRepository)
                 .findById(id);
 
-        List<MockDomain> actual = crudOperationsSpy.getById(id);
+        MockDomain expected = domainsToReturn.get(0);
+        MockDomain actual = crudOperationsSpy.getById(id);
 
-        assertEquals(domainsToReturn, actual);
+        assertEquals(expected, actual);
     }
 
     @Test(expected = ResourceNotFoundException.class)

@@ -72,14 +72,14 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
 
         AbstractPersistenceValidation<E, I, D, JpaRepository<E, I>> validationToReturn = null;
 
-        //rawtypes - Cant help it, getting them from spring.
+        //rawtypes - This is fine for this logic.
         //noinspection rawtypes
         Map<String, AbstractPersistenceValidation> beans = context.getBeansOfType(AbstractPersistenceValidation.class);
 
-        //rawtypes - Cant help it, getting them from spring.
+        //rawtypes - This is fine for this logic.
         //noinspection rawtypes
         for (Map.Entry<String, AbstractPersistenceValidation> bean : beans.entrySet()) {
-            //rawtypes - Cant help it, getting them from spring.
+            //rawtypes - This is fine for this logic.
             //noinspection rawtypes
             AbstractPersistenceValidation validationBean = bean.getValue();
             if (
@@ -100,14 +100,14 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @param id The id of the desired resource data
      * @return The resource data list for the given id
      */
-    public List<D> getById(I id) {
+    public D getById(I id) {
         Optional<E> object = jpaRepository.findById(id);
 
         if (!object.isPresent()) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
         }
 
-        return Collections.singletonList(MappingUtils.convertToType(object.get(), domainClass));
+        return MappingUtils.convertToType(object.get(), domainClass);
     }
 
     /**

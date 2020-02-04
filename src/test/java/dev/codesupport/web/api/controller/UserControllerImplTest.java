@@ -3,10 +3,10 @@ package dev.codesupport.web.api.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.codesupport.web.common.service.service.RestResponse;
-import dev.codesupport.web.domain.User;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.service.UserService;
+import dev.codesupport.web.domain.TokenResponse;
+import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserRegistration;
 import dev.codesupport.web.domain.UserStripped;
 import org.junit.Before;
@@ -68,17 +68,16 @@ public class UserControllerImplTest {
         List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<UserStripped> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
+        List<UserStripped> expected = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
         });
 
-        doReturn(returnedUsers)
+        doReturn(expected)
                 .when(mockService)
                 .findAllUsers();
 
-        RestResponse<UserStripped> expected = new RestResponse<>(returnedUsers);
-        RestResponse<UserStripped> actual = controller.getAllUsers();
+        List<UserStripped> actual = controller.getAllUsers();
 
-        assertEquals(expected.getResponse(), actual.getResponse());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -91,31 +90,31 @@ public class UserControllerImplTest {
         List<UserStripped> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
         });
 
-        doReturn(returnedUsers)
+        doReturn(returnedUsers.get(0))
                 .when(mockService)
                 .getUserById(id);
 
-        RestResponse<UserStripped> expected = new RestResponse<>(returnedUsers);
-        RestResponse<UserStripped> actual = controller.getUserById(id);
+        UserStripped expected = returnedUsers.get(0);
+        UserStripped actual = controller.getUserById(id);
 
-        assertEquals(expected.getResponse(), actual.getResponse());
+        assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorrectResponseForRegisterUser() {
-        List<String> token = Collections.singletonList("Tokentokentoken");
+        String token = "Tokentokentoken";
+        TokenResponse expected = new TokenResponse(token);
 
         UserRegistration userRegistration = new UserRegistration();
         userRegistration.setAlias("user");
 
-        doReturn(token)
+        doReturn(expected)
                 .when(mockService)
                 .registerUser(userRegistration);
 
-        RestResponse<String> expected = new RestResponse<>(token);
-        RestResponse<String> actual = controller.registerUser(userRegistration);
+        TokenResponse actual = controller.registerUser(userRegistration);
 
-        assertEquals(expected.getResponse(), actual.getResponse());
+        assertEquals(expected, actual);
     }
 
 }

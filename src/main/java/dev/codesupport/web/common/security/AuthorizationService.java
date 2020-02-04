@@ -1,13 +1,14 @@
 package dev.codesupport.web.common.security;
 
 import dev.codesupport.web.common.security.models.UserDetails;
+import dev.codesupport.web.domain.TokenResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthorizationService {
 
-    String createTokenForEmailAndPassword(String email, String password);
+    TokenResponse createTokenForEmailAndPassword(String email, String password);
 
     UserDetails getUserDetailsByEmail(String email);
 

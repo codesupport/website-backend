@@ -1,16 +1,11 @@
 package dev.codesupport.web.common.service.controller;
 
-import com.google.common.annotations.VisibleForTesting;
-import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.security.AuthorizationService;
-import dev.codesupport.web.common.service.service.RestResponse;
+import dev.codesupport.web.common.security.models.AuthenticationRequest;
+import dev.codesupport.web.domain.OkResponse;
+import dev.codesupport.web.domain.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Accepts post requests containing username/password credentials
@@ -38,15 +33,11 @@ public class AuthenticationControllerImpl implements AuthenticationController {
      * @param authenticationRequest The {@link AuthenticationRequest} body
      * @return The encoded JWT string if authentication passes.
      */
-    public ResponseEntity<RestResponse<String>> authenticate(AuthenticationRequest authenticationRequest) {
+    public TokenResponse authenticate(AuthenticationRequest authenticationRequest) {
         String email = authenticationRequest.getEmail();
         String password = authenticationRequest.getPassword();
 
-        final String token = authorizationService.createTokenForEmailAndPassword(email, password);
-
-        return ResponseEntity.ok(
-                getRestResponse(Collections.singletonList(token))
-        );
+        return authorizationService.createTokenForEmailAndPassword(email, password);
     }
 
     /**
@@ -58,24 +49,10 @@ public class AuthenticationControllerImpl implements AuthenticationController {
      * @return Returns simple OK - 200 response if successful
      */
     @Override
-    public ResponseEntity<RestResponse<Serializable>> linkDiscord(String code) {
+    public OkResponse linkDiscord(String code) {
         authorizationService.linkDiscord(code);
 
-        return ResponseEntity.ok(
-                RestResponse.restResponse(Collections.singletonList("Ok"))
-        );
-    }
-
-    /**
-     * Returns a new instance of {@link RestResponse}
-     * <p>This exists to make unit testing easier</p>
-     *
-     * @param objectList The resources to include in the {@link RestResponse}
-     * @return The expected {@link RestResponse}
-     */
-    @VisibleForTesting
-    RestResponse<String> getRestResponse(List<String> objectList) {
-        return new RestResponse<>(objectList);
+        return new OkResponse();
     }
 
 }

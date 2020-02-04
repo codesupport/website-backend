@@ -6,6 +6,7 @@ import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
+import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserProfileStripped;
@@ -14,7 +15,6 @@ import dev.codesupport.web.domain.UserStripped;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserProfileStripped> getUserProfileById(Long id) {
+    public UserProfileStripped getUserProfileById(Long id) {
         return userProfileCrudOperations.getById(id);
     }
 
@@ -65,8 +65,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserStripped> getUserById(Long id) {
-        List<User> users = userCrudOperations.getById(id);
+    public UserStripped getUserById(Long id) {
+        User users = userCrudOperations.getById(id);
 
         return MappingUtils.convertToType(users, UserStripped.class);
     }
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<String> registerUser(UserRegistration userRegistration) {
+    public TokenResponse registerUser(UserRegistration userRegistration) {
         User user = MappingUtils.convertToType(userRegistration, User.class);
 
         user.setHashPassword(
@@ -88,9 +88,9 @@ public class UserServiceImpl implements UserService {
 
         List<User> users = userCrudOperations.createEntity(user);
 
-        final String token = jwtUtility.generateToken(users.get(0).getAlias(), users.get(0).getEmail());
-
-        return Collections.singletonList(token);
+        return new TokenResponse(
+                jwtUtility.generateToken(users.get(0).getAlias(), users.get(0).getEmail())
+        );
     }
 
 }

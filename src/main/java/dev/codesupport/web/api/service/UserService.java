@@ -1,5 +1,6 @@
 package dev.codesupport.web.api.service;
 
+import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.UserRegistration;
@@ -18,14 +19,14 @@ public interface UserService {
     @PostAuthorize("hasPermission(returnObject, 'read')")
     UserProfile getUserProfileByAlias(String alias);
 
-    List<UserProfileStripped> getUserProfileById(Long id);
+    UserProfileStripped getUserProfileById(Long id);
 
     List<UserProfileStripped> findAllUserProfiles();
 
-    List<UserStripped> getUserById(Long id);
+    UserStripped getUserById(Long id);
 
     List<UserStripped> findAllUsers();
 
-    List<String> registerUser(UserRegistration userRegistration);
+    TokenResponse registerUser(UserRegistration userRegistration);
 
 }

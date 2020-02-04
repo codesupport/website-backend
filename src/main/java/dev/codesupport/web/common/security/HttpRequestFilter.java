@@ -58,7 +58,6 @@ public class HttpRequestFilter extends OncePerRequestFilter {
 
         checkForJWToken(request);
 
-        // Boilerplate call, invokes subsequent filter layers
         chain.doFilter(request, response);
     }
 

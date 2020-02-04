@@ -9,6 +9,7 @@ import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
+import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserProfileStripped;
@@ -138,15 +139,16 @@ public class UserServiceImplTest {
     public void shouldReturnCorrectUsersWithGetUserProfileById() {
         Long id = 1L;
 
-        List<UserProfileStripped> expected = mapper()
+        List<UserProfileStripped> returnedUsers = mapper()
                 .convertValue(getUserList, new TypeReference<List<UserProfileStripped>>() {
                 });
 
-        doReturn(expected)
+        doReturn(returnedUsers.get(0))
                 .when(mockUserProfileCrudOperations)
                 .getById(id);
 
-        List<UserProfileStripped> actual = service.getUserProfileById(id);
+        UserProfileStripped expected = returnedUsers.get(0);
+        UserProfileStripped actual = service.getUserProfileById(id);
 
         assertEquals(expected, actual);
     }
@@ -170,15 +172,16 @@ public class UserServiceImplTest {
     public void shouldReturnCorrectUsersWithGetUserById() {
         Long id = 1L;
 
-        List<UserStripped> expected = mapper()
+        List<UserStripped> returnedUsers = mapper()
                 .convertValue(getUserList, new TypeReference<List<UserStripped>>() {
                 });
 
-        doReturn(getUserList)
+        doReturn(getUserList.get(0))
                 .when(mockUserCrudOperations)
                 .getById(id);
 
-        List<UserStripped> actual = service.getUserById(id);
+        UserStripped expected = returnedUsers.get(0);
+        UserStripped actual = service.getUserById(id);
 
         assertEquals(expected, actual);
     }
@@ -202,9 +205,10 @@ public class UserServiceImplTest {
                 .when(mockJwtUtility)
                 .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
 
-        List<String> actual = service.registerUser(userRegistration);
+        TokenResponse expected = new TokenResponse(token);
+        TokenResponse actual = service.registerUser(userRegistration);
 
-        assertEquals(Collections.singletonList(token), actual);
+        assertEquals(expected, actual);
     }
 
 }

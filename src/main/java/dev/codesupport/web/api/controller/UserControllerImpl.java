@@ -1,7 +1,7 @@
 package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.UserService;
-import dev.codesupport.web.common.service.service.RestResponse;
+import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserRegistration;
 import dev.codesupport.web.domain.UserStripped;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import static dev.codesupport.web.common.service.service.RestResponse.restResponse;
+import java.util.List;
 
 /**
  * API Contract implementation for the {@link User} resource.
@@ -26,13 +26,13 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public RestResponse<UserStripped> getAllUsers() {
-        return restResponse(service.findAllUsers());
+    public List<UserStripped> getAllUsers() {
+        return service.findAllUsers();
     }
 
     @Override
-    public RestResponse<UserStripped> getUserById(Long id) {
-        return restResponse(service.getUserById(id));
+    public UserStripped getUserById(Long id) {
+        return service.getUserById(id);
     }
 
     /**
@@ -42,8 +42,8 @@ public class UserControllerImpl implements UserController {
      * @return A valid JWT for the created user.
      */
     @Override
-    public RestResponse<String> registerUser(UserRegistration userRegistration) {
-        return restResponse(service.registerUser(userRegistration));
+    public TokenResponse registerUser(UserRegistration userRegistration) {
+        return service.registerUser(userRegistration);
     }
 
 }

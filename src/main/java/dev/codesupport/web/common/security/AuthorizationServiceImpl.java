@@ -15,6 +15,7 @@ import dev.codesupport.web.common.security.models.DiscordUser;
 import dev.codesupport.web.common.security.models.UserDetails;
 import dev.codesupport.web.common.service.http.HttpClient;
 import dev.codesupport.web.common.service.http.HttpMethod;
+import dev.codesupport.web.domain.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -58,7 +59,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @throws InvalidUserException If the authorization could not be completed for the given credentials.
      */
     @Override
-    public String createTokenForEmailAndPassword(String email, String password) {
+    public TokenResponse createTokenForEmailAndPassword(String email, String password) {
         UserDetails userDetails;
 
         try {
@@ -75,7 +76,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new InvalidUserException("Could not authenticate user.", e);
         }
 
-        return jwtUtility.generateToken(userDetails.getAlias(), userDetails.getEmail());
+        return new TokenResponse(
+                jwtUtility.generateToken(userDetails.getAlias(), userDetails.getEmail())
+        );
     }
 
     /**

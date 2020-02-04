@@ -13,6 +13,7 @@ import dev.codesupport.web.common.security.models.UserDetails;
 import dev.codesupport.web.common.service.http.HttpClient;
 import dev.codesupport.web.common.service.http.HttpMethod;
 import dev.codesupport.web.common.service.http.RestRequest;
+import dev.codesupport.web.domain.TokenResponse;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -179,9 +180,10 @@ public class AuthorizationServiceImplTest {
                         email
                 );
 
-        String actual = spyService.createTokenForEmailAndPassword(email, password);
+        TokenResponse expected = new TokenResponse(token);
+        TokenResponse actual = spyService.createTokenForEmailAndPassword(email, password);
 
-        assertEquals(token, actual);
+        assertEquals(expected, actual);
     }
 
     @Test(expected = InvalidUserException.class)

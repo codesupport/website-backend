@@ -1,7 +1,6 @@
 package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.UserService;
-import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserProfileStripped;
@@ -9,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import static dev.codesupport.web.common.service.service.RestResponse.restResponse;
+import java.util.List;
 
 /**
  * API Contract implementation for the {@link User} resource.
@@ -26,18 +25,18 @@ public class UserProfileControllerImpl implements UserProfileController {
     }
 
     @Override
-    public RestResponse<UserProfileStripped> getAllUserProfiles() {
-        return restResponse(service.findAllUserProfiles());
+    public List<UserProfileStripped> getAllUserProfiles() {
+        return service.findAllUserProfiles();
     }
 
     @Override
-    public RestResponse<UserProfile> getUserProfileByAlias(String alias) {
-        return restResponse(service.getUserProfileByAlias(alias));
+    public UserProfile getUserProfileByAlias(String alias) {
+        return service.getUserProfileByAlias(alias);
     }
 
     @Override
-    public RestResponse<UserProfileStripped> getUserProfileById(Long id) {
-        return restResponse(service.getUserProfileById(id));
+    public UserProfileStripped getUserProfileById(Long id) {
+        return service.getUserProfileById(id);
     }
 
 }

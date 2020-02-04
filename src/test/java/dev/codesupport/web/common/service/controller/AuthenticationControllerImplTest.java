@@ -2,15 +2,11 @@ package dev.codesupport.web.common.service.controller;
 
 import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
-import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.common.security.AuthorizationService;
-import dev.codesupport.web.common.service.service.RestResponse;
+import dev.codesupport.web.common.security.models.AuthenticationRequest;
+import dev.codesupport.web.domain.OkResponse;
+import dev.codesupport.web.domain.TokenResponse;
 import org.junit.Test;
-import org.springframework.http.ResponseEntity;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -52,6 +48,7 @@ public class AuthenticationControllerImplTest {
         String email = "user@domain.com";
         String password = "clearpassword";
         String token = "mytokenstring";
+        TokenResponse expected = new TokenResponse(token);
 
         AuthenticationRequest request = new AuthenticationRequest();
         request.setEmail(email);
@@ -59,7 +56,7 @@ public class AuthenticationControllerImplTest {
 
         AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
 
-        doReturn(token)
+        doReturn(expected)
                 .when(mockAuthorizationService)
                 .createTokenForEmailAndPassword(
                         request.getEmail(),
@@ -68,17 +65,9 @@ public class AuthenticationControllerImplTest {
 
         AuthenticationControllerImpl spyController = spy(new AuthenticationControllerImpl(mockAuthorizationService));
 
-        //unchecked - This is fine for creating mocks.
-        //noinspection unchecked
-        RestResponse<String> mockRestResponse = mock(RestResponse.class);
+        TokenResponse response = spyController.authenticate(request);
 
-        doReturn(mockRestResponse)
-                .when(spyController)
-                .getRestResponse(Collections.singletonList(token));
-
-        ResponseEntity<RestResponse<String>> response = spyController.authenticate(request);
-
-        assertEquals(mockRestResponse, response.getBody());
+        assertEquals(expected, response);
     }
 
     @Test(expected = ServiceLayerException.class)
@@ -118,31 +107,8 @@ public class AuthenticationControllerImplTest {
 
         AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
 
-        List<String> expected = Collections.singletonList("Ok");
-
-        ResponseEntity<RestResponse<Serializable>> responseEntity = controller.linkDiscord(code);
-
-        //ConstantConditions - This is fine for the context of this test.
-        //noinspection ConstantConditions
-        assertEquals(expected, responseEntity.getBody().getResponse());
-    }
-
-    @Test
-    public void shouldCreateCorrectRestResponseObject() {
-        String referenceId = "1234";
-
-        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
-
-        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
-
-        List<String> token = Collections.singletonList("tokentokentoken");
-
-        RestResponse<String> expected = new RestResponse<>();
-        expected.setReferenceId(referenceId);
-        expected.setResponse(token);
-
-        RestResponse<String> actual = controller.getRestResponse(token);
-        actual.setReferenceId(referenceId);
+        OkResponse expected = new OkResponse();
+        OkResponse actual = controller.linkDiscord(code);
 
         assertEquals(expected, actual);
     }

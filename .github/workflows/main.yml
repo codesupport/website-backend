@@ -14,7 +14,7 @@ jobs:
         run: ./mvnw clean compile
       - name: Run Unit Tests
         run: ./mvnw test
-      - name: Download Codacy Binary
+      - name: Download Codacy binary
         run: curl -Ls -o codacy-coverage-reporter "$(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | contains("codacy-coverage-reporter-linux"))) | .[0].browser_download_url')"
       - name: Configure Codacy Binary
         run: chmod +x codacy-coverage-reporter

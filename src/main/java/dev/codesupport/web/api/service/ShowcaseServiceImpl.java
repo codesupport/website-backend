@@ -67,6 +67,9 @@ public class ShowcaseServiceImpl implements ShowcaseService {
         // Set new generated ID in showcase
         showcase.getContributorList().setId(savedContributorList.getId());
 
+        // Showcases are disabled by default
+        showcase.setApproved(false);
+
         // Create all new contributors
         List<ContributorEntity> contributors = MappingUtils.convertToType(showcase.getContributorList().getContributors(), ContributorEntity.class);
         contributors.forEach(contributor -> {
@@ -88,6 +91,9 @@ public class ShowcaseServiceImpl implements ShowcaseService {
     public Showcase updateShowcase(Showcase showcase) {
         ShowcaseEntity updatedShowcase;
         Optional<ShowcaseEntity> oldShowcaseOptional = showcaseRepository.findById(showcase.getId());
+
+        // Showcases are disabled by default
+        showcase.setApproved(false);
 
         // Check if showcase exists
         if (oldShowcaseOptional.isPresent()) {

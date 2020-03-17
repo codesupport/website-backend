@@ -54,6 +54,7 @@ public class AccessorEvaluatorFactoryTest {
                 .getBeansOfType(AbstractAccessEvaluator.class);
 
         AccessEvaluatorFactory accessEvaluatorFactory = new AccessEvaluatorFactory(mockContext);
+        accessEvaluatorFactory.getEvaluatorMap();
 
         //rawtypes - This is fine for the purposes of this test
         //noinspection rawtypes

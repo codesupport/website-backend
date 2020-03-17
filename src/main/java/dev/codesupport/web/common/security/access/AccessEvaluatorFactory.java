@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security.access;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -35,6 +36,7 @@ public class AccessEvaluatorFactory {
      *
      * @return The map of evaluators
      */
+    @VisibleForTesting
     Map<String, AbstractAccessEvaluator<?>> getEvaluatorMap() {
         if (evaluatorMap == null) {
             evaluatorMap = new HashMap<>();

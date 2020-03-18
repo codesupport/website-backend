@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class SpringHttpClient implements HttpClient {
 
     // Using Spring's RestTemplate http client
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
     public SpringHttpClient(RestTemplate restTemplate) {

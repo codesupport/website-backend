@@ -91,6 +91,7 @@ public class AccessEvaluatorFactory {
      */
     //S1452 - No way to know what type of evaluator it will be.
     @SuppressWarnings("squid:S1452")
+    @VisibleForTesting
     AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName, String permission) {
         AbstractAccessEvaluator<?> evaluator;
 

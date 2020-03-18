@@ -14,6 +14,15 @@
 
 ``./mvn clean package`` - Deletes `target/` folder and repackages (preferred way to build)
 
+## Discord Settings
+Discord configuration is required to run the service, needed values for the yml:
+
+```
+client-id    // The ID for the discord developer app (found on discord dev portal)
+secret       // The secret for the discord developer app (found on discord dev portal)
+redirect-uri // The uri to redirect to from discord auth (found on discord dev portal)
+```
+
 ## Endpoints
 Swagger UI - `*/swagger-ui.html`
 

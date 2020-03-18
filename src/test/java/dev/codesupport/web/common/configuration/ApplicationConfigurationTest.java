@@ -36,7 +36,7 @@ public class ApplicationConfigurationTest {
     }
 
     @After
-    public void teardown() {
+    public void tearDown() {
         CrudOperations.setContext(null);
     }
 

@@ -5,6 +5,7 @@ import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.testutils.controller.throwparsing.parser.ThrowableParser;
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.junit.Test;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -21,6 +22,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+//S1192 - Unit Tests are not meant to be DRY
+@SuppressWarnings("squid:S1192")
 public class ErrorHandlerControllerTest {
 
     @Test
@@ -202,7 +205,7 @@ public class ErrorHandlerControllerTest {
 
         doReturn(mockThrowable3)
                 .when(mockRequest)
-                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
+                .getAttribute(DefaultErrorAttributes.class.getName() + ".ERROR");
 
         Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
 
@@ -230,7 +233,7 @@ public class ErrorHandlerControllerTest {
 
         doReturn(mockThrowable2)
                 .when(mockRequest)
-                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
+                .getAttribute(DefaultErrorAttributes.class.getName() + ".ERROR");
 
         Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
 
@@ -257,7 +260,7 @@ public class ErrorHandlerControllerTest {
 
         doReturn(mockThrowable1)
                 .when(mockRequest)
-                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
+                .getAttribute(DefaultErrorAttributes.class.getName() + ".ERROR");
 
         Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
 
@@ -282,7 +285,7 @@ public class ErrorHandlerControllerTest {
 
         doReturn(null)
                 .when(mockRequest)
-                .getAttribute(ErrorHandlerController.SPRING_DEFAULT_ERROR);
+                .getAttribute(DefaultErrorAttributes.class.getName() + ".ERROR");
 
         Throwable actual = controller.getExceptionOrReturnNull(mockRequest);
 

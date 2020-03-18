@@ -19,13 +19,12 @@ public class UserProfileReadEvaluator extends AbstractAccessEvaluator<UserProfil
     }
 
     /**
-     * Checks if user has right to link an account
-     * <p>Only authenticated users (with valid JWT) are allowed to link their account, as this is needed
-     * to know who the user is.</p>
+     * Performs a passive check if the requester can see the user's email
+     * <p>Only the requester that owns the user account is allowed to see their email.</p>
      *
      * @param auth        The Authentication associated with the access evaluation
      * @param userProfile The object associated with the access evaluation
-     * @return True if user is authenticated, False otherwise.
+     * @return True always.
      */
     @Override
     protected boolean hasPermissionCheck(Authentication auth, UserProfile userProfile) {
@@ -41,7 +40,7 @@ public class UserProfileReadEvaluator extends AbstractAccessEvaluator<UserProfil
      *
      * @param auth        The Authentication associated with the access evaluation
      * @param userProfile The object associated with the access evaluation
-     * @return True if Authentication can see UserProfile email, False otherwise
+     * @return True if Authentication can not see UserProfile email, False otherwise
      */
     @VisibleForTesting
     boolean isNotAllowedToSeeEmail(Authentication auth, UserProfile userProfile) {

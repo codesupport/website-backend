@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security.access;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class AccessEvaluatorFactory {
 
     private Map<String, AbstractAccessEvaluator<?>> evaluatorMap;
+    private ApplicationContext context;
 
     /**
      * Builds evaluator maps for all found AccessEvaluator components
@@ -24,15 +26,30 @@ public class AccessEvaluatorFactory {
      */
     @Autowired
     public AccessEvaluatorFactory(ApplicationContext context) {
-        evaluatorMap = new HashMap<>();
+        this.context = context;
+    }
 
-        //rawtypes - No choice here.
-        //noinspection rawtypes
-        Map<String, AbstractAccessEvaluator> beanMap = context.getBeansOfType(AbstractAccessEvaluator.class);
+    /**
+     * Lazy loads the evaluatorMap
+     * <p>Upon first request for an evaluator, loads the evaluators from the applciation context.
+     * This is done to combat a bean load order issue that surfaced.</p>
+     *
+     * @return The map of evaluators
+     */
+    @VisibleForTesting
+    Map<String, AbstractAccessEvaluator<?>> getEvaluatorMap() {
+        if (evaluatorMap == null) {
+            evaluatorMap = new HashMap<>();
 
-        for (AbstractAccessEvaluator<?> evaluator : beanMap.values()) {
-            evaluatorMap.put(evaluator.getEvaluatorName(), evaluator);
+            //rawtypes - No choice here.
+            //noinspection rawtypes
+            Map<String, AbstractAccessEvaluator> beanMap = context.getBeansOfType(AbstractAccessEvaluator.class);
+
+            for (AbstractAccessEvaluator<?> evaluator : beanMap.values()) {
+                evaluatorMap.put(evaluator.getEvaluatorName(), evaluator);
+            }
         }
+        return evaluatorMap;
     }
 
     /**
@@ -74,13 +91,14 @@ public class AccessEvaluatorFactory {
      */
     //S1452 - No way to know what type of evaluator it will be.
     @SuppressWarnings("squid:S1452")
+    @VisibleForTesting
     AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName, String permission) {
         AbstractAccessEvaluator<?> evaluator;
 
         String evaluatorName = permission + " " + canonicalClassName;
 
-        if (evaluatorMap.containsKey(evaluatorName)) {
-            evaluator = evaluatorMap.get(evaluatorName);
+        if (getEvaluatorMap().containsKey(evaluatorName)) {
+            evaluator = getEvaluatorMap().get(evaluatorName);
         } else {
             throw new InvalidArgumentException("No '" + permission + "' access evaluator for class type '" + canonicalClassName + "'");
         }

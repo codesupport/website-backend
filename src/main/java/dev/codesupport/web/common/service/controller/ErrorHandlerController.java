@@ -36,7 +36,7 @@ public class ErrorHandlerController implements ErrorController {
     /**
      * The attribute name for Spring's DefaultErrorAttribute related exceptions.
      */
-    static final String SPRING_DEFAULT_ERROR = DefaultErrorAttributes.class.getName() + ".ERROR";
+    private static final String SPRING_DEFAULT_ERROR = DefaultErrorAttributes.class.getName() + ".ERROR";
 
     @Autowired
     public ErrorHandlerController(ThrowableParserFactory throwableParserFactory) {

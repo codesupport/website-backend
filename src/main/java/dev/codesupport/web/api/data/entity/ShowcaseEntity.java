@@ -23,7 +23,6 @@ public class ShowcaseEntity implements IdentifiableEntity<Long> {
     private UserEntity user;
     @Column(length = 40)
     private String title;
-    @Column(columnDefinition = "TEXT")
     private String description;
     private boolean approved;
     private String link;

@@ -3,6 +3,7 @@ package dev.codesupport.web.common.service.controller;
 import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.controller.throwparser.ThrowableParserFactory;
+import dev.codesupport.web.common.service.http.DontWrapResponse;
 import lombok.extern.slf4j.Slf4j;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.common.service.service.RestStatus;
@@ -58,6 +59,7 @@ public class ErrorHandlerController implements ErrorController {
     //S3752 - Need to use RequestMapping to catch errors for every request method type.
     @SuppressWarnings({"squid:S3752", "WeakerAccess"})
     @RequestMapping("/error")
+    @DontWrapResponse
     public ResponseEntity<RestResponse<Serializable>> handleError(HttpServletRequest request) {
         RestResponse<Serializable> restResponse = createRestResponse();
 

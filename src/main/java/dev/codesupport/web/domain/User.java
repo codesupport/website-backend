@@ -1,8 +1,7 @@
 package dev.codesupport.web.domain;
 
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import lombok.Data;
-import dev.codesupport.web.common.domain.AbstractValidatable;
-import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
@@ -10,8 +9,7 @@ import java.util.Set;
  * Used internally by service to perform actions on a User.  Not to be returned by API.
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class User extends AbstractValidatable<Long> {
+public class User implements IdentifiableDomain<Long> {
 
     private Long id;
     private String alias;

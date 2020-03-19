@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.service.http;
+package dev.codesupport.web.common.service.http.client;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.google.common.annotations.VisibleForTesting;

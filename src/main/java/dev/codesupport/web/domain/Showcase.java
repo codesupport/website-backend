@@ -1,12 +1,10 @@
 package dev.codesupport.web.domain;
 
-import dev.codesupport.web.common.domain.AbstractValidatable;
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Showcase extends AbstractValidatable<Long> {
+public class Showcase implements IdentifiableDomain<Long> {
 
     private Long id;
     private UserStripped user;

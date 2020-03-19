@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.service.http;
+package dev.codesupport.web.common.service.http.client;
 
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;

@@ -1,13 +1,13 @@
 package dev.codesupport.web.common.service.service;
 
-import dev.codesupport.testutils.domain.MockDomain;
-import dev.codesupport.testutils.entity.MockEntity;
+import dev.codesupport.testutils.domain.MockIdentifiableDomain;
+import dev.codesupport.testutils.entity.MockIdentifiableEntity;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.exception.ValidationException;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
-import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidation;
+import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,9 +34,9 @@ import static org.mockito.Mockito.verify;
 
 public class CrudOperationsTest {
 
-    private static CrudOperations<MockEntity, Long, MockDomain> crudOperationsSpy;
-    private static JpaRepository<MockEntity, Long> mockRepository;
-    private static AbstractPersistenceValidation<MockEntity, Long, MockDomain, JpaRepository<MockEntity, Long>> mockValidator;
+    private static CrudOperations<MockIdentifiableEntity, MockIdentifiableDomain, Long> crudOperationsSpy;
+    private static JpaRepository<MockIdentifiableEntity, Long> mockRepository;
+    private static AbstractPersistenceValidator<MockIdentifiableEntity, Long, MockIdentifiableDomain, JpaRepository<MockIdentifiableEntity, Long>> mockValidator;
     private static ApplicationContext mockContext;
 
     @BeforeClass
@@ -45,22 +45,22 @@ public class CrudOperationsTest {
 
         //unchecked - This is not a concern for the purposes of this test.
         //noinspection unchecked
-        mockValidator = mock(AbstractPersistenceValidation.class);
+        mockValidator = mock(AbstractPersistenceValidator.class);
 
         //ResultOfMethodCallIgnored - Not calling a method, making a mock
         //noinspection ResultOfMethodCallIgnored
-        doReturn(MockEntity.class)
+        doReturn(MockIdentifiableEntity.class)
                 .when(mockValidator)
                 .getEntityType();
 
         //rawtypes - This is fine for hte purposes of this test.
         //noinspection rawtypes
-        Map<String, AbstractPersistenceValidation> abstractValidationMap = new HashMap<>();
+        Map<String, AbstractPersistenceValidator> abstractValidationMap = new HashMap<>();
         abstractValidationMap.put("mockValidator", mockValidator);
 
         doReturn(abstractValidationMap)
                 .when(mockContext)
-                .getBeansOfType(AbstractPersistenceValidation.class);
+                .getBeansOfType(AbstractPersistenceValidator.class);
 
         //unchecked - This is not a concern for the purposes of this test.
         //noinspection unchecked
@@ -71,8 +71,8 @@ public class CrudOperationsTest {
         crudOperationsSpy = spy(
                 new CrudOperations<>(
                         mockRepository,
-                        MockEntity.class,
-                        MockDomain.class
+                        MockIdentifiableEntity.class,
+                        MockIdentifiableDomain.class
                 )
         );
     }
@@ -91,10 +91,10 @@ public class CrudOperationsTest {
     @Test(expected = ConfigurationException.class)
     public void shouldThrowConfigurationExceptionIfNoContextConfigured() {
         CrudOperations.setContext(null);
-        CrudOperations<MockEntity, Long, MockDomain> crudOperations = new CrudOperations<>(
+        CrudOperations<MockIdentifiableEntity, MockIdentifiableDomain, Long> crudOperations = new CrudOperations<>(
                 mockRepository,
-                MockEntity.class,
-                MockDomain.class
+                MockIdentifiableEntity.class,
+                MockIdentifiableDomain.class
         );
 
         crudOperations.setupValidationBean();
@@ -104,7 +104,7 @@ public class CrudOperationsTest {
     public void shouldGetFirstCorrectValidationBean() {
         //ResultOfMethodCallIgnored - Not calling a method, making a mock
         //noinspection ResultOfMethodCallIgnored
-        doReturn(MockEntity.class)
+        doReturn(MockIdentifiableEntity.class)
                 .when(mockValidator)
                 .getEntityType();
 
@@ -112,7 +112,7 @@ public class CrudOperationsTest {
 
         //rawtypes - Fine for the purposes of this test.
         //noinspection rawtypes
-        AbstractPersistenceValidation actual = (AbstractPersistenceValidation) ReflectionTestUtils.getField(crudOperationsSpy, "validation");
+        AbstractPersistenceValidator actual = (AbstractPersistenceValidator) ReflectionTestUtils.getField(crudOperationsSpy, "validation");
 
         assertEquals(mockValidator, actual);
     }
@@ -122,20 +122,20 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        Optional<MockEntity> optional = Optional.of(
-                new MockEntity(id, "value")
+        Optional<MockIdentifiableEntity> optional = Optional.of(
+                new MockIdentifiableEntity(id, "value")
         );
 
         doReturn(optional)
                 .when(mockRepository)
                 .findById(id);
 
-        MockDomain expected = domainsToReturn.get(0);
-        MockDomain actual = crudOperationsSpy.getById(id);
+        MockIdentifiableDomain expected = domainsToReturn.get(0);
+        MockIdentifiableDomain actual = crudOperationsSpy.getById(id);
 
         assertEquals(expected, actual);
     }
@@ -156,19 +156,19 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockEntity> returnedEntities = Collections.singletonList(
-                new MockEntity(id, value)
+        List<MockIdentifiableEntity> returnedEntities = Collections.singletonList(
+                new MockIdentifiableEntity(id, value)
         );
 
         doReturn(returnedEntities)
                 .when(mockRepository)
                 .findAll();
 
-        List<MockDomain> actual = crudOperationsSpy.getAll();
+        List<MockIdentifiableDomain> actual = crudOperationsSpy.getAll();
 
         assertEquals(domainsToReturn, actual);
     }
@@ -178,12 +178,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doNothing()
@@ -209,12 +209,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doNothing()
@@ -237,19 +237,21 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        MockDomain domainToSave = new MockDomain(id, value);
+        MockIdentifiableDomain domainToSave = new MockIdentifiableDomain(id, value);
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .createEntities(Collections.singletonList(domainToSave));
 
-        List<MockDomain> actual = crudOperationsSpy.createEntity(domainToSave);
+        MockIdentifiableDomain expected = domainsToReturn.get(0);
 
-        assertEquals(domainsToReturn, actual);
+        MockIdentifiableDomain actual = crudOperationsSpy.createEntity(domainToSave);
+
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -257,12 +259,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doNothing()
@@ -277,7 +279,7 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
-        List<MockDomain> actual = crudOperationsSpy.createEntities(domainsToSave);
+        List<MockIdentifiableDomain> actual = crudOperationsSpy.createEntities(domainsToSave);
 
         assertEquals(domainsToReturn, actual);
     }
@@ -287,12 +289,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doNothing()
@@ -318,12 +320,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doThrow(ResourceNotFoundException.class)
@@ -346,12 +348,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doNothing()
@@ -377,12 +379,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doNothing()
@@ -405,12 +407,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
         doNothing()
@@ -425,7 +427,7 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
 
-        List<MockDomain> actual = crudOperationsSpy.updateEntities(domainsToSave);
+        List<MockIdentifiableDomain> actual = crudOperationsSpy.updateEntities(domainsToSave);
 
         assertEquals(domainsToReturn, actual);
     }
@@ -435,12 +437,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToDelete = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToDelete = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockEntity> entitiesToDelete = Collections.singletonList(
-                new MockEntity(id, value)
+        List<MockIdentifiableEntity> entitiesToDelete = Collections.singletonList(
+                new MockIdentifiableEntity(id, value)
         );
 
         doNothing()
@@ -462,27 +464,27 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToSave = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockEntity> entitiesToSave = Collections.singletonList(
-                new MockEntity(id, value)
+        List<MockIdentifiableEntity> entitiesToSave = Collections.singletonList(
+                new MockIdentifiableEntity(id, value)
         );
 
-        List<MockDomain> domainsToReturn = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockEntity> returnedEntities = Collections.singletonList(
-                new MockEntity(id, value)
+        List<MockIdentifiableEntity> returnedEntities = Collections.singletonList(
+                new MockIdentifiableEntity(id, value)
         );
 
         doReturn(returnedEntities)
                 .when(mockRepository)
                 .saveAll(entitiesToSave);
 
-        List<MockDomain> actual = crudOperationsSpy.saveEntities(domainsToSave);
+        List<MockIdentifiableDomain> actual = crudOperationsSpy.saveEntities(domainsToSave);
 
         assertEquals(domainsToReturn, actual);
     }
@@ -492,12 +494,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToDelete = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToDelete = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockEntity> entitiesToDelete = Collections.singletonList(
-                new MockEntity(id, value)
+        List<MockIdentifiableEntity> entitiesToDelete = Collections.singletonList(
+                new MockIdentifiableEntity(id, value)
         );
 
         doThrow(ResourceNotFoundException.class)
@@ -518,12 +520,12 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockDomain> domainsToDelete = Collections.singletonList(
-                new MockDomain(id, value)
+        List<MockIdentifiableDomain> domainsToDelete = Collections.singletonList(
+                new MockIdentifiableDomain(id, value)
         );
 
-        List<MockEntity> entitiesToDelete = Collections.singletonList(
-                new MockEntity(id, value)
+        List<MockIdentifiableEntity> entitiesToDelete = Collections.singletonList(
+                new MockIdentifiableEntity(id, value)
         );
 
         doNothing()
@@ -538,71 +540,21 @@ public class CrudOperationsTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldThrowValidationExceptionWhenDomainLevelValidationIssuesFound() {
-        MockDomain mockDomain = mock(MockDomain.class);
-
-        List<ValidationIssue> mockValidationIssues = Collections.singletonList(
-                mock(ValidationIssue.class)
-        );
-
-        doReturn(mockValidationIssues)
-                .when(mockDomain)
-                .validate();
-
-        List<MockDomain> mockDomains = Collections.singletonList(mockDomain);
-
-        crudOperationsSpy.validationCheck(mockDomains);
-    }
-
-    @Test
-    public void shouldNotInvokePersistenceLevelValidationIfDomainLevelIssuesFound() {
-
-        MockDomain mockDomain = mock(MockDomain.class);
-
-        List<ValidationIssue> mockValidationIssues = Collections.singletonList(
-                mock(ValidationIssue.class)
-        );
-
-        doReturn(mockValidationIssues)
-                .when(mockDomain)
-                .validate();
-
-        doReturn(Collections.emptyList())
-                .when(mockValidator)
-                .validate(mockDomain);
-
-        List<MockDomain> mockDomains = Collections.singletonList(mockDomain);
-
-        try {
-            crudOperationsSpy.validationCheck(mockDomains);
-        } catch (ValidationException e) {
-            //swallowing so we can do a verify assertion
-        }
-
-        verify(mockValidator, times(0))
-                .validate(mockDomain);
-    }
-
-    @Test(expected = ValidationException.class)
     public void shouldThrowValidationExceptionWhenPersistanceLevelValidationIssuesFound() {
 
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         List<ValidationIssue> mockValidationIssues = Collections.singletonList(
                 mock(ValidationIssue.class)
         );
 
-        doReturn(Collections.emptyList())
-                .when(mockDomain)
-                .validate();
-
         doReturn(mockValidationIssues)
                 .when(mockValidator)
-                .validate(mockDomain);
+                .validate(MockIdentifiableDomain);
 
-        List<MockDomain> mockDomains = Collections.singletonList(mockDomain);
+        List<MockIdentifiableDomain> MockIdentifiableDomains = Collections.singletonList(MockIdentifiableDomain);
 
-        crudOperationsSpy.validationCheck(mockDomains);
+        crudOperationsSpy.validationCheck(MockIdentifiableDomains);
     }
 
     //DefaultAnnotationParam - SonarQube requires an assertion, be explicit!
@@ -610,88 +562,84 @@ public class CrudOperationsTest {
     @Test(expected = Test.None.class)
     public void shouldThrowNoExceptionsIfNoValidationIssuesFoundOnAnyLevel() {
 
-        MockDomain mockDomain = mock(MockDomain.class);
-
-        doReturn(Collections.emptyList())
-                .when(mockDomain)
-                .validate();
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         doReturn(Collections.emptyList())
                 .when(mockValidator)
-                .validate(mockDomain);
+                .validate(MockIdentifiableDomain);
 
-        List<MockDomain> mockDomains = Collections.singletonList(mockDomain);
+        List<MockIdentifiableDomain> MockIdentifiableDomains = Collections.singletonList(MockIdentifiableDomain);
 
-        crudOperationsSpy.validationCheck(mockDomains);
+        crudOperationsSpy.validationCheck(MockIdentifiableDomains);
     }
 
     @Test
     public void shouldInvokeResourceDoesntExistCheckForEachDomain() {
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
-        List<MockDomain> mockDomains = Arrays.asList(
-                mockDomain,
-                mockDomain
+        List<MockIdentifiableDomain> MockIdentifiableDomains = Arrays.asList(
+                MockIdentifiableDomain,
+                MockIdentifiableDomain
         );
 
         doNothing()
                 .when(crudOperationsSpy)
-                .resourceDoesntExistCheck(mockDomain);
+                .resourceDoesntExistCheck(MockIdentifiableDomain);
 
-        crudOperationsSpy.resourcesDontExistCheck(mockDomains);
+        crudOperationsSpy.resourcesDontExistCheck(MockIdentifiableDomains);
 
-        verify(crudOperationsSpy, times(mockDomains.size()))
-                .resourceDoesntExistCheck(mockDomain);
+        verify(crudOperationsSpy, times(MockIdentifiableDomains.size()))
+                .resourceDoesntExistCheck(MockIdentifiableDomain);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldBubbleUpResourceNotFoundExceptionIfDomainDoesntExist() {
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
-        List<MockDomain> mockDomains = Arrays.asList(
-                mockDomain,
-                mockDomain
+        List<MockIdentifiableDomain> MockIdentifiableDomains = Arrays.asList(
+                MockIdentifiableDomain,
+                MockIdentifiableDomain
         );
 
         //Returns issues on second check
         doNothing()
                 .doThrow(ResourceNotFoundException.class)
                 .when(crudOperationsSpy)
-                .resourceDoesntExistCheck(mockDomain);
+                .resourceDoesntExistCheck(MockIdentifiableDomain);
 
-        crudOperationsSpy.resourcesDontExistCheck(mockDomains);
+        crudOperationsSpy.resourcesDontExistCheck(MockIdentifiableDomains);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfIdIsNull() {
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         //ResultOfMethodCallIgnored - Not doing method call, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(null)
-                .when(mockDomain)
+                .when(MockIdentifiableDomain)
                 .getId();
 
-        crudOperationsSpy.resourceDoesntExistCheck(mockDomain);
+        crudOperationsSpy.resourceDoesntExistCheck(MockIdentifiableDomain);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfNotFoundInRepo() {
         long id = 1L;
 
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         //ResultOfMethodCallIgnored - Not doing method call, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(id)
-                .when(mockDomain)
+                .when(MockIdentifiableDomain)
                 .getId();
 
         doReturn(false)
                 .when(mockRepository)
                 .existsById(id);
 
-        crudOperationsSpy.resourceDoesntExistCheck(mockDomain);
+        crudOperationsSpy.resourceDoesntExistCheck(MockIdentifiableDomain);
     }
 
     //DefaultAnnotationParam - SonarQube requires an assertion, be explicit!
@@ -700,72 +648,72 @@ public class CrudOperationsTest {
     public void shouldThrowNoExceptionWhenDomainExistsForResourceDoesntExistCheck() {
         long id = 1L;
 
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         //ResultOfMethodCallIgnored - Not doing method call, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(id)
-                .when(mockDomain)
+                .when(MockIdentifiableDomain)
                 .getId();
 
         doReturn(true)
                 .when(mockRepository)
                 .existsById(id);
 
-        crudOperationsSpy.resourceDoesntExistCheck(mockDomain);
+        crudOperationsSpy.resourceDoesntExistCheck(MockIdentifiableDomain);
     }
 
 
     @Test
     public void shouldInvokeResourceAlreadyExistsCheckForEachDomain() {
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
-        List<MockDomain> mockDomains = Arrays.asList(
-                mockDomain,
-                mockDomain
+        List<MockIdentifiableDomain> MockIdentifiableDomains = Arrays.asList(
+                MockIdentifiableDomain,
+                MockIdentifiableDomain
         );
 
         doNothing()
                 .when(crudOperationsSpy)
-                .resourceDoesntExistCheck(mockDomain);
+                .resourceDoesntExistCheck(MockIdentifiableDomain);
 
-        crudOperationsSpy.resourcesAlreadyExistCheck(mockDomains);
+        crudOperationsSpy.resourcesAlreadyExistCheck(MockIdentifiableDomains);
 
-        verify(crudOperationsSpy, times(mockDomains.size()))
-                .resourceAlreadyExistsCheck(mockDomain);
+        verify(crudOperationsSpy, times(MockIdentifiableDomains.size()))
+                .resourceAlreadyExistsCheck(MockIdentifiableDomain);
     }
 
     @Test(expected = ServiceLayerException.class)
     public void shouldBubbleUpServiceLayerExceptionIfDomainAlreadyExists() {
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
-        List<MockDomain> mockDomains = Arrays.asList(
-                mockDomain,
-                mockDomain
+        List<MockIdentifiableDomain> MockIdentifiableDomains = Arrays.asList(
+                MockIdentifiableDomain,
+                MockIdentifiableDomain
         );
 
         //Returns issues on second check
         doNothing()
                 .doThrow(ServiceLayerException.class)
                 .when(crudOperationsSpy)
-                .resourceAlreadyExistsCheck(mockDomain);
+                .resourceAlreadyExistsCheck(MockIdentifiableDomain);
 
-        crudOperationsSpy.resourcesAlreadyExistCheck(mockDomains);
+        crudOperationsSpy.resourcesAlreadyExistCheck(MockIdentifiableDomains);
     }
 
     @Test
     public void shouldNotInvokeRepoCheckIfIdIsNullForResourceAlreadyExistsCheck() {
         long id = 1L;
 
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         //ResultOfMethodCallIgnored - Not doing method call, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(null)
-                .when(mockDomain)
+                .when(MockIdentifiableDomain)
                 .getId();
 
-        crudOperationsSpy.resourceAlreadyExistsCheck(mockDomain);
+        crudOperationsSpy.resourceAlreadyExistsCheck(MockIdentifiableDomain);
 
         verify(mockRepository, times(0))
                 .existsById(id);
@@ -775,19 +723,19 @@ public class CrudOperationsTest {
     public void shouldThrowServiceLayerExceptionIfIdIsNotNullAndIsFoundInRepo() {
         long id = 1L;
 
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         //ResultOfMethodCallIgnored - Not doing method call, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(id)
-                .when(mockDomain)
+                .when(MockIdentifiableDomain)
                 .getId();
 
         doReturn(true)
                 .when(mockRepository)
                 .existsById(id);
 
-        crudOperationsSpy.resourceAlreadyExistsCheck(mockDomain);
+        crudOperationsSpy.resourceAlreadyExistsCheck(MockIdentifiableDomain);
     }
 
     //DefaultAnnotationParam - SonarQube requires an assertion, be explicit!
@@ -796,18 +744,18 @@ public class CrudOperationsTest {
     public void shouldThrowNoExceptionWhenDomainDoesntExistForResourceAlreadyExistsCheck() {
         long id = 1L;
 
-        MockDomain mockDomain = mock(MockDomain.class);
+        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
         //ResultOfMethodCallIgnored - Not doing method call, creating a mock
         //noinspection ResultOfMethodCallIgnored
         doReturn(id)
-                .when(mockDomain)
+                .when(MockIdentifiableDomain)
                 .getId();
 
         doReturn(false)
                 .when(mockRepository)
                 .existsById(id);
 
-        crudOperationsSpy.resourceAlreadyExistsCheck(mockDomain);
+        crudOperationsSpy.resourceAlreadyExistsCheck(MockIdentifiableDomain);
     }
 }

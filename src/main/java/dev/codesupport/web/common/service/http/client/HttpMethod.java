@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.service.http;
+package dev.codesupport.web.common.service.http.client;
 
 /**
  * Used in conjunction with the client to define request method types

@@ -1,6 +1,6 @@
 package dev.codesupport.web.domain;
 
-import dev.codesupport.web.common.domain.IdentifiableDomain;
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import lombok.Data;
 
 import java.util.Set;

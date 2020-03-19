@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.service.http;
+package dev.codesupport.web.common.service.http.client;
 
 import com.google.common.io.CharSource;
 import dev.codesupport.web.common.exception.HttpRequestException;

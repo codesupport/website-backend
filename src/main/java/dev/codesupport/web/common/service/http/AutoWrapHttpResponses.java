@@ -26,12 +26,10 @@ public class AutoWrapHttpResponses implements ResponseBodyAdvice<Object> {
 
     static {
         NON_SUPPORTED_METHODS = Arrays.asList(
-                "handleerror",
                 "uiconfiguration",
                 "securityconfiguration",
                 "swaggerresources",
                 "getdocumentation"
-
         );
     }
 
@@ -45,10 +43,18 @@ public class AutoWrapHttpResponses implements ResponseBodyAdvice<Object> {
      */
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
-        return returnType.getMethod() == null ||
-                !NON_SUPPORTED_METHODS.contains(
-                        returnType.getMethod().getName().toLowerCase()
-                );
+        boolean useWrapper;
+
+        if (returnType.getMethod() == null) {
+            useWrapper = false;
+        } else {
+            useWrapper = returnType.getMethodAnnotation(DontWrapResponse.class) == null &&
+                    !NON_SUPPORTED_METHODS.contains(
+                            returnType.getMethod().getName().toLowerCase()
+                    );
+        }
+
+        return useWrapper;
     }
 
     /**

@@ -1,6 +1,6 @@
 package dev.codesupport.web.api.data.entity;
 
-import dev.codesupport.web.common.service.data.entity.IdentifiableEntity;
+import dev.codesupport.web.common.data.entity.IdentifiableEntity;
 import lombok.Data;
 
 import javax.persistence.Entity;

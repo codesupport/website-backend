@@ -1,18 +1,16 @@
 package dev.codesupport.web.domain;
 
-import dev.codesupport.web.common.domain.AbstractValidatable;
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import dev.codesupport.web.domain.validation.annotation.AliasConstraint;
 import dev.codesupport.web.domain.validation.annotation.EmailConstraint;
 import dev.codesupport.web.domain.validation.annotation.PasswordConstraint;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * Used for user registration post requests.
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UserRegistration extends AbstractValidatable<Long> {
+public class UserRegistration implements IdentifiableDomain<Long> {
 
     private Long id;
     @AliasConstraint

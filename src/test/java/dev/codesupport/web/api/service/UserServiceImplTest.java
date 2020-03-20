@@ -38,8 +38,8 @@ public class UserServiceImplTest {
 
     private static HashingUtility mockHashingUtility;
 
-    private static CrudOperations<UserEntity, Long, User> mockUserCrudOperations;
-    private static CrudOperations<UserEntity, Long, UserProfileStripped> mockUserProfileCrudOperations;
+    private static CrudOperations<UserEntity, User, Long> mockUserCrudOperations;
+    private static CrudOperations<UserEntity, UserProfileStripped, Long> mockUserProfileCrudOperations;
 
     private static UserRepository mockUserRepository;
 
@@ -197,7 +197,7 @@ public class UserServiceImplTest {
 
         User user = mapper().convertValue(userRegistration, User.class);
 
-        doReturn(getUserList)
+        doReturn(getUserList.get(0))
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 

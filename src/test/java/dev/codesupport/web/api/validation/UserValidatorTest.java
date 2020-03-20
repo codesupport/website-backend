@@ -16,17 +16,17 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-public class UserValidationTest {
+public class UserValidatorTest {
 
     private static UserRepository mockUserRepository;
 
-    private static UserValidation validation;
+    private static UserValidator validation;
 
     @BeforeClass
     public static void init() {
         mockUserRepository = mock(UserRepository.class);
 
-        validation = new UserValidation(mockUserRepository);
+        validation = new UserValidator(mockUserRepository);
     }
 
     @Before

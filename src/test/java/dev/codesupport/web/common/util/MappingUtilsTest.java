@@ -1,8 +1,8 @@
 package dev.codesupport.web.common.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.codesupport.testutils.domain.MockDomain;
-import dev.codesupport.testutils.entity.MockEntity;
+import dev.codesupport.testutils.domain.MockIdentifiableDomain;
+import dev.codesupport.testutils.entity.MockIdentifiableEntity;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -27,10 +27,10 @@ public class MappingUtilsTest {
         Long id = 1L;
         String propertyValue = "property";
 
-        MockDomain domain = new MockDomain(id, propertyValue);
+        MockIdentifiableDomain domain = new MockIdentifiableDomain(id, propertyValue);
 
-        MockEntity expected = new MockEntity(id, propertyValue);
-        MockEntity actual = MappingUtils.convertToType(domain, MockEntity.class);
+        MockIdentifiableEntity expected = new MockIdentifiableEntity(id, propertyValue);
+        MockIdentifiableEntity actual = MappingUtils.convertToType(domain, MockIdentifiableEntity.class);
 
         assertEquals(expected, actual);
     }
@@ -40,14 +40,14 @@ public class MappingUtilsTest {
         Long id = 1L;
         String propertyValue = "property";
 
-        List<MockDomain> domains = Collections.singletonList(
-                new MockDomain(id, propertyValue)
+        List<MockIdentifiableDomain> domains = Collections.singletonList(
+                new MockIdentifiableDomain(id, propertyValue)
         );
 
-        List<MockEntity> expected = Collections.singletonList(
-                new MockEntity(id, propertyValue)
+        List<MockIdentifiableEntity> expected = Collections.singletonList(
+                new MockIdentifiableEntity(id, propertyValue)
         );
-        List<MockEntity> actual = MappingUtils.convertToType(domains, MockEntity.class);
+        List<MockIdentifiableEntity> actual = MappingUtils.convertToType(domains, MockIdentifiableEntity.class);
 
         assertEquals(expected, actual);
     }
@@ -59,8 +59,8 @@ public class MappingUtilsTest {
 
         String jsonString = "{ \"id\" : 1, \"propertyA\" : \"property\" }";
 
-        MockDomain expected = new MockDomain(id, propertyValue);
-        MockDomain actual = MappingUtils.convertFromJson(jsonString, MockDomain.class);
+        MockIdentifiableDomain expected = new MockIdentifiableDomain(id, propertyValue);
+        MockIdentifiableDomain actual = MappingUtils.convertFromJson(jsonString, MockIdentifiableDomain.class);
 
         assertEquals(expected, actual);
     }
@@ -72,10 +72,10 @@ public class MappingUtilsTest {
 
         String jsonString = "[ { \"id\" : 1, \"propertyA\" : \"property\" } ]";
 
-        List<MockDomain> expected = Collections.singletonList(
-                new MockDomain(id, propertyValue)
+        List<MockIdentifiableDomain> expected = Collections.singletonList(
+                new MockIdentifiableDomain(id, propertyValue)
         );
-        List<MockDomain> actual = MappingUtils.convertFromJsonList(jsonString, MockDomain.class);
+        List<MockIdentifiableDomain> actual = MappingUtils.convertFromJsonList(jsonString, MockIdentifiableDomain.class);
 
         assertEquals(expected, actual);
     }

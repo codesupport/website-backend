@@ -23,8 +23,8 @@ import java.util.List;
 @Component
 public class UserServiceImpl implements UserService {
 
-    private final CrudOperations<UserEntity, Long, User> userCrudOperations;
-    private final CrudOperations<UserEntity, Long, UserProfileStripped> userProfileCrudOperations;
+    private final CrudOperations<UserEntity, User, Long> userCrudOperations;
+    private final CrudOperations<UserEntity, UserProfileStripped, Long> userProfileCrudOperations;
 
     private final UserRepository userRepository;
 
@@ -86,10 +86,10 @@ public class UserServiceImpl implements UserService {
                 hashingUtility.hashPassword(userRegistration.getPassword())
         );
 
-        List<User> users = userCrudOperations.createEntity(user);
+        User createdUser = userCrudOperations.createEntity(user);
 
         return new TokenResponse(
-                jwtUtility.generateToken(users.get(0).getAlias(), users.get(0).getEmail())
+                jwtUtility.generateToken(createdUser.getAlias(), createdUser.getEmail())
         );
     }
 

@@ -2,8 +2,8 @@ package dev.codesupport.web.common.configuration;
 
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
-import dev.codesupport.web.common.service.http.ObjectToUrlEncodedConverter;
-import dev.codesupport.web.common.service.http.RestTemplateResponseErrorHandler;
+import dev.codesupport.web.common.service.http.client.ObjectToUrlEncodedConverter;
+import dev.codesupport.web.common.service.http.client.RestTemplateResponseErrorHandler;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import org.junit.After;
 import org.junit.Before;

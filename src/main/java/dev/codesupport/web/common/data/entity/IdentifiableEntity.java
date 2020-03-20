@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.service.data.entity;
+package dev.codesupport.web.common.data.entity;
 
 import java.io.Serializable;
 

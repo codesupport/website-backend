@@ -1,8 +1,8 @@
 package dev.codesupport.web.common.service.validation.persistant;
 
-import dev.codesupport.web.common.service.data.entity.IdentifiableEntity;
+import dev.codesupport.web.common.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
-import dev.codesupport.web.common.domain.IdentifiableDomain;
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import lombok.Data;
 import org.springframework.data.repository.CrudRepository;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @see IdentifiableDomain
  */
 @Data
-public abstract class AbstractPersistenceValidation<E extends IdentifiableEntity<I>, I, D extends IdentifiableDomain<I>, C extends CrudRepository<E, I>> {
+public abstract class AbstractPersistenceValidator<E extends IdentifiableEntity<I>, I, D extends IdentifiableDomain<I>, C extends CrudRepository<E, I>> {
 
     private final Class<E> entityType;
 
@@ -33,7 +33,7 @@ public abstract class AbstractPersistenceValidation<E extends IdentifiableEntity
      */
     protected C repository;
 
-    public AbstractPersistenceValidation(C repository) {
+    public AbstractPersistenceValidator(C repository) {
         this.repository = repository;
 
         Object type = this.getClass().getGenericSuperclass();

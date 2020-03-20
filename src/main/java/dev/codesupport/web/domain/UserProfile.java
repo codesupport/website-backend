@@ -1,8 +1,7 @@
 package dev.codesupport.web.domain;
 
-import dev.codesupport.web.common.domain.AbstractValidatable;
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
@@ -12,8 +11,7 @@ import java.util.Set;
  * No password.
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UserProfile extends AbstractValidatable<Long> {
+public class UserProfile implements IdentifiableDomain<Long> {
 
     private Long id;
     private String alias;

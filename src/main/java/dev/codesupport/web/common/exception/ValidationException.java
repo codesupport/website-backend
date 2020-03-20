@@ -1,16 +1,16 @@
 package dev.codesupport.web.common.exception;
 
-import dev.codesupport.web.common.domain.AbstractValidatable;
-import lombok.Getter;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
+import dev.codesupport.web.common.service.service.CrudOperations;
+
+import lombok.Getter;
 
 import java.util.List;
 
 /**
  * Used to indicate domain level or persistence level validation issues.
  *
- * @see AbstractValidatable
- * @see dev.codesupport.web.common.service.service.CrudOperations
+ * @see CrudOperations
  */
 public class ValidationException extends ServiceLayerException {
 

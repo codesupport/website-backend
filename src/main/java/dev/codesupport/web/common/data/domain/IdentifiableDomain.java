@@ -1,4 +1,4 @@
-package dev.codesupport.web.common.domain;
+package dev.codesupport.web.common.data.domain;
 
 import java.io.Serializable;
 

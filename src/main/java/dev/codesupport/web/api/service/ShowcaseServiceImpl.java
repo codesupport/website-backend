@@ -24,7 +24,7 @@ public class ShowcaseServiceImpl implements ShowcaseService {
     private final ContributorListRepository contributorListRepository;
     private final ContributorRepository contributorRepository;
     private final ShowcaseRepository showcaseRepository;
-    private final CrudOperations<ShowcaseEntity, Long, Showcase> crudOperations;
+    private final CrudOperations<ShowcaseEntity, Showcase, Long> crudOperations;
 
     @Autowired
     public ShowcaseServiceImpl(

@@ -1,17 +1,16 @@
 package dev.codesupport.web.common.service.service;
 
 import com.google.common.annotations.VisibleForTesting;
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
+import dev.codesupport.web.common.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.exception.ValidationException;
-import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidation;
-import dev.codesupport.web.common.util.ListUtils;
-import lombok.Setter;
-import dev.codesupport.web.common.domain.AbstractValidatable;
-import dev.codesupport.web.common.service.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
+import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
 import dev.codesupport.web.common.util.MappingUtils;
+import lombok.Setter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -29,14 +28,14 @@ import java.util.Optional;
  * @param <I> Associated type of the Id property on the given resource.
  * @param <D> Domain class associated to the respected resource. Must implement Validatable interface.
  * @see IdentifiableEntity
- * @see AbstractValidatable
+ * @see IdentifiableDomain
  */
-public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends AbstractValidatable<I>> {
+public class CrudOperations<E extends IdentifiableEntity<I>, D extends IdentifiableDomain<I>, I> {
 
-    private final JpaRepository<E, I> jpaRepository;
-    private final Class<E> entityClass;
-    private final Class<D> domainClass;
-    private AbstractPersistenceValidation<E, I, D, ? extends JpaRepository<E, I>> validation;
+    protected final JpaRepository<E, I> jpaRepository;
+    protected final Class<E> entityClass;
+    protected final Class<D> domainClass;
+    private AbstractPersistenceValidator<E, I, D, ? extends JpaRepository<E, I>> validation;
     @Setter
     private static ApplicationContext context;
 
@@ -70,18 +69,18 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
             throw new ConfigurationException("CrudOperations ApplicationContext not configured");
         }
 
-        AbstractPersistenceValidation<E, I, D, JpaRepository<E, I>> validationToReturn = null;
+        AbstractPersistenceValidator<E, I, D, JpaRepository<E, I>> validationToReturn = null;
 
         //rawtypes - This is fine for this logic.
         //noinspection rawtypes
-        Map<String, AbstractPersistenceValidation> beans = context.getBeansOfType(AbstractPersistenceValidation.class);
+        Map<String, AbstractPersistenceValidator> beans = context.getBeansOfType(AbstractPersistenceValidator.class);
 
         //rawtypes - This is fine for this logic.
         //noinspection rawtypes
-        for (Map.Entry<String, AbstractPersistenceValidation> bean : beans.entrySet()) {
+        for (Map.Entry<String, AbstractPersistenceValidator> bean : beans.entrySet()) {
             //rawtypes - This is fine for this logic.
             //noinspection rawtypes
-            AbstractPersistenceValidation validationBean = bean.getValue();
+            AbstractPersistenceValidator validationBean = bean.getValue();
             if (
                     validationToReturn == null &&
                             validationBean.getEntityType().equals(entityClass)
@@ -125,11 +124,16 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * and that the provided data is valid.</p>
      *
      * @param domainObject The resource data to persist
-     * @return List of the persisted data including fields added at the time of persistence
+     * @return The persisted data including fields added at the time of persistence
      * @throws ServiceLayerException if the data already exists.
      */
-    public List<D> createEntity(D domainObject) {
-        return createEntities(Collections.singletonList(domainObject));
+    public D createEntity(D domainObject) {
+        return createEntities(Collections.singletonList(domainObject)).get(0);
+    }
+
+    protected void preCreate(List<D> domainObjects) {
+        domainObjects.forEach(object -> object.setId(null));
+        validationCheck(domainObjects);
     }
 
     /**
@@ -142,11 +146,27 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @throws ServiceLayerException if the data already exists.
      */
     public List<D> createEntities(List<D> domainObjects) {
-        emptyArgumentListCheck(domainObjects);
-        domainObjects.forEach(object -> object.setId(null));
-        validationCheck(domainObjects);
+        preCreate(domainObjects);
 
         return saveEntities(domainObjects);
+    }
+
+    /**
+     * Attempts to persist updated resource data
+     * <p>In updating the data, first it is validated that the data to update already exists, and that the provided
+     * data is valid.</p>
+     *
+     * @param domainObject The resource data to update
+     * @return The updated data including fields added at the time of persistence
+     * @throws ResourceNotFoundException if the data does not exist.
+     */
+    public D updateEntity(D domainObject) {
+        return updateEntities(Collections.singletonList(domainObject)).get(0);
+    }
+
+    protected void preUpdate(List<D> domainObjects) {
+        resourcesDontExistCheck(domainObjects);
+        validationCheck(domainObjects);
     }
 
     /**
@@ -159,9 +179,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * @throws ResourceNotFoundException if the data does not exist.
      */
     public List<D> updateEntities(List<D> domainObjects) {
-        emptyArgumentListCheck(domainObjects);
-        resourcesDontExistCheck(domainObjects);
-        validationCheck(domainObjects);
+        preUpdate(domainObjects);
 
         return saveEntities(domainObjects);
     }
@@ -185,16 +203,32 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
      * Attempts to delete the given data from the persistent storage.
      * <p>In deleting the data, first it is validated that the data to delete already exists.</p>
      *
+     * @param domainObject The resource data to delete
+     * @throws ResourceNotFoundException if the data does not exist.
+     */
+    public int deleteEntity(D domainObject) {
+        return deleteEntities(Collections.singletonList(domainObject));
+    }
+
+    protected void preDelete(List<D> domainObjects) {
+        resourcesDontExistCheck(domainObjects);
+    }
+
+    /**
+     * Attempts to delete the given data from the persistent storage.
+     * <p>In deleting the data, first it is validated that the data to delete already exists.</p>
+     *
      * @param domainObjects The list of resource data to delete
      * @throws ResourceNotFoundException if the data does not exist.
      */
-    public void deleteEntities(List<D> domainObjects) {
-        emptyArgumentListCheck(domainObjects);
-        resourcesDontExistCheck(domainObjects);
+    public int deleteEntities(List<D> domainObjects) {
+        preDelete(domainObjects);
 
         List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
 
         jpaRepository.deleteAll(entities);
+
+        return domainObjects.size();
     }
 
     /**
@@ -209,14 +243,13 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
     @VisibleForTesting
     void validationCheck(List<D> domainObjects) {
         List<ValidationIssue> validationIssues = new ArrayList<>();
-        for (D domainObject : domainObjects) {
-            validationIssues.addAll(domainObject.validate());
-        }
-        if (validationIssues.isEmpty() && validation != null) {
+
+        if (validation != null) {
             for (D domainObject : domainObjects) {
                 validationIssues.addAll(validation.validate(domainObject));
             }
         }
+
         if (!validationIssues.isEmpty()) {
             throw new ValidationException(validationIssues);
         }
@@ -271,13 +304,6 @@ public class CrudOperations<E extends IdentifiableEntity<I>, I, D extends Abstra
     void resourceAlreadyExistsCheck(D domainObject) {
         if (domainObject.getId() != null && jpaRepository.existsById(domainObject.getId())) {
             throw new ServiceLayerException(ServiceLayerException.Reason.RESOURCE_ALREADY_EXISTS);
-        }
-    }
-
-    @VisibleForTesting
-    void emptyArgumentListCheck(List<D> domainObjects) {
-        if (ListUtils.isEmpty(domainObjects)) {
-            throw new ServiceLayerException(ServiceLayerException.Reason.EMPTY_PAYLOAD);
         }
     }
 }

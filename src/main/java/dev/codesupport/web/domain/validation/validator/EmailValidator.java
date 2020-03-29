@@ -12,20 +12,10 @@ import javax.validation.ConstraintValidatorContext;
 public class EmailValidator implements ConstraintValidator<EmailConstraint, String> {
 
     /**
-     * No logic implemented for this validation
-     *
-     * @param email Reference to the constraint annotation
-     */
-    @Override
-    public void initialize(EmailConstraint email) {
-        // Empty because there's nothing to go here.
-    }
-
-    /**
      * Validates the value of the emailField.
      *
      * @param emailField The value of the email property
-     * @param cxt        ?
+     * @param cxt        Reference to the validation context
      * @return True if the value is valid, False otherwise.
      */
     @Override

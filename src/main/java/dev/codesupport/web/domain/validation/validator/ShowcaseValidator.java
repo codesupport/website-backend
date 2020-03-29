@@ -2,11 +2,21 @@ package dev.codesupport.web.domain.validation.validator;
 
 import dev.codesupport.web.domain.Showcase;
 import dev.codesupport.web.domain.validation.MultiViolationConstraintValidator;
+import dev.codesupport.web.domain.validation.Violation;
 import dev.codesupport.web.domain.validation.annotation.ShowcaseConstraint;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Validation logic to be performed on properties annotated with {@link ShowcaseConstraint}
+ */
 public class ShowcaseValidator implements MultiViolationConstraintValidator<ShowcaseConstraint, Showcase> {
 
+    /**
+     * Validates a {@link Showcase} object
+     *
+     * @param showcase  The {@link Showcase} object to validate
+     * @param violation Reference to the violation helper object used for this validation
+     */
     @Override
     public void validate(Showcase showcase, Violation violation) {
         if (StringUtils.isBlank(showcase.getTitle())) {
@@ -24,10 +34,21 @@ public class ShowcaseValidator implements MultiViolationConstraintValidator<Show
         if (showcase.getContributorList() == null) {
             violation.missing(Showcase.Fields.contributorList);
         } else {
-            ContributorListValidator contributorListValidator = new ContributorListValidator();
+            // If ContributorList exists, validate it
+            ContributorListValidator contributorListValidator = contributorListValidator();
 
-            contributorListValidator.validate(showcase.getContributorList(), violation);
+            contributorListValidator.validateContributorList(showcase.getContributorList(), violation, Showcase.Fields.contributorList);
         }
+    }
+
+    /**
+     * Builds a {@link ContributorListValidator} instance
+     * <p>Exists simply for easier unit testing</p>
+     *
+     * @return A new {@link ContributorListValidator} instance
+     */
+    ContributorListValidator contributorListValidator() {
+        return new ContributorListValidator();
     }
 
 }

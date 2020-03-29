@@ -1,5 +1,6 @@
 package dev.codesupport.web.domain.validation.validator;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.util.ListUtils;
 import dev.codesupport.web.common.util.StringUtils;
 import dev.codesupport.web.domain.Contributor;
@@ -62,6 +63,7 @@ public class ContributorListValidator implements MultiViolationConstraintValidat
      *
      * @return A new {@link ContributorValidator} instance
      */
+    @VisibleForTesting
     ContributorValidator contributorValidator() {
         return new ContributorValidator();
     }

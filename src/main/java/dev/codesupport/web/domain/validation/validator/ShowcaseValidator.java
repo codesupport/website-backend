@@ -1,5 +1,6 @@
 package dev.codesupport.web.domain.validation.validator;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.domain.Showcase;
 import dev.codesupport.web.domain.validation.MultiViolationConstraintValidator;
 import dev.codesupport.web.domain.validation.Violation;
@@ -47,6 +48,7 @@ public class ShowcaseValidator implements MultiViolationConstraintValidator<Show
      *
      * @return A new {@link ContributorListValidator} instance
      */
+    @VisibleForTesting
     ContributorListValidator contributorListValidator() {
         return new ContributorListValidator();
     }

@@ -12,20 +12,10 @@ import javax.validation.ConstraintValidatorContext;
 public class AliasValidator implements ConstraintValidator<AliasConstraint, String> {
 
     /**
-     * No logic implemented for this validation
-     *
-     * @param alias Reference to the constraint annotation
-     */
-    @Override
-    public void initialize(AliasConstraint alias) {
-        // Empty because there's nothing to go here.
-    }
-
-    /**
      * Validates the value of the aliasField.
      *
      * @param aliasField The value of the alias property
-     * @param cxt        ?
+     * @param cxt        Reference to the validation context
      * @return True if the value is valid, False otherwise.
      */
     @Override

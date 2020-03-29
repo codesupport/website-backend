@@ -12,20 +12,10 @@ import javax.validation.ConstraintValidatorContext;
 public class PasswordValidator implements ConstraintValidator<PasswordConstraint, String> {
 
     /**
-     * No logic implemented for this validation
-     *
-     * @param password Reference to the constraint annotation
-     */
-    @Override
-    public void initialize(PasswordConstraint password) {
-        // Empty because there's nothing to go here.
-    }
-
-    /**
      * Validates the value of the passwordField.
      *
      * @param passwordField The value of the property
-     * @param cxt           ?
+     * @param cxt           Reference to the validation context
      * @return True if the value is valid, False otherwise.
      */
     @Override

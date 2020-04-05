@@ -28,7 +28,7 @@ public class RestResponse<T extends Serializable> {
     /**
      * Any error/warning messages associated to the specific request
      */
-    private String message;
+    private Object message;
     /**
      * A reference ID to associate to the specific request, used for logging / troubleshooting
      */

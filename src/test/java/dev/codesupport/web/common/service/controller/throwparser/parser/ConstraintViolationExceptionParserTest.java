@@ -76,7 +76,7 @@ public class ConstraintViolationExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String expected = "Invalid parameter(s): [MockNode 'apple': test message]";
+        String expected = "[MockNode: test message]";
 
         assertEquals(expected, parser.responseMessage());
     }

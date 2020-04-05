@@ -2,6 +2,8 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.domain.Showcase;
 import dev.codesupport.web.domain.VoidMethodResponse;
+import dev.codesupport.web.domain.validation.annotation.EntityDeleteConstraint;
+import dev.codesupport.web.domain.validation.annotation.ShowcaseConstraint;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -36,14 +37,14 @@ public interface ShowcaseController {
 
     @ApiOperation("Create a Showcase")
     @PostMapping("/showcases")
-    Showcase createShowcase(@RequestBody @Valid Showcase showcase);
+    Showcase createShowcase(@RequestBody @ShowcaseConstraint Showcase showcase);
 
     @ApiOperation("Update a Showcase")
     @PutMapping("/showcases")
-    Showcase updateShowcase(@RequestBody @Valid Showcase showcase);
+    Showcase updateShowcase(@RequestBody @ShowcaseConstraint Showcase showcase);
 
     @ApiOperation("Delete a Showcase")
     @DeleteMapping("/showcases")
-    VoidMethodResponse deleteShowcase(@RequestBody @Valid Showcase showcase);
+    VoidMethodResponse deleteShowcase(@RequestBody @EntityDeleteConstraint Showcase showcase);
 
 }

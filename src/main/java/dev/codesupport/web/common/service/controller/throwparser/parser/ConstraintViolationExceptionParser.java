@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,16 +29,11 @@ public class ConstraintViolationExceptionParser extends AbstractThrowableParser<
 
     @Override
     protected String responseMessage() {
-        List<ConstraintViolation<?>> brokenConstraints = Lists.newArrayList(
-                throwable.getConstraintViolations().iterator()
-        );
+        return Arrays.stream(throwable.getConstraintViolations().toArray(new ConstraintViolation[]{}))
+                .map(constraintViolation -> {
+                    List<Path.Node> nodes = Lists.newArrayList(constraintViolation.getPropertyPath().iterator());
 
-        String brokenConstraintMessage = brokenConstraints.stream().map(e -> {
-            List<Path.Node> pathNodes = Lists.newArrayList(e.getPropertyPath().iterator());
-            return "[" + pathNodes.get(pathNodes.size() - 1).toString() + " '" + e.getInvalidValue() + "': " + e.getMessage() + "]";
-        }).collect(Collectors.joining(","));
-
-        return "Invalid parameter(s): " + brokenConstraintMessage;
-
+                    return "[" + nodes.get(nodes.size() - 1) + ": " + constraintViolation.getMessage() + "]";
+                }).collect(Collectors.joining(","));
     }
 }

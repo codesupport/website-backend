@@ -14,13 +14,18 @@ public class ShowcaseControllerImpl implements ShowcaseController {
     private final ShowcaseService service;
 
     @Autowired
-    public ShowcaseControllerImpl(ShowcaseService service){
+    public ShowcaseControllerImpl(ShowcaseService service) {
         this.service = service;
     }
 
     @Override
     public List<Showcase> findAllShowcases() {
         return service.findAllShowcases();
+    }
+
+    @Override
+    public List<Showcase> findAllShowcasesByUser(Long userid) {
+        return service.findAllShowcasesByUser(userid);
     }
 
     @Override

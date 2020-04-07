@@ -6,6 +6,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -24,11 +25,11 @@ public class MethodArgumentNotValidExceptionParser extends AbstractThrowablePars
     }
 
     @Override
-    protected String responseMessage() {
+    protected List<String> responseMessage() {
         return throwable
                 .getBindingResult()
                 .getFieldErrors()
                 .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.toList());
     }
 }

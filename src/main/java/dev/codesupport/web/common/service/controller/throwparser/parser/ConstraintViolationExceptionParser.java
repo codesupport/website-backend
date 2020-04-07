@@ -28,12 +28,12 @@ public class ConstraintViolationExceptionParser extends AbstractThrowableParser<
     }
 
     @Override
-    protected String responseMessage() {
+    protected List<String> responseMessage() {
         return Arrays.stream(throwable.getConstraintViolations().toArray(new ConstraintViolation[]{}))
                 .map(constraintViolation -> {
                     List<Path.Node> nodes = Lists.newArrayList(constraintViolation.getPropertyPath().iterator());
 
-                    return "[" + nodes.get(nodes.size() - 1) + ": " + constraintViolation.getMessage() + "]";
-                }).collect(Collectors.joining(","));
+                    return nodes.get(nodes.size() - 1) + ": " + constraintViolation.getMessage();
+                }).collect(Collectors.toList());
     }
 }

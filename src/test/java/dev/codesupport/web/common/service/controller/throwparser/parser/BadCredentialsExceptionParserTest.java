@@ -6,6 +6,9 @@ import org.junit.Test;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -40,8 +43,8 @@ public class BadCredentialsExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String expected = "The username/password supplied was invalid/inactive";
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList("The username/password supplied was invalid/inactive");
+        List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
     }

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -30,6 +32,10 @@ public interface ShowcaseController {
     @ApiOperation("Get all Showcases")
     @GetMapping("/showcases")
     List<Showcase> findAllShowcases();
+
+    @ApiOperation("Get Showcase by User ID")
+    @GetMapping(value = "/showcases", params = {"userid"})
+    List<Showcase> findAllShowcasesByUser(@RequestParam @NotNull Long userid);
 
     @ApiOperation("Get Showcase by id")
     @GetMapping("/showcases/{id}")

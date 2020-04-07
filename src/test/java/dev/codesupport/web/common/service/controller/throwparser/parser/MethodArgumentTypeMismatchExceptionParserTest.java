@@ -7,6 +7,9 @@ import org.springframework.core.MethodParameter;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -59,8 +62,10 @@ public class MethodArgumentTypeMismatchExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String expected = "Invalid parameter " + parameterName + " (Required: " + parameterType.getSimpleName() + ")";
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList(
+                "Invalid parameter " + parameterName + " (Required: " + parameterType.getSimpleName() + ")"
+        );
+        List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -61,8 +62,10 @@ public class MethodArgumentNotValidExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String exceptionMessage = "message 1,message 2";
-        String actual = parser.responseMessage();
+        List<String> exceptionMessage = fieldErrorList.stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+        List<String> actual = parser.responseMessage();
 
         assertEquals(exceptionMessage, actual);
     }

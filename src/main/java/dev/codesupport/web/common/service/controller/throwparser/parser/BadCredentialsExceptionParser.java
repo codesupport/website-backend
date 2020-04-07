@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to parse Spring's {@link BadCredentialsException} type throwables.
  *
@@ -22,8 +25,10 @@ public class BadCredentialsExceptionParser extends AbstractThrowableParser<BadCr
     }
 
     @Override
-    protected String responseMessage() {
-        return "The username/password supplied was invalid/inactive";
+    protected List<String> responseMessage() {
+        return Collections.singletonList(
+                "The username/password supplied was invalid/inactive"
+        );
     }
 
     @Override

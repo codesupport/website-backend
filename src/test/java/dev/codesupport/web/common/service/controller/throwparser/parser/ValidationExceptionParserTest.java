@@ -72,8 +72,8 @@ public class ValidationExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String expected = "[" + parameterName + ": " + validationMessage + "]";
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList(parameterName + ": " + validationMessage);
+        List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
     }

@@ -4,6 +4,9 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import dev.codesupport.web.common.service.service.RestStatus;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
+import java.util.List;
+
 @NoArgsConstructor
 public class ThrowableParser extends AbstractThrowableParser<Throwable> {
 
@@ -13,8 +16,8 @@ public class ThrowableParser extends AbstractThrowableParser<Throwable> {
     }
 
     @Override
-    protected String responseMessage() {
-        return "Mock parser message";
+    protected List<String> responseMessage() {
+        return Collections.singletonList("Mock parser message");
     }
 
     @Override

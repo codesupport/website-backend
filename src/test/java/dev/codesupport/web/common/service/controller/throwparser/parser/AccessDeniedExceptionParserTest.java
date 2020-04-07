@@ -6,6 +6,9 @@ import org.junit.Test;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -40,10 +43,12 @@ public class AccessDeniedExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String exceptionMessage = "You are not permitted to perform the requested action on the requested resource.";
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList(
+                "You are not permitted to perform the requested action on the requested resource."
+        );
+        List<String> actual = parser.responseMessage();
 
-        assertEquals(exceptionMessage, actual);
+        assertEquals(expected, actual);
     }
 
     @Test

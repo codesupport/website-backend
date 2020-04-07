@@ -3,6 +3,9 @@ package dev.codesupport.web.common.service.controller.throwparser;
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -32,8 +35,8 @@ public class DefaultExceptionParserTest {
     public void shouldReturnCorrectMessage() {
         DefaultExceptionParser parser = new DefaultExceptionParser();
 
-        String expected = "Server failure, exception logged.";
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList("Server failure, exception logged.");
+        List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
     }

@@ -6,6 +6,9 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to parse {@link ResourceNotFoundException} type throwables.
  *
@@ -22,8 +25,8 @@ public class ResourceNotFoundExceptionParser extends AbstractThrowableParser<Res
     }
 
     @Override
-    protected String responseMessage() {
-        return throwable.getMessage();
+    protected List<String> responseMessage() {
+        return Collections.singletonList(throwable.getMessage());
     }
 
     @Override

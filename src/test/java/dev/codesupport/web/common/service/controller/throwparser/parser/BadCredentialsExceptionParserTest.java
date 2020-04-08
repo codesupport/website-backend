@@ -43,7 +43,7 @@ public class BadCredentialsExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        List<String> expected = Collections.singletonList("The username/password supplied was invalid/inactive");
+        List<String> expected = Collections.singletonList("The username/password supplied was invalid/inactive.");
         List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);

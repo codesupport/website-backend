@@ -1,5 +1,6 @@
 package dev.codesupport.web.api.service;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.api.data.entity.ContributorEntity;
 import dev.codesupport.web.api.data.entity.ContributorListEntity;
 import dev.codesupport.web.api.data.entity.ShowcaseEntity;
@@ -41,11 +42,19 @@ public class ShowcaseServiceImpl implements ShowcaseService {
     @Override
     public List<Showcase> findAllShowcases() {
         List<Showcase> showcases = crudOperations.getAll();
-        showcases.forEach(showcase -> {
-            List<ContributorEntity> contributors = contributorRepository.findAllByContributorList_Id(showcase.getContributorList().getId());
 
-            showcase.getContributorList().setContributors(MappingUtils.convertToType(contributors, Contributor.class));
-        });
+        populateContributorList(showcases);
+
+        return showcases;
+    }
+
+    @Override
+    public List<Showcase> findAllShowcasesByUser(Long userId) {
+        List<ShowcaseEntity> showcaseEntities = showcaseRepository.findAllByUser_IdOrderById(userId);
+
+        List<Showcase> showcases = MappingUtils.convertToType(showcaseEntities, Showcase.class);
+
+        populateContributorList(showcases);
 
         return showcases;
     }
@@ -53,9 +62,8 @@ public class ShowcaseServiceImpl implements ShowcaseService {
     @Override
     public Showcase getShowcaseById(Long id) {
         Showcase showcase = crudOperations.getById(id);
-        List<ContributorEntity> contributors = contributorRepository.findAllByContributorList_Id(showcase.getContributorList().getId());
 
-        showcase.getContributorList().setContributors(MappingUtils.convertToType(contributors, Contributor.class));
+        populateContributorList(showcase);
 
         return showcase;
     }
@@ -145,6 +153,20 @@ public class ShowcaseServiceImpl implements ShowcaseService {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
         }
         return new VoidMethodResponse("Delete showcase", affectedEntities);
+    }
+
+    @VisibleForTesting
+    void populateContributorList(List<Showcase> showcases) {
+        showcases.forEach(this::populateContributorList);
+    }
+
+    @VisibleForTesting
+    void populateContributorList(Showcase showcase) {
+        List<ContributorEntity> contributorEntities = contributorRepository.findAllByContributorList_Id(showcase.getContributorList().getId());
+
+        List<Contributor> contributors = MappingUtils.convertToType(contributorEntities, Contributor.class);
+
+        showcase.getContributorList().setContributors(contributors);
     }
 
 }

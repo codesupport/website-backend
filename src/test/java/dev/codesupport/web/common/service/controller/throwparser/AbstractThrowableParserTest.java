@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -58,14 +60,14 @@ public class AbstractThrowableParserTest {
     @Test
     public void shouldModifyResponseMessageAndStatus() {
         String referenceId = "123";
-        String parserMessage = "Parser message";
+        List<String> parserMessages = Collections.singletonList("Parser message");
 
         RestResponse<Serializable> actual = new RestResponse<>();
         actual.setReferenceId(referenceId);
 
         AbstractThrowableParser<Throwable> parserSpy = Mockito.spy(new ThrowableParser());
 
-        doReturn(parserMessage)
+        doReturn(parserMessages)
                 .when(parserSpy)
                 .responseMessage();
 
@@ -75,7 +77,7 @@ public class AbstractThrowableParserTest {
 
         RestResponse<Serializable> expected = new RestResponse<>();
         expected.setReferenceId(referenceId);
-        expected.setMessage(parserMessage);
+        expected.setMessage(parserMessages);
         expected.setStatus(RestStatus.WARNING);
 
         parserSpy.modifyResponse(actual);
@@ -104,7 +106,7 @@ public class AbstractThrowableParserTest {
             }
 
             @Override
-            protected String responseMessage() {
+            protected List<String> responseMessage() {
                 return null;
             }
         };

@@ -5,6 +5,9 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to parse Spring's {@link InvalidUserException} type throwables.
  *
@@ -21,8 +24,8 @@ public class InvalidUserExceptionParser extends AbstractThrowableParser<InvalidU
     }
 
     @Override
-    protected String responseMessage() {
-        return throwable.getMessage();
+    protected List<String> responseMessage() {
+        return Collections.singletonList(throwable.getMessage());
     }
 
 }

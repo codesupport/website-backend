@@ -5,6 +5,9 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to parse Spring's {@link MethodArgumentTypeMismatchException} type throwables.
  *
@@ -21,7 +24,10 @@ public class MethodArgumentTypeMismatchExceptionParser extends AbstractThrowable
     }
 
     @Override
-    protected String responseMessage() {
-        return "Invalid parameter " + throwable.getName() + " (Required: " + throwable.getParameter().getParameterType().getSimpleName() + ")";
+    protected List<String> responseMessage() {
+        return Collections.singletonList(
+                "Invalid parameter " + throwable.getName() +
+                        " (Required: " + throwable.getParameter().getParameterType().getSimpleName() + ")."
+        );
     }
 }

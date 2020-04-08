@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * The abstract class extended when creating throwable (exception) parsers.
@@ -84,7 +85,7 @@ public abstract class AbstractThrowableParser<E extends Throwable> {
      *
      * @return The message associated to the throwable.
      */
-    protected abstract String responseMessage();
+    protected abstract List<String> responseMessage();
 
     /**
      * Returns the {@link RestStatus} associated to the throwable.

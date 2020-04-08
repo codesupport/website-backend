@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to parse Spring's {@link AccessDeniedException} type throwables.
  *
@@ -22,8 +25,10 @@ public class AccessDeniedExceptionParser extends AbstractThrowableParser<AccessD
     }
 
     @Override
-    protected String responseMessage() {
-        return "You are not permitted to perform the requested action on the requested resource.";
+    protected List<String> responseMessage() {
+        return Collections.singletonList(
+                "You are not permitted to perform the requested action on the requested resource."
+        );
     }
 
     @Override

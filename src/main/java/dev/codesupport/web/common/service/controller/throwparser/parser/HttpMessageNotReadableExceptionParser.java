@@ -5,6 +5,9 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to parse Spring's {@link HttpMessageNotReadableException} type throwables.
  *
@@ -21,7 +24,7 @@ public class HttpMessageNotReadableExceptionParser extends AbstractThrowablePars
     }
 
     @Override
-    protected String responseMessage() {
-        return "Could not parse JSON payload";
+    protected List<String> responseMessage() {
+        return Collections.singletonList("Could not parse JSON payload.");
     }
 }

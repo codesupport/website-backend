@@ -7,6 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -59,8 +62,8 @@ public class HttpMediaTypeNotSupportedExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String expected = "Content type not supported: " + content + "/" + type;
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList("Content type not supported: " + content + "/" + type);
+        List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
     }
@@ -77,8 +80,8 @@ public class HttpMediaTypeNotSupportedExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String expected = "Content type not supported: ";
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList("Content type not supported: ");
+        List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
     }

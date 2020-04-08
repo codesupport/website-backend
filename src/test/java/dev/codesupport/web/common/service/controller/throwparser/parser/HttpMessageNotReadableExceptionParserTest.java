@@ -6,6 +6,9 @@ import org.junit.Test;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -35,8 +38,8 @@ public class HttpMessageNotReadableExceptionParserTest {
     public void shouldReturnCorrectMessage() {
         HttpMessageNotReadableExceptionParser parser = new HttpMessageNotReadableExceptionParser();
 
-        String expected = "Could not parse JSON payload";
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList("Could not parse JSON payload.");
+        List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
     }

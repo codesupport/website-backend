@@ -27,7 +27,7 @@ public class MethodArgumentTypeMismatchExceptionParser extends AbstractThrowable
     protected List<String> responseMessage() {
         return Collections.singletonList(
                 "Invalid parameter " + throwable.getName() +
-                        " (Required: " + throwable.getParameter().getParameterType().getSimpleName() + ")"
+                        " (Required: " + throwable.getParameter().getParameterType().getSimpleName() + ")."
         );
     }
 }

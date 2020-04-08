@@ -27,7 +27,7 @@ public class BadCredentialsExceptionParser extends AbstractThrowableParser<BadCr
     @Override
     protected List<String> responseMessage() {
         return Collections.singletonList(
-                "The username/password supplied was invalid/inactive"
+                "The username/password supplied was invalid/inactive."
         );
     }
 

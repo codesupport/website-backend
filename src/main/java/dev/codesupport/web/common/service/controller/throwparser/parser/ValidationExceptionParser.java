@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -23,9 +24,9 @@ public class ValidationExceptionParser extends AbstractThrowableParser<Validatio
     }
 
     @Override
-    protected String responseMessage() {
+    protected List<String> responseMessage() {
         return throwable.getValidationIssues().stream()
-                .map(e -> "[" + e.getPropertyName() + ": " + e.getMessage() + "]")
-                .collect(Collectors.joining(","));
+                .map(e -> e.getPropertyName() + ": " + e.getMessage())
+                .collect(Collectors.toList());
     }
 }

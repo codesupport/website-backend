@@ -14,6 +14,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -68,7 +69,9 @@ public class ErrorHandlerControllerTest {
         RestResponse<Serializable> restResponse = new RestResponse<>();
         restResponse.setReferenceId(referenceId);
         restResponse.setStatus(RestStatus.NOT_FOUND);
-        restResponse.setMessage("The requested endpoint does not exist.");
+        restResponse.setMessage(
+                Collections.singletonList("The requested endpoint does not exist.")
+        );
 
         ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
         ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);
@@ -118,7 +121,9 @@ public class ErrorHandlerControllerTest {
         RestResponse<Serializable> restResponse = new RestResponse<>();
         restResponse.setReferenceId(referenceId);
         restResponse.setStatus(RestStatus.UNAUTHORIZED);
-        restResponse.setMessage("You are not authorized for this resource.");
+        restResponse.setMessage(
+                Collections.singletonList("You are not authorized for this resource.")
+        );
 
         ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
         ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);
@@ -175,7 +180,9 @@ public class ErrorHandlerControllerTest {
         RestResponse<Serializable> restResponse = new RestResponse<>();
         restResponse.setReferenceId(referenceId);
         restResponse.setStatus(RestStatus.WARNING);
-        restResponse.setMessage("Mock parser message");
+        restResponse.setMessage(
+                Collections.singletonList("Mock parser message")
+        );
 
         ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
         ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);

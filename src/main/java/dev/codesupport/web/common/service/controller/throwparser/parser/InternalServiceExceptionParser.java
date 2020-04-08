@@ -5,6 +5,9 @@ import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowab
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to validate {@link InternalServiceException} type throwables.
  *
@@ -21,7 +24,7 @@ public class InternalServiceExceptionParser extends AbstractThrowableParser<Inte
     }
 
     @Override
-    protected String responseMessage() {
-        return throwable.getMessage();
+    protected List<String> responseMessage() {
+        return Collections.singletonList(throwable.getMessage());
     }
 }

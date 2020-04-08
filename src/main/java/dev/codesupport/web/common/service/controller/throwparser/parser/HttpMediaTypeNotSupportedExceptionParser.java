@@ -6,6 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Used to parse Spring's {@link HttpMediaTypeNotSupportedException} type throwables.
  *
@@ -22,9 +25,9 @@ public class HttpMediaTypeNotSupportedExceptionParser extends AbstractThrowableP
     }
 
     @Override
-    protected String responseMessage() {
+    protected List<String> responseMessage() {
         MediaType contentType = throwable.getContentType();
         String message = (contentType != null) ? contentType.getType() + "/" + contentType.getSubtype() : "";
-        return "Content type not supported: " + message;
+        return Collections.singletonList("Content type not supported: " + message);
     }
 }

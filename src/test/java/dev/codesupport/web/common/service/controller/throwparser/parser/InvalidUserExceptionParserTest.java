@@ -6,6 +6,9 @@ import dev.codesupport.web.common.service.service.RestStatus;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -47,9 +50,10 @@ public class InvalidUserExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String actual = parser.responseMessage();
+        List<String> expected = Collections.singletonList(exceptionMessage);
+        List<String> actual = parser.responseMessage();
 
-        assertEquals(exceptionMessage, actual);
+        assertEquals(expected, actual);
     }
 
     @Test

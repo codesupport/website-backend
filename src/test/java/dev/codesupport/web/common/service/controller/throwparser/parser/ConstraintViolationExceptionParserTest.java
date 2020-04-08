@@ -11,6 +11,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -76,9 +78,10 @@ public class ConstraintViolationExceptionParserTest {
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        String expected = "[MockNode: test message]";
+        List<String> expected = Collections.singletonList("MockNode: test message");
+        List<String> actual = parser.responseMessage();
 
-        assertEquals(expected, parser.responseMessage());
+        assertEquals(expected, actual);
     }
 
     @Test

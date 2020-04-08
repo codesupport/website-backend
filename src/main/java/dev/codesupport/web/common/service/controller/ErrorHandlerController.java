@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.Collections;
 
 /**
  * Controller for handling exceptions and servlet errors.
@@ -77,10 +78,14 @@ public class ErrorHandlerController implements ErrorController {
         } else {
             if (HttpStatus.NOT_FOUND.equals(httpStatus)) {
                 restResponse.setStatus(RestStatus.NOT_FOUND);
-                restResponse.setMessage("The requested endpoint does not exist.");
+                restResponse.setMessage(
+                        Collections.singletonList("The requested endpoint does not exist.")
+                );
             } else if (HttpStatus.UNAUTHORIZED.equals(httpStatus)) {
                 restResponse.setStatus(RestStatus.UNAUTHORIZED);
-                restResponse.setMessage("You are not authorized for this resource.");
+                restResponse.setMessage(
+                        Collections.singletonList("You are not authorized for this resource.")
+                );
             }
         }
 

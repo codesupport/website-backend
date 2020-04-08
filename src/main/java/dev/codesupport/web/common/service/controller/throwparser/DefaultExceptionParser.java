@@ -3,6 +3,9 @@ package dev.codesupport.web.common.service.controller.throwparser;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Default parser to be used when no other associated parser can be found.
  */
@@ -16,7 +19,7 @@ public class DefaultExceptionParser extends AbstractThrowableParser<Throwable> {
     }
 
     @Override
-    protected String responseMessage() {
-        return "Server failure, exception logged.";
+    protected List<String> responseMessage() {
+        return Collections.singletonList("Server failure, exception logged.");
     }
 }

@@ -25,6 +25,6 @@ public class HttpMessageNotReadableExceptionParser extends AbstractThrowablePars
 
     @Override
     protected List<String> responseMessage() {
-        return Collections.singletonList("Could not parse JSON payload");
+        return Collections.singletonList("Could not parse JSON payload.");
     }
 }

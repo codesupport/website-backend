@@ -63,7 +63,7 @@ public class MethodArgumentTypeMismatchExceptionParserTest {
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
         List<String> expected = Collections.singletonList(
-                "Invalid parameter " + parameterName + " (Required: " + parameterType.getSimpleName() + ")"
+                "Invalid parameter " + parameterName + " (Required: " + parameterType.getSimpleName() + ")."
         );
         List<String> actual = parser.responseMessage();
 

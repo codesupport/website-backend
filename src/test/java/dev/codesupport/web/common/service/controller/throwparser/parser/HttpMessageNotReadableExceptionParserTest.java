@@ -38,7 +38,7 @@ public class HttpMessageNotReadableExceptionParserTest {
     public void shouldReturnCorrectMessage() {
         HttpMessageNotReadableExceptionParser parser = new HttpMessageNotReadableExceptionParser();
 
-        List<String> expected = Collections.singletonList("Could not parse JSON payload");
+        List<String> expected = Collections.singletonList("Could not parse JSON payload.");
         List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);

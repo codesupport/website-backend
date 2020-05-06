@@ -12,7 +12,7 @@
 
 ``./mvnw test`` - Runs unit tests
 
-``./mvn clean package`` - Deletes `target/` folder and repackages (preferred way to build)
+``./mvnw clean package`` - Deletes `target/` folder and repackages (preferred way to build)
 
 ## Discord Settings
 Discord configuration is required to run the service, needed values for the yml:

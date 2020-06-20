@@ -90,7 +90,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public UserDetails getUserDetailsByEmail(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email);
+        UserEntity userEntity = userRepository.findByEmailIgnoreCase(email);
         if (userEntity == null) {
             throw new InvalidUserException("User does not exist for given email.");
         }
@@ -128,7 +128,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @VisibleForTesting
     void saveDiscordIdToUser(String email, DiscordUser discordUser) {
-        UserEntity userEntity = userRepository.findByEmail(email);
+        UserEntity userEntity = userRepository.findByEmailIgnoreCase(email);
         userEntity.setDiscordId(discordUser.getId());
         userEntity.setDiscordUsername(discordUser.getUsername() + "#" + discordUser.getDiscriminator());
         userRepository.save(userEntity);

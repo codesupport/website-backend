@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
@@ -128,7 +129,7 @@ public class UserServiceImplTest {
 
         doReturn(userEntity)
                 .when(mockUserRepository)
-                .findByAlias(alias);
+                .findByAliasIgnoreCase(alias);
 
         UserProfile actual = service.getUserProfileByAlias(alias);
 
@@ -186,8 +187,8 @@ public class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    public void shouldReturnCorrectUsersWithRegisterUsers() {
+    @Test(expected = ServiceLayerException.class)
+    public void shouldThrowServiceLayerExceptionIfRegisteringWithNonUniqueAlias() {
         String token = "tokentokentokentoken";
 
         UserRegistration userRegistration = new UserRegistration();
@@ -196,6 +197,74 @@ public class UserServiceImplTest {
         userRegistration.setEmail("valid@email.com");
 
         User user = mapper().convertValue(userRegistration, User.class);
+
+        doReturn(true)
+                .when(mockUserRepository)
+                .existsByAliasIgnoreCase(userRegistration.getAlias());
+
+        doReturn(false)
+                .when(mockUserRepository)
+                .existsByEmailIgnoreCase(userRegistration.getEmail());
+
+        doReturn(getUserList.get(0))
+                .when(mockUserCrudOperations)
+                .createEntity(user);
+
+        doReturn(token)
+                .when(mockJwtUtility)
+                .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
+
+        service.registerUser(userRegistration);
+    }
+
+    @Test(expected = ServiceLayerException.class)
+    public void shouldThrowServiceLayerExceptionIfRegisterWithNonUniqueEmail() {
+        String token = "tokentokentokentoken";
+
+        UserRegistration userRegistration = new UserRegistration();
+        userRegistration.setAlias("timmy");
+        userRegistration.setPassword("1234567890abcdef");
+        userRegistration.setEmail("valid@email.com");
+
+        User user = mapper().convertValue(userRegistration, User.class);
+
+        doReturn(false)
+                .when(mockUserRepository)
+                .existsByAliasIgnoreCase(userRegistration.getAlias());
+
+        doReturn(true)
+                .when(mockUserRepository)
+                .existsByEmailIgnoreCase(userRegistration.getEmail());
+
+        doReturn(getUserList.get(0))
+                .when(mockUserCrudOperations)
+                .createEntity(user);
+
+        doReturn(token)
+                .when(mockJwtUtility)
+                .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
+
+        service.registerUser(userRegistration);
+    }
+
+    @Test
+    public void shouldReturnCorrectUsersWhenRegisteringUniqueUser() {
+        String token = "tokentokentokentoken";
+
+        UserRegistration userRegistration = new UserRegistration();
+        userRegistration.setAlias("timmy");
+        userRegistration.setPassword("1234567890abcdef");
+        userRegistration.setEmail("valid@email.com");
+
+        User user = mapper().convertValue(userRegistration, User.class);
+
+        doReturn(false)
+                .when(mockUserRepository)
+                .existsByAliasIgnoreCase(userRegistration.getAlias());
+
+        doReturn(false)
+                .when(mockUserRepository)
+                .existsByEmailIgnoreCase(userRegistration.getEmail());
 
         doReturn(getUserList.get(0))
                 .when(mockUserCrudOperations)

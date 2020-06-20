@@ -192,7 +192,7 @@ public class AuthorizationServiceImplTest {
 
         doReturn(null)
                 .when(mockUserRepository)
-                .findByEmail(email);
+                .findByEmailIgnoreCase(email);
 
         spyService.getUserDetailsByEmail(email);
     }
@@ -212,7 +212,7 @@ public class AuthorizationServiceImplTest {
 
         doReturn(userEntity)
                 .when(mockUserRepository)
-                .findByEmail(email);
+                .findByEmailIgnoreCase(email);
 
         UserDetails expected = new UserDetails(alias, password, email, Collections.emptySet(), false);
 
@@ -286,7 +286,7 @@ public class AuthorizationServiceImplTest {
 
         doReturn(userEntity)
                 .when(mockRepository)
-                .findByEmail(email);
+                .findByEmailIgnoreCase(email);
 
         doReturn(new UserEntity())
                 .when(mockRepository)

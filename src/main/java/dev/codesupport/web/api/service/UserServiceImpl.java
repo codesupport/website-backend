@@ -2,6 +2,7 @@ package dev.codesupport.web.api.service;
 
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfile getUserProfileByAlias(String alias) {
-        UserEntity userEntity = userRepository.findByAlias(alias);
+        UserEntity userEntity = userRepository.findByAliasIgnoreCase(alias);
 
         return MappingUtils.convertToType(userEntity, UserProfile.class);
     }
@@ -81,12 +82,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public TokenResponse registerUser(UserRegistration userRegistration) {
         User user = MappingUtils.convertToType(userRegistration, User.class);
+        User createdUser;
 
-        user.setHashPassword(
-                hashingUtility.hashPassword(userRegistration.getPassword())
-        );
+        if (!userRepository.existsByAliasIgnoreCase(user.getAlias())) {
+            if (!userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+                user.setHashPassword(
+                        hashingUtility.hashPassword(userRegistration.getPassword())
+                );
 
-        User createdUser = userCrudOperations.createEntity(user);
+                createdUser = userCrudOperations.createEntity(user);
+            } else {
+                throw new ServiceLayerException("User already exists with that email.");
+            }
+        } else {
+            throw new ServiceLayerException("User already exists with that alias.");
+        }
 
         return new TokenResponse(
                 jwtUtility.generateToken(createdUser.getAlias(), createdUser.getEmail())

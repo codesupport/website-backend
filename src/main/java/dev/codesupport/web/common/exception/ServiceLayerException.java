@@ -20,15 +20,19 @@ public class ServiceLayerException extends RuntimeException {
         }
     }
 
-    ServiceLayerException(String message) {
-        super(message);
-    }
-
     public ServiceLayerException(Reason reason) {
-        super(reason.toString());
+        this(reason.toString());
     }
 
     public ServiceLayerException(Reason reason, Throwable throwable) {
-        super(reason.toString(), throwable);
+        this(reason.toString(), throwable);
+    }
+
+    public ServiceLayerException(String message) {
+        super(message);
+    }
+
+    public ServiceLayerException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -47,11 +47,11 @@ public class UserValidatorTest {
 
         doReturn(false)
                 .when(mockUserRepository)
-                .existsByAlias(alias);
+                .existsByAliasIgnoreCase(alias);
 
         doReturn(false)
                 .when(mockUserRepository)
-                .existsByEmail(email);
+                .existsByEmailIgnoreCase(email);
 
         List<ValidationIssue> actual = validation.validate(user);
 

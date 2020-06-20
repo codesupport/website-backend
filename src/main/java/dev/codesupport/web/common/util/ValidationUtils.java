@@ -29,8 +29,8 @@ public class ValidationUtils {
      */
     public static boolean isValidAlias(String username) {
         return !StringUtils.isEmpty(username) &&
-                username.length() > 4 &&
-                username.length() < 15 &&
+                username.length() >= 4 &&
+                username.length() <= 15 &&
                 StringUtils.isAlpha(username.substring(0, 1)) &&
                 StringUtils.isAlphanumeric(username);
     }

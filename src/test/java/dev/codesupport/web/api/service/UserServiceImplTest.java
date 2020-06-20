@@ -214,10 +214,7 @@ public class UserServiceImplTest {
                 .when(mockJwtUtility)
                 .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
 
-        TokenResponse expected = new TokenResponse(token);
-        TokenResponse actual = service.registerUser(userRegistration);
-
-        assertEquals(expected, actual);
+        service.registerUser(userRegistration);
     }
 
     @Test(expected = ServiceLayerException.class)
@@ -247,10 +244,7 @@ public class UserServiceImplTest {
                 .when(mockJwtUtility)
                 .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
 
-        TokenResponse expected = new TokenResponse(token);
-        TokenResponse actual = service.registerUser(userRegistration);
-
-        assertEquals(expected, actual);
+        service.registerUser(userRegistration);
     }
 
     @Test

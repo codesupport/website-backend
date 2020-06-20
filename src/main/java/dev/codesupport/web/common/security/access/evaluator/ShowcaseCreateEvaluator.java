@@ -37,7 +37,7 @@ public class ShowcaseCreateEvaluator extends AbstractAccessEvaluator<Showcase> {
 
         if (hasPermission) {
             // Set creator of showcase to the authenticated user.
-            UserEntity userEntity = userRepository.findByEmail(auth.getName());
+            UserEntity userEntity = userRepository.findByEmailIgnoreCase(auth.getName());
             UserStripped user = new UserStripped();
             user.setId(userEntity.getId());
             showcase.setUser(user);

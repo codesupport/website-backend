@@ -2,6 +2,7 @@ package dev.codesupport.web.api.service;
 
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Handles the business logic for the various resource operations provided by the API contract endpoints.
@@ -50,7 +52,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfile getUserProfileByAlias(String alias) {
-        UserEntity userEntity = userRepository.findByAliasIgnoreCase(alias);
+        UserEntity userEntity;
+        Optional<UserEntity> optional = userRepository.findByAliasIgnoreCase(alias);
+
+        if (optional.isPresent()) {
+            userEntity = optional.get();
+        } else {
+            throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
+        }
 
         return MappingUtils.convertToType(userEntity, UserProfile.class);
     }
@@ -98,7 +107,10 @@ public class UserServiceImpl implements UserService {
             throw new ServiceLayerException("User already exists with that alias.");
         }
 
+        UserProfile userProfile = MappingUtils.convertToType(createdUser, UserProfile.class);
+
         return new TokenResponse(
+                userProfile,
                 jwtUtility.generateToken(createdUser.getAlias(), createdUser.getEmail())
         );
     }

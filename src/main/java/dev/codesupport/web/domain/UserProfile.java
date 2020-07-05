@@ -16,7 +16,7 @@ public class UserProfile implements IdentifiableDomain<Long> {
     private Long id;
     private String alias;
     private String email;
-    private Long discordId;
+    private String discordId;
     private String discordUsername;
     private String githubUsername;
     private String jobTitle;

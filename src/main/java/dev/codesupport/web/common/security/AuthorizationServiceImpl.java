@@ -15,7 +15,9 @@ import dev.codesupport.web.common.security.models.DiscordUser;
 import dev.codesupport.web.common.security.models.UserDetails;
 import dev.codesupport.web.common.service.http.client.HttpClient;
 import dev.codesupport.web.common.service.http.client.HttpMethod;
+import dev.codesupport.web.common.util.MappingUtils;
 import dev.codesupport.web.domain.TokenResponse;
+import dev.codesupport.web.domain.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -55,29 +58,70 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      *
      * @param email    The email for the credentials.
      * @param password The clear text password for the credentials
-     * @return A token string if the credentials are valid
+     * @return The {@link TokenResponse} containing the encoded JWT and associated user information.
      * @throws InvalidUserException If the authorization could not be completed for the given credentials.
      */
     @Override
     public TokenResponse createTokenForEmailAndPassword(String email, String password) {
-        UserDetails userDetails;
+        UserProfile user;
 
         try {
-            userDetails = getUserDetailsByEmail(email);
+            Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
+            if (optional.isPresent()) {
+                UserEntity userEntity = optional.get();
 
-            if (hashingUtility.verifyPassword(password, userDetails.getPassword())) {
-                if (userDetails.isDisabled()) {
-                    throw new DisabledUserException("User is disabled.");
+                if (hashingUtility.verifyPassword(password, userEntity.getHashPassword())) {
+                    if (!userEntity.isDisabled()) {
+                        user = MappingUtils.convertToType(userEntity, UserProfile.class);
+                    } else {
+                        throw new DisabledUserException("User is disabled.");
+                    }
+                } else {
+                    throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
                 }
             } else {
-                throw new InvalidUserException("Invalid user credentials.");
+                throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
             }
-        } catch (InvalidUserException | DisabledUserException e) {
-            throw new InvalidUserException("Could not authenticate user.", e);
+        } catch (DisabledUserException e) {
+            throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER, e);
         }
 
         return new TokenResponse(
-                jwtUtility.generateToken(userDetails.getAlias(), userDetails.getEmail())
+                user,
+                jwtUtility.generateToken(user.getAlias(), user.getEmail())
+        );
+    }
+
+    /**
+     * Creates a new token from the existing authorization in the security context.
+     *
+     * @return The {@link TokenResponse} containing the encoded JWT and associated user information.
+     */
+    @Override
+    public TokenResponse refreshToken() {
+        UserProfile user;
+
+        String email = getUserEmailFromAuthorization();
+
+        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
+
+        if (optional.isPresent()) {
+            UserEntity userEntity = optional.get();
+            if (!userEntity.isDisabled()) {
+                user = MappingUtils.convertToType(userEntity, UserProfile.class);
+            } else {
+                throw new InvalidUserException(
+                        InvalidUserException.Reason.INVALID_USER,
+                        new DisabledUserException("User is disabled.")
+                );
+            }
+        } else {
+            throw new InvalidUserException(InvalidUserException.Reason.MISSING_USER);
+        }
+
+        return new TokenResponse(
+                user,
+                jwtUtility.generateToken(user.getAlias(), user.getEmail())
         );
     }
 
@@ -90,9 +134,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public UserDetails getUserDetailsByEmail(String email) {
-        UserEntity userEntity = userRepository.findByEmailIgnoreCase(email);
-        if (userEntity == null) {
-            throw new InvalidUserException("User does not exist for given email.");
+        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
+        UserEntity userEntity;
+
+        if (optional.isPresent()) {
+            userEntity = optional.get();
+        } else {
+            throw new InvalidUserException(InvalidUserException.Reason.MISSING_USER);
         }
 
         return new UserDetails(
@@ -128,10 +176,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @VisibleForTesting
     void saveDiscordIdToUser(String email, DiscordUser discordUser) {
-        UserEntity userEntity = userRepository.findByEmailIgnoreCase(email);
-        userEntity.setDiscordId(discordUser.getId());
-        userEntity.setDiscordUsername(discordUser.getUsername() + "#" + discordUser.getDiscriminator());
-        userRepository.save(userEntity);
+        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
+        if (optional.isPresent()) {
+            UserEntity userEntity = optional.get();
+            userEntity.setDiscordId(discordUser.getId());
+            userEntity.setDiscordUsername(discordUser.getUsername() + "#" + discordUser.getDiscriminator());
+            userRepository.save(userEntity);
+        } else {
+            throw new InvalidUserException(InvalidUserException.Reason.MISSING_USER);
+        }
     }
 
     /**
@@ -191,7 +244,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         if (principal instanceof UserDetails) {
             userDetails = (UserDetails) principal;
         } else {
-            throw new InvalidUserException("Authorization not valid");
+            throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
         }
 
         return userDetails.getEmail();

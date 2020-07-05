@@ -1,11 +1,13 @@
 package dev.codesupport.web.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * Used to indicate a given resource was not found in the persistent storage.
  *
  * @see dev.codesupport.web.common.service.service.CrudOperations
  */
-public class ResourceNotFoundException extends RuntimeException {
+public class ResourceNotFoundException extends ErrorControllerException {
     public enum Reason {
         NOT_FOUND("Resource with the given ID was not found");
 
@@ -22,6 +24,6 @@ public class ResourceNotFoundException extends RuntimeException {
     }
 
     public ResourceNotFoundException(Reason reason) {
-        super(reason.toString());
+        super(reason.toString(), HttpStatus.NOT_FOUND);
     }
 }

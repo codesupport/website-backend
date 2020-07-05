@@ -2,17 +2,22 @@ package dev.codesupport.web.common.security.access.evaluator;
 
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
 import dev.codesupport.web.common.security.access.Permission;
 import dev.codesupport.web.domain.Showcase;
 import dev.codesupport.web.domain.UserStripped;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * Determines access for creating Showcases
  */
 @Component
+@EqualsAndHashCode(callSuper = true)
 public class ShowcaseCreateEvaluator extends AbstractAccessEvaluator<Showcase> {
 
     private final UserRepository userRepository;
@@ -37,13 +42,25 @@ public class ShowcaseCreateEvaluator extends AbstractAccessEvaluator<Showcase> {
 
         if (hasPermission) {
             // Set creator of showcase to the authenticated user.
-            UserEntity userEntity = userRepository.findByEmailIgnoreCase(auth.getName());
-            UserStripped user = new UserStripped();
-            user.setId(userEntity.getId());
-            showcase.setUser(user);
+            Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(auth.getName());
+            if (optional.isPresent()) {
+                UserEntity userEntity = optional.get();
+                UserStripped user = new UserStripped();
+                user.setId(userEntity.getId());
+                showcase.setUser(user);
+            } else {
+                throw new InvalidUserException(InvalidUserException.Reason.MISSING_USER);
+            }
         }
 
         return hasPermission;
+    }
+
+    //S1185 - Doing this just so it can be mocked for tests, really need powermock.
+    @SuppressWarnings("squid:S1185")
+    @Override
+    protected boolean isValidAuth(Authentication auth) {
+        return super.isValidAuth(auth);
     }
 
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
@@ -25,6 +26,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -117,6 +119,19 @@ public class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionWithGetUserProfileByAliasIfAliasDoesNotExist() {
+        String alias = "username";
+
+        Optional<UserEntity> optional = Optional.empty();
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByAliasIgnoreCase(alias);
+
+        service.getUserProfileByAlias(alias);
+    }
+
     @Test
     public void shouldReturnCorrectUsersWithGetUserProfileByAlias() {
         String alias = "username";
@@ -127,7 +142,9 @@ public class UserServiceImplTest {
         UserEntity userEntity = mapper()
                 .convertValue(getUserList.get(0), UserEntity.class);
 
-        doReturn(userEntity)
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
                 .when(mockUserRepository)
                 .findByAliasIgnoreCase(alias);
 
@@ -249,14 +266,20 @@ public class UserServiceImplTest {
 
     @Test
     public void shouldReturnCorrectUsersWhenRegisteringUniqueUser() {
-        String token = "tokentokentokentoken";
+        String hashPassword = "abc123";
+        String token = "tokentokentokentokentoken";
 
-        UserRegistration userRegistration = new UserRegistration();
-        userRegistration.setAlias("timmy");
-        userRegistration.setPassword("1234567890abcdef");
-        userRegistration.setEmail("valid@email.com");
+        UserBuilder builder = UserBuilder.builder()
+                .alias("timmy")
+                .password("1234567890abcdef")
+                .email("valid@email.com");
 
-        User user = mapper().convertValue(userRegistration, User.class);
+        UserRegistration userRegistration = builder.buildUserRegistrationDomain();
+
+        User user = builder.buildDomain();
+        user.setHashPassword(hashPassword);
+
+        User createdUser = builder.buildDomain();
 
         doReturn(false)
                 .when(mockUserRepository)
@@ -266,15 +289,21 @@ public class UserServiceImplTest {
                 .when(mockUserRepository)
                 .existsByEmailIgnoreCase(userRegistration.getEmail());
 
-        doReturn(getUserList.get(0))
+        doReturn(hashPassword)
+                .when(mockHashingUtility)
+                .hashPassword(userRegistration.getPassword());
+
+        doReturn(createdUser)
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 
         doReturn(token)
                 .when(mockJwtUtility)
-                .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
+                .generateToken(createdUser.getAlias(), createdUser.getEmail());
 
-        TokenResponse expected = new TokenResponse(token);
+        UserProfile userProfile = builder.buildUserProfileDomain();
+
+        TokenResponse expected = new TokenResponse(userProfile, token);
         TokenResponse actual = service.registerUser(userRegistration);
 
         assertEquals(expected, actual);

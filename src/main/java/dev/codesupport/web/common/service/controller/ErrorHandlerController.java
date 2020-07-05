@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.service.controller;
 
 import com.google.common.annotations.VisibleForTesting;
+import dev.codesupport.web.common.exception.ErrorControllerException;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.controller.throwparser.ThrowableParserFactory;
 import dev.codesupport.web.common.service.http.DontWrapResponse;
@@ -93,9 +94,7 @@ public class ErrorHandlerController implements ErrorController {
             log.error("Service exception: [refId: " + restResponse.getReferenceId() + "]", throwable);
         }
 
-        if (RestStatus.NOT_FOUND.equals(restResponse.getStatus())) {
-            httpStatus = HttpStatus.NOT_FOUND;
-        }
+        httpStatus = updateHttpStatus(httpStatus, throwable);
 
         if (log.isDebugEnabled()) {
             Object requestedUri = request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
@@ -136,6 +135,22 @@ public class ErrorHandlerController implements ErrorController {
     @VisibleForTesting
     RestResponse<Serializable> createRestResponse() {
         return new RestResponse<>();
+    }
+
+    @VisibleForTesting
+    HttpStatus updateHttpStatus(HttpStatus httpStatus, Throwable throwable) {
+        Throwable reference = throwable;
+
+        while (reference != null) {
+            if (reference instanceof ErrorControllerException) {
+                httpStatus = ((ErrorControllerException)reference).getHttpStatus();
+                reference = null;
+            } else {
+                reference = reference.getCause();
+            }
+        }
+
+        return httpStatus;
     }
 
     /**

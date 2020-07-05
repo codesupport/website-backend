@@ -7,19 +7,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 /**
- * Determines access for linking discord account
+ * Determines access to refresh JWT
  */
 @Component
-public class AccountLinkEvaluator extends AbstractAccessEvaluator<String> {
+public class TokenRefreshEvaluator extends AbstractAccessEvaluator<String> {
 
-    public AccountLinkEvaluator() {
-        super(Permission.LINK);
+    public TokenRefreshEvaluator() {
+        super(Permission.UPDATE);
     }
 
     /**
-     * Checks if user has right to link an account
-     * <p>Only authenticated users (with valid JWT) are allowed to link their account, as this is needed
-     * to know who the user is.</p>
+     * Checks if user has right to refresh their token
+     * <p>Only authenticated users (with valid JWT) are allowed to refresh their token</p>
      *
      * @param auth               The Authentication associated with the access evaluation
      * @param targetDomainObject The object associated with the access evaluation
@@ -39,7 +38,7 @@ public class AccountLinkEvaluator extends AbstractAccessEvaluator<String> {
     @Override
     public Accessor getAccessor() {
         // Set accessor since this evaluation has no associated class type.
-        return Accessor.DISCORD;
+        return Accessor.TOKEN;
     }
 
 }

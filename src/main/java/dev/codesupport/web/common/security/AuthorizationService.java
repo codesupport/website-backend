@@ -10,6 +10,9 @@ public interface AuthorizationService {
 
     TokenResponse createTokenForEmailAndPassword(String email, String password);
 
+    @PreAuthorize("hasPermission('token', 'update')")
+    TokenResponse refreshToken();
+
     UserDetails getUserDetailsByEmail(String email);
 
     @PreAuthorize("hasPermission('discord', 'link')")

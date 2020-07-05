@@ -6,9 +6,11 @@ import dev.codesupport.web.common.security.AuthorizationService;
 import dev.codesupport.web.common.security.models.AuthenticationRequest;
 import dev.codesupport.web.domain.OkResponse;
 import dev.codesupport.web.domain.TokenResponse;
+import dev.codesupport.web.domain.UserProfile;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -48,7 +50,8 @@ public class AuthenticationControllerImplTest {
         String email = "user@domain.com";
         String password = "clearpassword";
         String token = "mytokenstring";
-        TokenResponse expected = new TokenResponse(token);
+        UserProfile mockUserProfile = mock(UserProfile.class);
+        TokenResponse expected = new TokenResponse(mockUserProfile, token);
 
         AuthenticationRequest request = new AuthenticationRequest();
         request.setEmail(email);
@@ -67,7 +70,26 @@ public class AuthenticationControllerImplTest {
 
         TokenResponse response = spyController.authenticate(request);
 
-        assertEquals(expected, response);
+        assertSame(expected, response);
+    }
+
+    @Test
+    public void shouldReturnTokenIfRefreshToken() {
+        String token = "mytokenstring";
+        UserProfile mockUserProfile = mock(UserProfile.class);
+        TokenResponse expected = new TokenResponse(mockUserProfile, token);
+
+        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+
+        doReturn(expected)
+                .when(mockAuthorizationService)
+                .refreshToken();
+
+        AuthenticationControllerImpl spyController = spy(new AuthenticationControllerImpl(mockAuthorizationService));
+
+        TokenResponse response = spyController.refreshToken();
+
+        assertSame(expected, response);
     }
 
     @Test(expected = ServiceLayerException.class)

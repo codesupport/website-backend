@@ -1,8 +1,9 @@
 package dev.codesupport.web.common.service.controller;
 
+import dev.codesupport.testutils.controller.throwparsing.parser.ThrowableParser;
+import dev.codesupport.web.common.exception.ErrorControllerException;
 import dev.codesupport.web.common.service.controller.throwparser.ThrowableParserFactory;
 import dev.codesupport.web.common.service.service.RestResponse;
-import dev.codesupport.testutils.controller.throwparsing.parser.ThrowableParser;
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.junit.Test;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -65,6 +67,15 @@ public class ErrorHandlerControllerTest {
         doReturn(null)
                 .when(mockRequest)
                 .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+
+        // Disables normal behavior, then we will supply a return for one scenario
+        doReturn(null)
+                .when(controllerSpy)
+                .updateHttpStatus(any(), any());
+
+        doReturn(httpStatus)
+                .when(controllerSpy)
+                .updateHttpStatus(httpStatus, null);
 
         RestResponse<Serializable> restResponse = new RestResponse<>();
         restResponse.setReferenceId(referenceId);
@@ -118,6 +129,15 @@ public class ErrorHandlerControllerTest {
                 .when(mockRequest)
                 .getAttribute(RequestDispatcher.ERROR_EXCEPTION);
 
+        // Disables normal behavior, then we will supply a return for one scenario
+        doReturn(null)
+                .when(controllerSpy)
+                .updateHttpStatus(any(), any());
+
+        doReturn(httpStatus)
+                .when(controllerSpy)
+                .updateHttpStatus(httpStatus, null);
+
         RestResponse<Serializable> restResponse = new RestResponse<>();
         restResponse.setReferenceId(referenceId);
         restResponse.setStatus(RestStatus.UNAUTHORIZED);
@@ -170,6 +190,15 @@ public class ErrorHandlerControllerTest {
                 .when(controllerSpy)
                 .getExceptionOrReturnNull(mockRequest);
 
+        // Disables normal behavior, then we will supply a return for one scenario
+        doReturn(null)
+                .when(controllerSpy)
+                .updateHttpStatus(any(), any());
+
+        doReturn(httpStatus)
+                .when(controllerSpy)
+                .updateHttpStatus(httpStatus, mockThrowable);
+
         ThrowableParser throwableParser = new ThrowableParser();
         ReflectionTestUtils.setField(throwableParser, "throwable", mockThrowable);
 
@@ -185,6 +214,74 @@ public class ErrorHandlerControllerTest {
         );
 
         ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, httpStatus);
+        ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectUpdateHttpStatusIfExceptionFound() {
+        String referenceId = "123";
+
+        ThrowableParserFactory mockThrowableParserFactory = mock(ThrowableParserFactory.class);
+
+        ErrorHandlerController controllerSpy = spy(new ErrorHandlerController(mockThrowableParserFactory));
+
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+
+        RestResponse<Serializable> mockRestResponse = new RestResponse<>();
+        mockRestResponse.setReferenceId(referenceId);
+
+        Throwable mockThrowable = mock(Throwable.class);
+
+        doReturn("GET")
+                .when(mockRequest)
+                .getMethod();
+
+        doReturn("test/uri")
+                .when(mockRequest)
+                .getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+
+        doReturn(mockRestResponse)
+                .when(controllerSpy)
+                .createRestResponse();
+
+        doReturn(httpStatus.value())
+                .when(mockRequest)
+                .getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+
+        //ThrowableNotThrown - Not throwing an exception, mocking the return of one.
+        //noinspection ThrowableNotThrown
+        doReturn(mockThrowable)
+                .when(controllerSpy)
+                .getExceptionOrReturnNull(mockRequest);
+
+        // Disables normal behavior, then we will supply a return for one scenario
+        doReturn(null)
+                .when(controllerSpy)
+                .updateHttpStatus(any(), any());
+
+        doReturn(HttpStatus.NOT_FOUND)
+                .when(controllerSpy)
+                .updateHttpStatus(httpStatus, mockThrowable);
+
+        ThrowableParser throwableParser = new ThrowableParser();
+        ReflectionTestUtils.setField(throwableParser, "throwable", mockThrowable);
+
+        doReturn(throwableParser)
+                .when(mockThrowableParserFactory)
+                .createParser(mockThrowable);
+
+        RestResponse<Serializable> restResponse = new RestResponse<>();
+        restResponse.setReferenceId(referenceId);
+        restResponse.setStatus(RestStatus.WARNING);
+        restResponse.setMessage(
+                Collections.singletonList("Mock parser message")
+        );
+
+        ResponseEntity<RestResponse<Serializable>> expected = new ResponseEntity<>(restResponse, HttpStatus.NOT_FOUND);
         ResponseEntity<RestResponse<Serializable>> actual = controllerSpy.handleError(mockRequest);
 
         assertEquals(expected, actual);
@@ -307,6 +404,49 @@ public class ErrorHandlerControllerTest {
         RestResponse<Serializable> secondInstance = controller.createRestResponse();
 
         assertNotSame(firstInstance, secondInstance);
+    }
+
+    @Test
+    public void shouldCorrectlyUpdateHttpStatusIfThrowableNull() {
+        ErrorHandlerController controller = new ErrorHandlerController(mock(ThrowableParserFactory.class));
+
+        HttpStatus expected = HttpStatus.OK;
+        HttpStatus actual = controller.updateHttpStatus(expected, null);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldCorrectlyUpdateHttpStatusIfThrowableDoesNotContainErrorControllerException() {
+        ErrorHandlerController controller = new ErrorHandlerController(mock(ThrowableParserFactory.class));
+
+        Throwable throwable = new RuntimeException();
+
+        HttpStatus expected = HttpStatus.OK;
+        HttpStatus actual = controller.updateHttpStatus(expected, throwable);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldCorrectlyUpdateHttpStatusIfThrowableContainsErrorControllerException() {
+        ErrorHandlerController controller = new ErrorHandlerController(mock(ThrowableParserFactory.class));
+
+        ErrorControllerException mockException = mock(ErrorControllerException.class);
+
+        HttpStatus expected = HttpStatus.NOT_FOUND;
+
+        //ResultOfMethodCallIgnored - We're not invoking a method, we're creating a mock
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(expected)
+                .when(mockException)
+                .getHttpStatus();
+
+        Throwable throwable = new RuntimeException(mockException);
+
+        HttpStatus actual = controller.updateHttpStatus(HttpStatus.OK, throwable);
+
+        assertEquals(expected, actual);
     }
 
     @Test

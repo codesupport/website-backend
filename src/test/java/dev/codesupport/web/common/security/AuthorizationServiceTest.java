@@ -1,44 +1,75 @@
 package dev.codesupport.web.common.security;
 
-import dev.codesupport.web.api.ApiServiceApplication;
-import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.lang.reflect.Method;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = ApiServiceApplication.class)
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 public class AuthorizationServiceTest {
 
-    //unused - This is autowired, IDE can't see for some reason
-    @SuppressWarnings("unused")
-    @Autowired
-    private AuthorizationService authorizationService;
+    @Test
+    public void shouldBeAnnotatedWithService() {
+        Service annotation = AuthorizationService.class.getAnnotation(Service.class);
 
-    @After
-    public void tearDown() {
-        SecurityContextHolder.getContext().setAuthentication(null);
+        assertNotNull(annotation);
     }
 
-    @Test(expected = AccessDeniedException.class)
-    public void shouldRejectAccessWithUnpermittedUserAuthentication() {
-        SecurityContextHolder.getContext().setAuthentication(
-                new AnonymousAuthenticationToken(
-                        "user",
-                        "principle",
-                        Collections.singletonList(new SimpleGrantedAuthority("ANONYMOUS_USER"))
-                )
-        );
+    @Test
+    public void shouldNotBeAnnotatedWithPreAuthorizeOnCreateTokenForEmailAndPassword() throws NoSuchMethodException {
+        Method method = AuthorizationService.class.getMethod("createTokenForEmailAndPassword", String.class, String.class);
+        Service annotation = method.getAnnotation(Service.class);
 
-        authorizationService.linkDiscord("code");
+        assertNull(annotation);
+    }
+
+    @Test
+    public void shouldBeAnnotatedWithPreAuthorizeOnRefreshToken() throws NoSuchMethodException {
+        Method method = AuthorizationService.class.getMethod("refreshToken");
+        String expected = "hasPermission('token', 'update')";
+        String actual;
+
+        PreAuthorize annotation = method.getAnnotation(PreAuthorize.class);
+
+        if (annotation != null) {
+            actual = annotation.value();
+        } else {
+            actual = null;
+            fail("Annotation missing");
+        }
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldNotBeAnnotatedWithPreAuthorizeOnGetUserDetailsByEmail() throws NoSuchMethodException {
+        Method method = AuthorizationService.class.getMethod("getUserDetailsByEmail", String.class);
+        Service annotation = method.getAnnotation(Service.class);
+
+        assertNull(annotation);
+    }
+
+    @Test
+    public void shouldBeAnnotatedWithPreAuthorizeOnLinkDiscord() throws NoSuchMethodException {
+        Method method = AuthorizationService.class.getMethod("linkDiscord", String.class);
+        String expected = "hasPermission('discord', 'link')";
+        String actual;
+
+        PreAuthorize annotation = method.getAnnotation(PreAuthorize.class);
+
+        if (annotation != null) {
+            actual = annotation.value();
+        } else {
+            actual = null;
+            fail("Annotation missing");
+        }
+
+        assertEquals(expected, actual);
     }
 
 }

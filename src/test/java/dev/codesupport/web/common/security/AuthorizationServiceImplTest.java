@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.security;
 
 import com.google.common.net.HttpHeaders;
+import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.exception.InvalidUserException;
@@ -14,6 +15,7 @@ import dev.codesupport.web.common.service.http.client.HttpClient;
 import dev.codesupport.web.common.service.http.client.HttpMethod;
 import dev.codesupport.web.common.service.http.client.RestRequest;
 import dev.codesupport.web.domain.TokenResponse;
+import dev.codesupport.web.domain.UserProfile;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,12 +30,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -44,7 +46,7 @@ import static org.mockito.Mockito.verify;
 @SuppressWarnings({"squid:S1192", "squid:S2068"})
 public class AuthorizationServiceImplTest {
 
-    private static AuthorizationServiceImpl spyService;
+    private static AuthorizationServiceImpl serviceSpy;
 
     private static UserRepository mockUserRepository;
 
@@ -61,7 +63,7 @@ public class AuthorizationServiceImplTest {
         mockJwtUtility = mock(JwtUtility.class);
         mockHttpClient = mock(HttpClient.class);
 
-        spyService = spy(new AuthorizationServiceImpl(mockUserRepository, mockHashingUtility, mockJwtUtility, mockHttpClient));
+        serviceSpy = spy(new AuthorizationServiceImpl(mockUserRepository, mockHashingUtility, mockJwtUtility, mockHttpClient));
     }
 
     @Before
@@ -73,26 +75,34 @@ public class AuthorizationServiceImplTest {
                 mockHashingUtility,
                 mockJwtUtility,
                 mockHttpClient,
-                spyService
+                serviceSpy
         );
     }
 
     @Test(expected = InvalidUserException.class)
-    public void shouldThrowInvalidUserExceptionIfUserDisabled() {
+    public void shouldThrowInvalidUserExceptionForCreateTokenForValidEmailAndPasswordIfUserDisabled() {
         String alias = "me";
         String email = "email@email.em";
         String password = "mypassword";
         String token = "tokentokentoken";
 
-        UserDetails userDetails = new UserDetails(alias, password, email, Collections.emptySet(), true);
+        UserBuilder builder = UserBuilder.builder()
+                .alias(alias)
+                .email(email)
+                .hashPassword("abc123")
+                .disabled(true);
 
-        doReturn(userDetails)
-                .when(spyService)
-                .getUserDetailsByEmail(email);
+        UserEntity userEntity = builder.buildEntity();
+
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByEmailIgnoreCase(email);
 
         doReturn(true)
                 .when(mockHashingUtility)
-                .verifyPassword(password, password);
+                .verifyPassword(password, userEntity.getHashPassword());
 
         doReturn(token)
                 .when(mockJwtUtility)
@@ -101,7 +111,30 @@ public class AuthorizationServiceImplTest {
                         email
                 );
 
-        spyService.createTokenForEmailAndPassword(email, password);
+        serviceSpy.createTokenForEmailAndPassword(email, password);
+    }
+
+    @Test(expected = InvalidUserException.class)
+    public void shouldThrowInvalidUserExceptionForCreateTokenForValidEmailAndPasswordIfUserDoesNotExist() {
+        String alias = "me";
+        String email = "email@email.em";
+        String password = "mypassword";
+        String token = "tokentokentoken";
+
+        Optional<UserEntity> optional = Optional.empty();
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByEmailIgnoreCase(email);
+
+        doReturn(token)
+                .when(mockJwtUtility)
+                .generateToken(
+                        alias,
+                        email
+                );
+
+        serviceSpy.createTokenForEmailAndPassword(email, password);
     }
 
     @Test(expected = InvalidUserException.class)
@@ -111,15 +144,23 @@ public class AuthorizationServiceImplTest {
         String password = "mypassword";
         String token = "tokentokentoken";
 
-        UserDetails userDetails = new UserDetails(alias, password, email, Collections.emptySet(), false);
+        UserBuilder builder = UserBuilder.builder()
+                .alias(alias)
+                .email(email)
+                .hashPassword("abc123")
+                .disabled(false);
 
-        doReturn(userDetails)
-                .when(spyService)
-                .getUserDetailsByEmail(email);
+        UserEntity userEntity = builder.buildEntity();
+
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByEmailIgnoreCase(email);
 
         doReturn(false)
                 .when(mockHashingUtility)
-                .verifyPassword(password, password);
+                .verifyPassword(password, userEntity.getHashPassword());
 
         doReturn(token)
                 .when(mockJwtUtility)
@@ -128,32 +169,7 @@ public class AuthorizationServiceImplTest {
                         email
                 );
 
-        spyService.createTokenForEmailAndPassword(email, password);
-    }
-
-    @Test(expected = InvalidUserException.class)
-    public void shouldThrowInvalidUserExceptionIfGetUserDetailsThrowsInvalidUserException() {
-        String alias = "me";
-        String email = "email@email.em";
-        String password = "mypassword";
-        String token = "tokentokentoken";
-
-        doThrow(InvalidUserException.class)
-                .when(spyService)
-                .getUserDetailsByEmail(email);
-
-        doReturn(true)
-                .when(mockHashingUtility)
-                .verifyPassword(password, password);
-
-        doReturn(token)
-                .when(mockJwtUtility)
-                .generateToken(
-                        alias,
-                        email
-                );
-
-        spyService.createTokenForEmailAndPassword(email, password);
+        serviceSpy.createTokenForEmailAndPassword(email, password);
     }
 
     @Test
@@ -163,15 +179,25 @@ public class AuthorizationServiceImplTest {
         String password = "mypassword";
         String token = "tokentokentoken";
 
-        UserDetails userDetails = new UserDetails(alias, password, email, Collections.emptySet(), false);
+        UserBuilder builder = UserBuilder.builder()
+                .alias(alias)
+                .email(email)
+                .hashPassword("abc123")
+                .disabled(false);
 
-        doReturn(userDetails)
-                .when(spyService)
-                .getUserDetailsByEmail(email);
+        UserEntity userEntity = builder.buildEntity();
+
+        UserProfile userProfile = builder.buildUserProfileDomain();
+
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByEmailIgnoreCase(email);
 
         doReturn(true)
                 .when(mockHashingUtility)
-                .verifyPassword(password, password);
+                .verifyPassword(password, userEntity.getHashPassword());
 
         doReturn(token)
                 .when(mockJwtUtility)
@@ -180,8 +206,83 @@ public class AuthorizationServiceImplTest {
                         email
                 );
 
-        TokenResponse expected = new TokenResponse(token);
-        TokenResponse actual = spyService.createTokenForEmailAndPassword(email, password);
+        TokenResponse expected = new TokenResponse(userProfile, token);
+        TokenResponse actual = serviceSpy.createTokenForEmailAndPassword(email, password);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test(expected = InvalidUserException.class)
+    public void shouldThrowInvalidUserExceptionIfUserDoesNotExistOnRefreshToken() {
+        String email = "email@email.e";
+
+        doReturn(email)
+                .when(serviceSpy)
+                .getUserEmailFromAuthorization();
+
+        Optional<UserEntity> optional = Optional.empty();
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByEmailIgnoreCase(email);
+
+        serviceSpy.refreshToken();
+    }
+
+    @Test(expected = InvalidUserException.class)
+    public void shouldThrowInvalidUserExceptionIfUserDisabledOnRefreshToken() {
+        String email = "email@email.e";
+
+        doReturn(email)
+                .when(serviceSpy)
+                .getUserEmailFromAuthorization();
+
+        UserBuilder userBuilder = UserBuilder.builder()
+                .alias("me")
+                .disabled(true)
+                .email(email);
+
+        UserEntity userEntity = userBuilder.buildEntity();
+
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByEmailIgnoreCase(email);
+
+        serviceSpy.refreshToken();
+    }
+
+    @Test
+    public void shouldReturnCorrectTokenOnRefreshToken() {
+        String email = "email@email.e";
+        String token = "tokentokentoken";
+
+        doReturn(email)
+                .when(serviceSpy)
+                .getUserEmailFromAuthorization();
+
+        UserBuilder userBuilder = UserBuilder.builder()
+                .alias("me")
+                .disabled(false)
+                .email(email);
+
+        UserEntity userEntity = userBuilder.buildEntity();
+
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
+                .when(mockUserRepository)
+                .findByEmailIgnoreCase(email);
+
+        UserProfile userProfile = userBuilder.buildUserProfileDomain();
+
+        doReturn(token)
+                .when(mockJwtUtility)
+                .generateToken(userProfile.getAlias(), userProfile.getEmail());
+
+        TokenResponse expected = new TokenResponse(userProfile, token);
+        TokenResponse actual = serviceSpy.refreshToken();
 
         assertEquals(expected, actual);
     }
@@ -189,34 +290,36 @@ public class AuthorizationServiceImplTest {
     @Test(expected = InvalidUserException.class)
     public void shouldThrowInvalidUserExceptionIfUserNotFound() {
         String email = "email@email.em";
+        Optional<UserEntity> optional = Optional.empty();
 
-        doReturn(null)
+        doReturn(optional)
                 .when(mockUserRepository)
                 .findByEmailIgnoreCase(email);
 
-        spyService.getUserDetailsByEmail(email);
+        serviceSpy.getUserDetailsByEmail(email);
     }
 
     @Test
     public void shouldReturnCorrectUserDetailsIfUserFound() {
-        String alias = "me";
         String email = "email@email.em";
-        String password = "mypassword";
+        UserBuilder userBuilder = UserBuilder.builder()
+                .alias("me")
+                .email(email)
+                .hashPassword("abc123")
+                .permission(Collections.emptySet())
+                .disabled(false);
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setAlias(alias);
-        userEntity.setEmail(email);
-        userEntity.setHashPassword(password);
-        userEntity.setPermission(Collections.emptySet());
-        userEntity.setDisabled(false);
+        UserEntity userEntity = userBuilder.buildEntity();
 
-        doReturn(userEntity)
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
                 .when(mockUserRepository)
                 .findByEmailIgnoreCase(email);
 
-        UserDetails expected = new UserDetails(alias, password, email, Collections.emptySet(), false);
+        UserDetails expected = userBuilder.buildUserDetailsDomain();
 
-        UserDetails actual = spyService.getUserDetailsByEmail(email);
+        UserDetails actual = serviceSpy.getUserDetailsByEmail(email);
 
         assertEquals(expected, actual);
     }
@@ -266,6 +369,28 @@ public class AuthorizationServiceImplTest {
                 .saveDiscordIdToUser(email, mockDiscordUser);
     }
 
+    @Test(expected = InvalidUserException.class)
+    public void shouldThrowInvalidUserExceptionIfUserDoesNotExistWithEmail() {
+        String email = "user@email.com";
+
+        UserRepository mockRepository = mock(UserRepository.class);
+        HashingUtility mockHashingUtility = mock(HashingUtility.class);
+        JwtUtility mockJwtUtility = mock(JwtUtility.class);
+        HttpClient mockHttpClient = mock(HttpClient.class);
+
+        Optional<UserEntity> optional = Optional.empty();
+
+        doReturn(optional)
+                .when(mockRepository)
+                .findByEmailIgnoreCase(email);
+
+        AuthorizationServiceImpl service = new AuthorizationServiceImpl(mockRepository, mockHashingUtility, mockJwtUtility, mockHttpClient);
+
+        DiscordUser mockDiscordUser = mock(DiscordUser.class);
+
+        service.saveDiscordIdToUser(email, mockDiscordUser);
+    }
+
     @Test
     public void shouldSaveDiscordIdToUser() {
         String email = "user@email.com";
@@ -279,16 +404,21 @@ public class AuthorizationServiceImplTest {
         HttpClient mockHttpClient = mock(HttpClient.class);
 
         UserEntity expectedUserEntity = new UserEntity();
+        expectedUserEntity.setEmail(email);
         expectedUserEntity.setDiscordId(id);
         expectedUserEntity.setDiscordUsername(discordUser + "#" + discordDiscriminator);
 
-        UserEntity userEntity = new UserEntity();
+        UserEntity userEntity = UserBuilder.builder()
+                .email(email)
+                .buildEntity();
 
-        doReturn(userEntity)
+        Optional<UserEntity> optional = Optional.of(userEntity);
+
+        doReturn(optional)
                 .when(mockRepository)
                 .findByEmailIgnoreCase(email);
 
-        doReturn(new UserEntity())
+        doReturn(null)
                 .when(mockRepository)
                 .save(expectedUserEntity);
 

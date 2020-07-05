@@ -138,19 +138,20 @@ public class ErrorHandlerController implements ErrorController {
     }
 
     @VisibleForTesting
-    HttpStatus updateHttpStatus(HttpStatus httpStatus, Throwable throwable) {
+    HttpStatus updateHttpStatus(final HttpStatus httpStatus, Throwable throwable) {
         Throwable reference = throwable;
+        HttpStatus newStatus = httpStatus;
 
         while (reference != null) {
             if (reference instanceof ErrorControllerException) {
-                httpStatus = ((ErrorControllerException)reference).getHttpStatus();
+                newStatus = ((ErrorControllerException)reference).getHttpStatus();
                 reference = null;
             } else {
                 reference = reference.getCause();
             }
         }
 
-        return httpStatus;
+        return newStatus;
     }
 
     /**

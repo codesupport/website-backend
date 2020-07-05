@@ -8,12 +8,12 @@ import static org.junit.Assert.assertTrue;
 public class ResourceNotFoundExceptionTest {
 
     @Test
-    public void shouldCreateRuntimeExceptionSubtype() {
+    public void shouldCreateErrorControllerExceptionSubtype() {
         ResourceNotFoundException exception = new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
 
         //ConstantConditions - never know till you check!
         //noinspection ConstantConditions
-        assertTrue(exception instanceof RuntimeException);
+        assertTrue(exception instanceof ErrorControllerException);
     }
 
     @Test

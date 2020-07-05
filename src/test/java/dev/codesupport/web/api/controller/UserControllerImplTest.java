@@ -7,6 +7,7 @@ import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
+import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
 import dev.codesupport.web.domain.UserStripped;
 import org.junit.Before;
@@ -103,7 +104,9 @@ public class UserControllerImplTest {
     @Test
     public void shouldReturnCorrectResponseForRegisterUser() {
         String token = "Tokentokentoken";
-        TokenResponse expected = new TokenResponse(token);
+        UserProfile mockUserProfile = mock(UserProfile.class);
+
+        TokenResponse expected = new TokenResponse(mockUserProfile, token);
 
         UserRegistration userRegistration = new UserRegistration();
         userRegistration.setAlias("user");

@@ -2,6 +2,7 @@ package dev.codesupport.web.common.service.controller.throwparser.parser;
 
 import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
+import dev.codesupport.web.common.service.service.RestStatus;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -28,4 +29,8 @@ public class InvalidUserExceptionParser extends AbstractThrowableParser<InvalidU
         return Collections.singletonList(throwable.getMessage());
     }
 
+    @Override
+    protected RestStatus responseStatus() {
+        return RestStatus.UNAUTHORIZED;
+    }
 }

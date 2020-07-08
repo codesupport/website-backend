@@ -29,6 +29,11 @@ public class ShowcaseControllerImpl implements ShowcaseController {
     }
 
     @Override
+    public List<Showcase> findAllShowcasesByAlias(String alias) {
+        return service.findAllShowcasesByAlias(alias);
+    }
+
+    @Override
     public Showcase getShowcaseById(Long id) {
         return service.getShowcaseById(id);
     }

@@ -60,6 +60,17 @@ public class ShowcaseServiceImpl implements ShowcaseService {
     }
 
     @Override
+    public List<Showcase> findAllShowcasesByAlias(String alias) {
+        List<ShowcaseEntity> showcaseEntities = showcaseRepository.findAllByUser_AliasIgnoreCaseOrderById(alias);
+
+        List<Showcase> showcases = MappingUtils.convertToType(showcaseEntities, Showcase.class);
+
+        populateContributorList(showcases);
+
+        return showcases;
+    }
+
+    @Override
     public Showcase getShowcaseById(Long id) {
         Showcase showcase = crudOperations.getById(id);
 

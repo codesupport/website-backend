@@ -37,6 +37,10 @@ public interface ShowcaseController {
     @GetMapping(value = "/showcases", params = {"userid"})
     List<Showcase> findAllShowcasesByUser(@RequestParam @NotNull Long userid);
 
+    @ApiOperation("Get Showcase by Alias")
+    @GetMapping(value = "/showcases", params = {"alias"})
+    List<Showcase> findAllShowcasesByAlias(@RequestParam @NotNull String alias);
+
     @ApiOperation("Get Showcase by id")
     @GetMapping("/showcases/{id}")
     Showcase getShowcaseById(@PathVariable Long id);

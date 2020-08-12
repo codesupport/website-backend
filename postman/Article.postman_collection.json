@@ -1,0 +1,246 @@
+{
+	"info": {
+		"_postman_id": "76c4ec1d-a848-4d3c-9d0f-5a8049f7bdbb",
+		"name": "Article",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreateArticle_Valid",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9b2b095a-a8a3-4da5-ac8c-2561d856beaa",
+						"exec": [
+							"let codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+							"console.log(codesupportBackendUrl);",
+							"",
+							"// // Example with a full fledged SDK Request",
+							"const echoPostRequest = {",
+							"  url: codesupportBackendUrl + '/authenticate',",
+							"  method: 'POST',",
+							"  header: 'Content-Type: application/json',",
+							"  body: {",
+							"    mode: 'raw',",
+							"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+							"  }",
+							"};",
+							"pm.sendRequest(echoPostRequest, function (err, res) {",
+							"  if (!err) {",
+							"      let result = res.json();",
+							"      let token = result.response[0].token;",
+							"      pm.environment.set('JWT_TOKEN', token);",
+							"  } else {",
+							"      console.log(err);",
+							"  }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol.\",\n  \"description\": \"Description of the HTTP Protocol\",\n  \"tags\": [\n\t\t  \"HTTP\",\n\t    \"Protocol\",\n\t    \"Website\"\n  ],\n  \"title\": \"HTTP Protocol\",\n  \"visible\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{codesupportBackend}}/api/article/v1/articles",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"api",
+						"article",
+						"v1",
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateArticle2_Valid",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc3a637f-c7c9-41dc-9410-84690e235c6a",
+						"exec": [
+							"let codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+							"console.log(codesupportBackendUrl);",
+							"",
+							"// // Example with a full fledged SDK Request",
+							"const echoPostRequest = {",
+							"  url: codesupportBackendUrl + '/authenticate',",
+							"  method: 'POST',",
+							"  header: 'Content-Type: application/json',",
+							"  body: {",
+							"    mode: 'raw',",
+							"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+							"  }",
+							"};",
+							"pm.sendRequest(echoPostRequest, function (err, res) {",
+							"  if (!err) {",
+							"      let result = res.json();",
+							"      let token = result.response[0].token;",
+							"      pm.environment.set('JWT_TOKEN', token);",
+							"  } else {",
+							"      console.log(err);",
+							"  }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of making websites.\",\n  \"description\": \"Description for making websitesl\",\n  \"tags\": [\n    \t\"HTTP\",\n\t    \"Website\"\n  ],\n  \"title\": \"Website Development\",\n  \"visible\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{codesupportBackend}}/api/article/v1/articles",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"api",
+						"article",
+						"v1",
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateArticle3_Valid",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a5afb2f8-bfad-465b-8223-b31b9ccea502",
+						"exec": [
+							"let codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+							"console.log(codesupportBackendUrl);",
+							"",
+							"// // Example with a full fledged SDK Request",
+							"const echoPostRequest = {",
+							"  url: codesupportBackendUrl + '/authenticate',",
+							"  method: 'POST',",
+							"  header: 'Content-Type: application/json',",
+							"  body: {",
+							"    mode: 'raw',",
+							"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+							"  }",
+							"};",
+							"pm.sendRequest(echoPostRequest, function (err, res) {",
+							"  if (!err) {",
+							"      let result = res.json();",
+							"      let token = result.response[0].token;",
+							"      pm.environment.set('JWT_TOKEN', token);",
+							"  } else {",
+							"      console.log(err);",
+							"  }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the AMQP protocol.\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\",\n  \"visible\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{codesupportBackend}}/api/article/v1/articles",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"api",
+						"article",
+						"v1",
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllArticles_Valid",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{codesupportBackend}}/api/article/v1/articles",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"api",
+						"article",
+						"v1",
+						"articles"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

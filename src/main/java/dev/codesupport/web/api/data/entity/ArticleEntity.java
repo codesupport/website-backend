@@ -3,7 +3,6 @@ package dev.codesupport.web.api.data.entity;
 import dev.codesupport.web.common.data.entity.IdentifiableEntity;
 import lombok.Data;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.Transient;
 
 @Data
 @Entity
@@ -24,30 +24,32 @@ public class ArticleEntity implements IdentifiableEntity<Long> {
     private String title;
     @Column(nullable = false)
     private String description;
-    @ManyToOne(optional = false)
-    private UserEntity createdBy;
-    @ManyToOne(optional = false)
-    private UserEntity updatedBy;
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
     @Column(nullable = false)
-    private boolean visible;
-    @ManyToOne(cascade = CascadeType.ALL)
+    private boolean approved;
+    @Transient
     private TagSetEntity tagSet;
-    @Column(updatable = false, nullable = false)
-    private Long createDate;
     @Column(nullable = false)
-    private Long updateDate;
+    private Long tagSetId;
+    @ManyToOne(optional = false)
+    private UserEntity createdBy;
+    @Column(updatable = false, nullable = false)
+    private Long createdOn;
+    @ManyToOne(optional = false)
+    private UserEntity updatedBy;
+    @Column(nullable = false)
+    private Long updatedOn;
 
     @PrePersist
-    public void onCreateArticle() {
-        createDate = System.currentTimeMillis();
-        onUpdateArticle();
+    public void onCreate() {
+        createdOn = System.currentTimeMillis();
+        onUpdate();
     }
 
     @PreUpdate
-    public void onUpdateArticle() {
-        updateDate = System.currentTimeMillis();
+    public void onUpdate() {
+        updatedOn = System.currentTimeMillis();
     }
 
 }

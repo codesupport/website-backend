@@ -8,6 +8,6 @@ import lombok.experimental.FieldNameConstants;
 public class Tag {
 
     private Long id;
-    private String tag;
+    private String label;
 
 }

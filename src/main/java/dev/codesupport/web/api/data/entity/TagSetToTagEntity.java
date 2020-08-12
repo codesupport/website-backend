@@ -2,20 +2,22 @@ package dev.codesupport.web.api.data.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Data
 @Entity
-public class TagEntity {
+public class TagSetToTagEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50, nullable = false)
-    private String label;
+    @ManyToOne(optional = false)
+    private TagSetEntity tagSet;
+    @ManyToOne(optional = false)
+    private TagEntity tag;
 
 }

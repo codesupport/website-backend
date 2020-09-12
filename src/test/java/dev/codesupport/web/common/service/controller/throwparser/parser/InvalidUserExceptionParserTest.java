@@ -60,7 +60,7 @@ public class InvalidUserExceptionParserTest {
     public void shouldReturnCorrectStatus() {
         InvalidUserExceptionParser parser = new InvalidUserExceptionParser();
 
-        RestStatus expected = RestStatus.FAIL;
+        RestStatus expected = RestStatus.UNAUTHORIZED;
         RestStatus actual = ReflectionTestUtils.invokeMethod(parser, "responseStatus");
 
         assertEquals(expected, actual);

@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,14 +22,19 @@ import javax.validation.Valid;
 @RestController
 @Api(value = "Authentication", description = "REST API for Authentications", tags = {"Authentication"})
 @Validated
+@RequestMapping("/authenticate")
 public interface AuthenticationController {
 
     @ApiOperation("Authenticate user credentials")
-    @PostMapping(value = "/authenticate")
+    @PostMapping
     TokenResponse authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest);
 
+    @ApiOperation("Refresh user token")
+    @GetMapping("/refresh")
+    TokenResponse refreshToken();
+
     @ApiOperation("Authenticate and link discord account")
-    @GetMapping(value = "/authenticate/discord")
+    @GetMapping("/discord")
     OkResponse linkDiscord(@RequestParam String code);
 
 }

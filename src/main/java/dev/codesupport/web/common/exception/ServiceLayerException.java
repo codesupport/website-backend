@@ -1,9 +1,11 @@
 package dev.codesupport.web.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * Used to indicate service layer business logic issues.
  */
-public class ServiceLayerException extends RuntimeException {
+public class ServiceLayerException extends ErrorControllerException {
     public enum Reason {
         RESOURCE_ALREADY_EXISTS("Resource already exists."),
         EMPTY_PAYLOAD("Payload can not be an empty list.");
@@ -20,15 +22,19 @@ public class ServiceLayerException extends RuntimeException {
         }
     }
 
-    ServiceLayerException(String message) {
-        super(message);
-    }
-
     public ServiceLayerException(Reason reason) {
-        super(reason.toString());
+        this(reason.toString());
     }
 
     public ServiceLayerException(Reason reason, Throwable throwable) {
-        super(reason.toString(), throwable);
+        this(reason.toString(), throwable);
+    }
+
+    public ServiceLayerException(String message) {
+        super(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public ServiceLayerException(String message, Throwable cause) {
+        super(message, cause, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

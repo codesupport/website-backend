@@ -13,15 +13,15 @@ public class ValidationUtilsTest {
     }
 
     @Test
-    public void shouldReturnFalseForUsernameShorterThanFiveCharacters() {
+    public void shouldReturnFalseForUsernameShorterThanFourCharacters() {
         String username = "abc";
 
         assertFalse(ValidationUtils.isValidAlias(username));
     }
 
     @Test
-    public void shouldReturnFalseForUsernameLongerThanFourteenCharacters() {
-        String username = "abcdefghijklmno";
+    public void shouldReturnFalseForUsernameLongerThanFifteenCharacters() {
+        String username = "abcdefghijklmnop";
 
         assertFalse(ValidationUtils.isValidAlias(username));
     }
@@ -42,7 +42,7 @@ public class ValidationUtilsTest {
 
     @Test
     public void shouldReturnTrueForValidUsername() {
-        String username = "abcdef1";
+        String username = "abc1";
 
         assertTrue(ValidationUtils.isValidAlias(username));
     }

@@ -15,7 +15,7 @@ public class UserStripped implements IdentifiableDomain<Long> {
 
     private Long id;
     private String alias;
-    private Long discordId;
+    private String discordId;
     private String avatarLink;
     private boolean disabled;
     private Role role;

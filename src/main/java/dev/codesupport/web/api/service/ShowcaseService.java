@@ -12,6 +12,8 @@ public interface ShowcaseService {
 
     List<Showcase> findAllShowcasesByUser(Long userId);
 
+    List<Showcase> findAllShowcasesByAlias(String alias);
+
     Showcase getShowcaseById(Long id);
 
     @PreAuthorize("hasPermission(#showcase, 'create')")

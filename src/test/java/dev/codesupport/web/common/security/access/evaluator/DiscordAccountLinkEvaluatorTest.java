@@ -13,11 +13,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class AccountLinkEvaluatorTest {
+public class DiscordAccountLinkEvaluatorTest {
 
     @Test
     public void shouldSetPermissionToLink() {
-        AccountLinkEvaluator evaluator = new AccountLinkEvaluator();
+        DiscordAccountLinkEvaluator evaluator = new DiscordAccountLinkEvaluator();
 
         Permission actual = (Permission) ReflectionTestUtils.getField(
                 evaluator,
@@ -29,7 +29,7 @@ public class AccountLinkEvaluatorTest {
 
     @Test
     public void shouldReturnFalseForHasPermissionIfNullAuth() {
-        AccountLinkEvaluator evaluator = new AccountLinkEvaluator();
+        DiscordAccountLinkEvaluator evaluator = new DiscordAccountLinkEvaluator();
 
         assertFalse(
                 evaluator.hasPermission(null, "")
@@ -38,7 +38,7 @@ public class AccountLinkEvaluatorTest {
 
     @Test
     public void shouldReturnFalseForHasPermissionIfAnonAuth() {
-        AccountLinkEvaluator evaluator = new AccountLinkEvaluator();
+        DiscordAccountLinkEvaluator evaluator = new DiscordAccountLinkEvaluator();
 
         Authentication mockAuthentication = mock(AnonymousAuthenticationToken.class);
 
@@ -49,7 +49,7 @@ public class AccountLinkEvaluatorTest {
 
     @Test
     public void shouldReturnTrueIfValidAuth() {
-        AccountLinkEvaluator evaluator = new AccountLinkEvaluator();
+        DiscordAccountLinkEvaluator evaluator = new DiscordAccountLinkEvaluator();
 
         Authentication mockAuthentication = mock(UsernamePasswordAuthenticationToken.class);
 
@@ -60,7 +60,7 @@ public class AccountLinkEvaluatorTest {
 
     @Test
     public void shouldGetCorrectAccessor() {
-        AccountLinkEvaluator evaluator = new AccountLinkEvaluator();
+        DiscordAccountLinkEvaluator evaluator = new DiscordAccountLinkEvaluator();
 
         assertEquals(Accessor.DISCORD, evaluator.getAccessor());
     }

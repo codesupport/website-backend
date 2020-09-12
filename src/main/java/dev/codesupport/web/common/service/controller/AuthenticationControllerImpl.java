@@ -31,13 +31,25 @@ public class AuthenticationControllerImpl implements AuthenticationController {
      * to the {@link ErrorHandlerController}</p>
      *
      * @param authenticationRequest The {@link AuthenticationRequest} body
-     * @return The encoded JWT string if authentication passes.
+     * @return The {@link TokenResponse}, with encoded JWT and associated user information
      */
+    @Override
     public TokenResponse authenticate(AuthenticationRequest authenticationRequest) {
         String email = authenticationRequest.getEmail();
         String password = authenticationRequest.getPassword();
 
         return authorizationService.createTokenForEmailAndPassword(email, password);
+    }
+
+    /**
+     * Handles token refresh requests.
+     * <p>If the request comes from a user with a valid JWT, it will return a new JWT.</p>
+     *
+     * @return The {@link TokenResponse}, with encoded JWT and associated user information
+     */
+    @Override
+    public TokenResponse refreshToken() {
+        return authorizationService.refreshToken();
     }
 
     /**

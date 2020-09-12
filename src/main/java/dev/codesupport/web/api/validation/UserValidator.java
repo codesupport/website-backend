@@ -30,11 +30,11 @@ public class UserValidator extends AbstractPersistenceValidator<UserEntity, Long
     public List<ValidationIssue> validate(User domainObject) {
         List<ValidationIssue> validationIssues = new ArrayList<>();
 
-        if (repository.existsByAlias(domainObject.getAlias())) {
+        if (repository.existsByAliasIgnoreCase(domainObject.getAlias())) {
             validationIssues.add(ValidationIssue.duplicateParameter(null, UserEntity_.ALIAS));
         }
 
-        if (repository.existsByEmail(domainObject.getEmail())) {
+        if (repository.existsByEmailIgnoreCase(domainObject.getEmail())) {
             validationIssues.add(ValidationIssue.duplicateParameter(null, UserEntity_.EMAIL));
         }
 

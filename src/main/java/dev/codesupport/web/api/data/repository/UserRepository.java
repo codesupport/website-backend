@@ -4,18 +4,20 @@ import dev.codesupport.web.api.data.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * Data Access Layer for the persistent storage related to the {@link UserEntity} resource.
  */
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    boolean existsByAlias(String alias);
+    boolean existsByAliasIgnoreCase(String alias);
 
-    boolean existsByEmail(String email);
+    boolean existsByEmailIgnoreCase(String email);
 
-    UserEntity findByEmail(String email);
+    Optional<UserEntity> findByEmailIgnoreCase(String email);
 
-    UserEntity findByAlias(String alias);
+    Optional<UserEntity> findByAliasIgnoreCase(String alias);
 
 }

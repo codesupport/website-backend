@@ -9,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 
 @Data
@@ -21,13 +19,15 @@ public class ArticleEntity implements IdentifiableEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 50, nullable = false)
+    private String articleCode;
+    @Column(length = 50, nullable = false)
     private String title;
     @Column(nullable = false)
     private String description;
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
     @Column(nullable = false)
-    private boolean approved;
+    private boolean finalized;
     @Transient
     private TagSetEntity tagSet;
     @Column(nullable = false)
@@ -40,16 +40,5 @@ public class ArticleEntity implements IdentifiableEntity<Long> {
     private UserEntity updatedBy;
     @Column(nullable = false)
     private Long updatedOn;
-
-    @PrePersist
-    public void onCreate() {
-        createdOn = System.currentTimeMillis();
-        onUpdate();
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        updatedOn = System.currentTimeMillis();
-    }
 
 }

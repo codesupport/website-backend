@@ -14,4 +14,13 @@ public interface ArticleService {
     @PreAuthorize("hasPermission(#article, 'create')")
     Article createArticle(Article article);
 
+    @PreAuthorize("hasPermission(#article, 'update')")
+    Article updateArticle(Article article);
+
+    @PreAuthorize("hasPermission(#article, 'delete')")
+    Article deleteArticle(Article article);
+
+    @PreAuthorize("hasPermission(#article, 'publish')")
+    Article publishArticle(Article article);
+
 }

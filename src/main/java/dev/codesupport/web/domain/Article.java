@@ -16,7 +16,7 @@ public class Article implements IdentifiableDomain<Long> {
     private String title;
     private String description;
     private String content;
-    private boolean activated;
+    private boolean published;
     private List<String> tags;
     private UserStripped createdBy;
     private Long createdOn;

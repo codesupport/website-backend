@@ -31,4 +31,14 @@ public class ArticleControllerImpl implements ArticleController {
     public Article createArticle(Article article) {
         return service.createArticle(article);
     }
+
+    @Override
+    public Article updateArticle(Article article) {
+        return service.updateArticle(article);
+    }
+
+    @Override
+    public Article deleteArticle(Article article) {
+        return service.deleteArticle(article);
+    }
 }

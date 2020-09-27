@@ -17,12 +17,12 @@ import java.util.Optional;
  */
 @Component
 @EqualsAndHashCode(callSuper = true)
-public class ArticleCreateEvaluator extends AbstractAccessEvaluator<Article> {
+public class ArticleUpdateEvaluator extends AbstractAccessEvaluator<Article> {
 
     private final UserRepository userRepository;
 
-    public ArticleCreateEvaluator(UserRepository userRepository) {
-        super(Permission.CREATE);
+    public ArticleUpdateEvaluator(UserRepository userRepository) {
+        super(Permission.UPDATE);
         this.userRepository = userRepository;
     }
 
@@ -46,7 +46,6 @@ public class ArticleCreateEvaluator extends AbstractAccessEvaluator<Article> {
                 UserEntity userEntity = optional.get();
                 UserStripped user = new UserStripped();
                 user.setId(userEntity.getId());
-                article.setCreatedBy(user);
                 article.setUpdatedBy(user);
             } else {
                 throw new IllegalStateException("Could not access user's information");

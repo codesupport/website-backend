@@ -24,7 +24,7 @@ public class UserEntity implements IdentifiableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, length = 50)
     private String alias;
     @Column(nullable = false)
     private String hashPassword;

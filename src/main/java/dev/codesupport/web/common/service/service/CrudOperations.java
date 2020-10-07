@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * A class for performing generic CRUD operations of a particular resource
@@ -38,6 +39,10 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     private AbstractPersistenceValidator<E, I, D, ? extends JpaRepository<E, I>> validation;
     @Setter
     private static ApplicationContext context;
+    @Setter
+    private Consumer<E> preSaveEntities;
+    @Setter
+    private Consumer<E> preGetEntities;
 
     /**
      * Creates a new crudOperations object for a given resource.
@@ -93,6 +98,13 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
         validation = validationToReturn;
     }
 
+    @VisibleForTesting
+    void preGetEntities(List<E> entities) {
+        if (preGetEntities != null) {
+            entities.forEach(preGetEntities);
+        }
+    }
+
     /**
      * Gets a list of the resource data matching the given id
      *
@@ -100,13 +112,15 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      * @return The resource data list for the given id
      */
     public D getById(I id) {
-        Optional<E> object = jpaRepository.findById(id);
+        Optional<E> optional = jpaRepository.findById(id);
 
-        if (!object.isPresent()) {
-            throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
+        if (optional.isPresent()) {
+            E entity = optional.get();
+            preGetEntities(Collections.singletonList(entity));
+            return MappingUtils.convertToType(entity, domainClass);
         }
 
-        return MappingUtils.convertToType(object.get(), domainClass);
+        throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
     }
 
     /**
@@ -115,7 +129,9 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      * @return List of data for the given resource
      */
     public List<D> getAll() {
-        return MappingUtils.convertToType(jpaRepository.findAll(), domainClass);
+        List<E> entities = jpaRepository.findAll();
+        preGetEntities(entities);
+        return MappingUtils.convertToType(entities, domainClass);
     }
 
     /**
@@ -185,6 +201,17 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     }
 
     /**
+     * Allows the ability to perform logic on the entities prior to persisting them.
+     *
+     * @param entityObjects The entities pending persistence to the db
+     */
+    protected void preSaveEntities(List<E> entityObjects) {
+        if (preSaveEntities != null) {
+            entityObjects.forEach(preSaveEntities);
+        }
+    }
+
+    /**
      * Saves the provided data to the persistent storage.
      *
      * @param domainObjects The list of resource data to persist
@@ -193,6 +220,8 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     @VisibleForTesting
     List<D> saveEntities(List<D> domainObjects) {
         List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
+
+        preSaveEntities(entities);
 
         List<E> savedEntities = jpaRepository.saveAll(entities);
 

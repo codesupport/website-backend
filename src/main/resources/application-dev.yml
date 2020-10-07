@@ -15,6 +15,10 @@ spring:
 security:
   jwt:
     issuer: test.CodeSupport.dev
+  discord:
+    client-id: 1234
+    secret: 4321
+    redirect-uri: http://www.example.com
 logging:
   level:
     dev.codesupport: ${log.local.level:DEBUG}

@@ -35,7 +35,7 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldReturnTrueForExistsByEmailIfValidUser() {
-        assertTrue(userRepository.existsByEmailIgnoreCase("IF.fy@cs.dev"));
+        assertTrue(userRepository.existsByEmailIgnoreCase("IFfy@cs.dev"));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class UserRepositoryTest {
             fail("Failed to find expected user.");
         }
 
-        String expected = "UserEntity(id=3, alias=Iffy, hashPassword=$2a$10$ss9M0jlCsYDEIA0iBnAyi.PK8TJhpv/Y.tpILVOMKXIvmkOov.Eim, discordId=null, discordUsername=Iffy#<3<3, githubUsername=, jobTitle=null, jobCompany=null, email=if.fy@cs.dev, avatarLink=iffy.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[], biography=Red sparkles and glitter, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[UserAwardEntity(id=1, code=adv_cd_2019, label=Advent of Code 2019, description=A wonderful description)], joinDate=1570492800000)";
+        String expected = "UserEntity(id=3, alias=Iffy, hashPassword=$2a$10$OGVw0XltDpCZS949tqDhu.4ShJLI9sNCdmbjlCb3.PEkk.T0csCGi, discordId=null, discordUsername=Iffy#<3<3, githubUsername=, jobTitle=null, jobCompany=null, email=iffy@cs.dev, avatarLink=iffy.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[], biography=Red sparkles and glitter, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[UserAwardEntity(id=1, code=adv_cd_2019, label=Advent of Code 2019, description=A wonderful description)], joinDate=1570492800000)";
         String actual = userEntity.toString();
 
         assertEquals(expected, actual);
@@ -63,7 +63,7 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldReturnCorrectUserByEmail() {
-        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase("IF.fy@cs.dev");
+        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase("IFfy@cs.dev");
         UserEntity userEntity;
 
         if (optional.isPresent()) {
@@ -73,7 +73,7 @@ public class UserRepositoryTest {
             fail("Failed to find expected user.");
         }
 
-        String expected = "UserEntity(id=3, alias=Iffy, hashPassword=$2a$10$ss9M0jlCsYDEIA0iBnAyi.PK8TJhpv/Y.tpILVOMKXIvmkOov.Eim, discordId=null, discordUsername=Iffy#<3<3, githubUsername=, jobTitle=null, jobCompany=null, email=if.fy@cs.dev, avatarLink=iffy.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[], biography=Red sparkles and glitter, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[UserAwardEntity(id=1, code=adv_cd_2019, label=Advent of Code 2019, description=A wonderful description)], joinDate=1570492800000)";
+        String expected = "UserEntity(id=3, alias=Iffy, hashPassword=$2a$10$OGVw0XltDpCZS949tqDhu.4ShJLI9sNCdmbjlCb3.PEkk.T0csCGi, discordId=null, discordUsername=Iffy#<3<3, githubUsername=, jobTitle=null, jobCompany=null, email=iffy@cs.dev, avatarLink=iffy.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[], biography=Red sparkles and glitter, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[UserAwardEntity(id=1, code=adv_cd_2019, label=Advent of Code 2019, description=A wonderful description)], joinDate=1570492800000)";
         String actual = userEntity.toString();
 
         assertEquals(expected, actual);

@@ -2,177 +2,93 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/448f0a0fbf14480ca9735246d3ade25f)](https://app.codacy.com/gh/codesupport/website-backend?utm_source=github.com&utm_medium=referral&utm_content=codesupport/website-backend&utm_campaign=Badge_Grade_Settings)
 
-## Maven commands
+## About
+This repository contains the code for the backend of the CodeSupport website. The project is written in Java using the Spring framework. 
 
-``./mvnw clean`` - Deletes `target/` folder (build folder)
+Documentation is powered by Swagger and can be reached at `/swagger-ui.html` when running the application locally.
 
-``./mvnw package`` - Compiles .class files, runs tess, and packages into jar (``./mvn compile`` just compiles)
+## Dependencies
+Please see [pom.xml](https://github.com/codesupport/website-backend/blob/develop/pom.xml) for a list of dependencies.
 
-``./mvnw install`` - Compiles, packages, and installs to local m2 repo (``<user>/.m2/repository``)
+## Setup
+1. Navigate into the repository on your computer
+2. On Unix systems run `./mnvw clean package` and on Windows run `./mvnw.cmd clean package`
+3. Run `java -jar target/api-service-0.0.1-SNAPSHOT.jar`
 
-``./mvnw test`` - Runs unit tests
-
-``./mvnw clean package`` - Deletes `target/` folder and repackages (preferred way to build)
-
-## Discord Settings
-Discord configuration is required to run the service, needed values for the yml:
-
-```
-client-id    // The ID for the discord developer app (found on discord dev portal)
-secret       // The secret for the discord developer app (found on discord dev portal)
-redirect-uri // The uri to redirect to from discord auth (found on discord dev portal)
-```
-
-## Endpoints
-Swagger UI - `*/swagger-ui.html`
-
-## Usage
-### Build the App
-(From api-service root folder)
-#### Unix
-
-``./mvnw clean package``
-
-#### Windows
-
-``./mvnw.cmd clean package``
-
-
-### Run the App
-
-(From app-service root dir)
-
-``java -jar target/api-service-0.0.1-SNAPSHOT.jar``
-
-### Environment Variables
-
-#### JWT
-```
-JWT_ISSUER - (default: codesupport.dev)
-JWT_EXPIRATION - (default: 10m)
-```
-#### Discord
-```
-DISCORD_APP_ID
-DISCORD_APP_SECRET
-DISCORD_APP_REDIRECT
-```
-#### App
-```
-LOG_ROOT_LEVEL - (default: INFO)
-LOG_LOCAL_LEVEL - (default: ERROR) - Log level for app specific
-SERVICE_PORT - (default: 8080)
-```
-#### Database
-```
-DATABASE_URL
-DATABASE_USERNAME
-DATABASE_PASSWORD
-DATABASE_DRIVER - (default: com.mysql.jdbc.Driver)
-DATABASE_DIALECT - (default: org.hibernate.dialect.MySQLDialect)
-DATABASE_POOL_SIZE - (default: 4) - Max number of allowed db connections
-DATABASE_POOL_IDLE - (default: 2) - Minimum number of db connections to keep open
-```
 ## Structure
+- Domain is the business model and handles business related validation
+- Controller defines the API contract and enforces it with validation
+- ControllerImpl translates the HTTP requests to service calls and handles simple parameter transformations prior to service calls
+- Service is the business logic, the bulk of logic in the request and gathering data happens here
+- Repository is the DAL (data access layer) and handles communication with the database
+- Entity is the database contract definition and validation enforcement of that contract
 
-#### Layer Separation
-- Domain - Business model, handles business related validation (required fields, etc.)
-- Controller - Defines the API contract and enforces it with validations.
-- ControllerImpl - Translates HTTP requests to service calls, and can rarely help with
-supplemental API Contract validations, but no business logic.  Handles simple parameter transformations prior to
-Service calls (i.e. parsing delimited strings to lists)
-- Service - Business logic, handles bulk of logic in the request, gathering all data needed
-for the response.
-- Repository - DAL (Data access layer), handles communication with DB
-- Entity - DB Contract definition, and validation enforcement of that contract
+## Conventions
+### Resource
+This is a consumable offered via API interaction. The naming for an example resource:
+- `User` - the domain model
+- `api/v1/users/{ID}` - the API endpoint (plural)
+- `UserController` - the API contract
+- `UserControllerImpl` - the API contract implementation
+- `UserService` - the business logic
+- `UserRepository` - the data access
+- `UserEntity` - the database contract
+- `UserValidation` - the persistence level validation
 
-### Response
-
-All responses wrapped in `RestResponse` providing basic feedback from request.
-
-- Status (OK, FAIL, WARNING, NOT_FOUND)
-- Message (error/warning message if required)
-- ReferenceId (ReferenceID to use for troubleshooting/logging)
-- Response (The requested Resource)
-
-### Packaging
-
-    dev.codesupport.web.api*
-
-Resource logic
-- Controllers (rest endpoints)
-- Service Classes
-- Entities
-- Repositories
-- Validation rules
-
-
-    dev.codesupport.web.common.*
-
-Framework
-- Common utilities
-- Error/Exception Handling
-- CRUD framework
-
-
-    dev.codesupport.web.domain.*
-
-Rich domain models (Business models) used for API interactions and business validations
+### Exceptions
+Any business logic exceptions throw `ServiceLayerExceptio`n in the service class. Validation and Resource exceptions are handled by the framework if utilizing provided APIs. All exceptions are caught and handled by the framework to provide feedback to the user and log to the system.
 
 ### Validations
+#### Domain Level (Business Validations)
+Domain level validations are done on the domain models via implementing the `Validatable` interface. This is for business validations such as required fields and field checks.
 
-#### Domain level (Business Validations)
-Domain level validations are done on the domain models via implementing the `Validatable` interface.
-This is for business validations such as required fields and field checks.
+#### Persistence Level (Database Data)
+Persistence level validations are done via validation classes that extend the `AbstractPersistenceValidation` class and are used for validation checks against the DB, such as unique column value checks.
 
-#### Persistence level (DB data)
-Persistence level validations are done via validation classes that extend the `AbstractPersistenceValidation`
-class, and are used for validation checks against the DB, such as unique column value checks.
+#### Entity Validations (Database Contracts)
+Validations on the entities are only to protect the integrity of the database and enforce the DB contracts. No business logic validations are done here (meaning no messages back to the user).
 
-#### Entity Validations (DB Contracts)
-Validations on the entities are only to protect the integrity of the database and enforce the DB contracts.
-No business logic validations done here (meaning no messages back to the user).
+#### API Validations (API Contracts)
+These validations are done on the API interfaces, and are used as basic API contract enforcements, done via the constraint annotations on the API interfaces. API implementations contain no validation checks.
 
-#### API Validations (Api Contracts)
-These validations are done on the API interfaces, and are used as basic API contract enforcements,
-done via the constraint annotations on the API interfaces.  API implementations contain no validation checks.
+### CRUD Operations
+Basic crud requirements are fulfilled (with preset mechanics) by utilizing the `CrudOperation`s class:
+- `getAll()` gets all avalaible entities
+- `getById()` gets by a specific id
+  - Throws `ResourceNotFoundException`, resulting in 404, if not found
+- `createEntities()` saves entities to the database
+  - Throws `Exception` if already exists by id, performs validation checks (domain and persistence level)
+- `updateEntities()` updates entities in the database
+  - Throws `ResourceNotFoundException`, resulting in 404, if not found, performs validation checks (domain and persistence level)
+- `deleteEntities()` deletes entities from the database
+  - Throws `ResourceNotFoundException`, resulting in 404, if not found
 
-### CRUD operations
-Basic crud requirements are fulfilled (with preset mechanics) by utilizing the `CrudOperations` class.
-```
-getAll() - get all available entities
-getById() - get by a specific id, throws `ResourceNotFoundException`, resulting in 404, if not found
-createEntities() - saves entities to db, throws Exception if already exists by id, performs validation checks (domain & persistence level)
-updateEntities() - updates entities in db, throws `ResourceNotFoundException`, resulting in 404, if not found, performs validation checks (domain & persistence level)
-deleteEntities() - deletes entities from db, throws `ResourceNotFoundException`, resulting in 404, if not found
-```
+## Tests
+We are using [JUnit](https://junit.org/junit4/) for our tests. **All code should be tested**.
 
-### Conventions
+## Scripts
+- To delete the `target/` build folder use `./mvnw clean`
+- To compile `.class` files, run tests and package into `.jar` use `./mvnw package`
+- To compile, package and install to a local m2 repo use `./mvnw install`
+- To run unit tests use `./mnvw test`
+- To delete the `target/` build folder and repackage use `./mvnw clean package` (this is the prefered way to build)
+- To run the application use `java -jar target/api-service-0.0.1-SNAPSHOT.jar`
 
-#### API
-##### Http methods
-- GET - Get resource
-- POST - Create resource
-- PUT - Update resource
-- DELETE - Delete resource
-
-##### Resource
-A consumable offered via API interaction
-
-Naming for example resource: User
-- User - Domain model (Business model)
-- api/v1/users/{id} - Api uri (plural)
-- UserController - API Contract (interface)
-- UserControllerImpl - Api Contract implementation
-- UserService - Service class (business logic)
-- UserRepository - Data Access Layer
-- UserEntity - DB Contract
-- UserValidation - Persistence level validation
-
-##### Exceptions
-Any business logic exceptions throw `ServiceLayerException` in the service class.
-Validation and Resource exceptions are handled by the framework if utilizing provided APIs.
-All exceptions are caught and handled by the framework to provide feedback to the user and log
-to the system.
+## Environment Variables
+Name | Default | Description
+---|---|---
+`DATABASE_URL` |  | The URL to the database
+`DATABASE_USERNAME` | | The username for the database
+`DATABASE_PASSWORD` | | The password for the database
+`DATABASE_DRIVER` | `com.mysql.jdbc.Driver` | The driver for the database
+`DATABASE_DIALECT` | `org.hibernate.dialect.MySQLDialect ` | The dialect for the database
+`DATABASE_POOL_SIZE` | `4` | The maximum number of database connections
+`DATABASE_POOL_IDLE` | `2` | The minimum number of database connections to keep open
+`DISCORD_APP_ID` | | The Discord app's ID
+`DISCORD_APP_SECRET` | | The Discord app's secret
+`DISCORD_APP_REDIRECT` | | The Discord app's redirect for OAuth
+`JWT_ISSUER` | `codesupport.dev` | The JWT issuer
+`JWT_EXPIRATION` | `10m` | The length of time a JWT lasts
+`SERVICE_PORT` | `8080` | The port to run the application on
 
 **Any Questions?** Feel free to mention @LamboCreeper#6510 in the [CodeSupport Discord](https://discord.gg/Hn9SETt).

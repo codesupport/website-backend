@@ -1,0 +1,321 @@
+{
+	"info": {
+		"_postman_id": "f17f415f-e04d-4c14-a1b8-9e950d10eb12",
+		"name": "Authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AuthenticateUser_Invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4b3e3e66-1b5a-424f-be86-ba7fd626211b",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401)",
+							"});",
+							"pm.test(\"Status is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+							"});",
+							"pm.test(\"Message is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    let expected = [",
+							"        \"Invalid user credentials\"",
+							"    ];",
+							"",
+							"    pm.expect(jsonData.message).to.deep.eql(expected);",
+							"});",
+							"pm.test(\"Payload is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.response).to.be.null;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"boooop@cs.dev\",\n\t\"password\": \"beeeeeeeeeeep\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{codesupportBackend}}/authenticate",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AuthenticateUser_Valid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "06d4a598-f796-49d7-b35d-0da60b257738",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200)",
+							"});",
+							"pm.test(\"Status is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"OK\");",
+							"});",
+							"pm.test(\"Message is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.be.null;",
+							"});",
+							"pm.test(\"Payload is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.response.length).to.eq(1);",
+							"",
+							"    const firstResult = jsonData.response[0];",
+							"    pm.expect(firstResult.user.id).to.not.be.null;",
+							"    pm.expect(firstResult.user.alias).to.eq(\"Iffy\");",
+							"    pm.expect(firstResult.token).to.not.be.null;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"if.fy@cs.dev\",\n\t\"password\": \"supersecretpassword\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{codesupportBackend}}/authenticate",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RefreshToken_Invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3f6bdeed-d401-4cc6-8db4-002e87825bdb",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401)",
+							"});",
+							"pm.test(\"Status is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+							"});",
+							"pm.test(\"Message is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const expected = [",
+							"        \"You are not permitted to perform the requested action on the requested resource.\"",
+							"    ];",
+							"    pm.expect(jsonData.message).to.deep.eq(expected);",
+							"});",
+							"pm.test(\"Payload is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.response).to.be.null;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0LkNvZGVTdXBwb3J0LmRldiIsInVzZXJuYW1lIjoiYXRydW0iLCJleHBpcmF0aW9uIjoxNTkzMDA4NjQxNjU5LCJlbWFpbCI6ImF0cnVtQGNzLmRldiJ9.rBjRwUs44p9oL_pgkKwBSFZ65dMXgeCaoNHoJcY-MSQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{codesupportBackend}}/authenticate/refresh",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"authenticate",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RefreshToken_Valid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "85ac5768-08b5-4604-bc2c-e88f4d0d5a74",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200)",
+							"});",
+							"pm.test(\"Status is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"OK\");",
+							"});",
+							"pm.test(\"Message is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.be.null;",
+							"});",
+							"pm.test(\"Payload is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.response.length).to.eq(1);",
+							"",
+							"    const firstResult = jsonData.response[0];",
+							"    pm.expect(firstResult.user.id).to.not.be.null;",
+							"    pm.expect(firstResult.user.alias).to.eq(\"Iffy\");",
+							"    pm.expect(firstResult.token).to.not.be.null;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e429ef93-8265-4729-ba95-ababaf0366ae",
+						"exec": [
+							"let codesupportBackend = pm.environment.get(\"codesupportBackend\");",
+							"",
+							"pm.sendRequest({",
+							"    url: codesupportBackend + '/authenticate',",
+							"    method: 'POST',",
+							"    header: 'Content-Type: application/json',",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({\"email\":\"if.fy@cs.dev\",\"password\":\"supersecretpassword\"})",
+							"    }",
+							"}, function (err, res) {",
+							"    let token = res.json().response[0].token;",
+							"    pm.environment.set(\"JWT_TOKEN\", token);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{codesupportBackend}}/authenticate/refresh",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"authenticate",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AuthenticateDiscord_Valid",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ca033546-a5b3-4e94-8448-ac77f5161a85",
+						"exec": [
+							"let codesupportBackend = pm.environment.get(\"codesupportBackend\");",
+							"",
+							"pm.sendRequest({",
+							"    url: codesupportBackend + '/authenticate',",
+							"    method: 'POST',",
+							"    header: 'Content-Type: application/json',",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({\"email\":\"if.fy@cs.dev\",\"password\":\"supersecretpassword\"})",
+							"    }",
+							"}, function (err, res) {",
+							"    let token = res.json().response[0].token;",
+							"    pm.environment.set(\"JWT_TOKEN\", token);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{codesupportBackend}}/authenticate/discord?code=abc",
+					"host": [
+						"{{codesupportBackend}}"
+					],
+					"path": [
+						"authenticate",
+						"discord"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "abc"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

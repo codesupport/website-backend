@@ -96,11 +96,13 @@ public class ArticleServiceImpl implements ArticleService {
         return null;
     }
 
+    @VisibleForTesting
     PublishedArticleEntity updatePublishedArticle(PublishedArticleEntity paEntity, ArticleEntity article) {
         paEntity.setArticleId(article.getId());
         return paEntity;
     }
 
+    @VisibleForTesting
     PublishedArticleEntity createPublishedArticle(ArticleEntity article) {
         PublishedArticleEntity newPAEntity = new PublishedArticleEntity();
         newPAEntity.setArticleId(article.getId());

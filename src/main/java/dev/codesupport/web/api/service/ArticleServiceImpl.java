@@ -1,5 +1,6 @@
 package dev.codesupport.web.api.service;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.api.data.entity.ArticleEntity;
 import dev.codesupport.web.api.data.entity.PublishedArticleEntity;
 import dev.codesupport.web.api.data.entity.TagEntity;
@@ -127,6 +128,7 @@ public class ArticleServiceImpl implements ArticleService {
             this.tagSetToTagsRepository = tagSetToTagsRepository;
         }
 
+        @VisibleForTesting
         Consumer<ArticleEntity> preSaveLogic() {
             return (ArticleEntity articleEntity) -> {
                 updateTagReferences(articleEntity);
@@ -134,6 +136,7 @@ public class ArticleServiceImpl implements ArticleService {
             };
         }
 
+        @VisibleForTesting
         Consumer<ArticleEntity> preGetLogic() {
             return (ArticleEntity articleEntity) -> {
                 Optional<TagSetEntity> optional = tagSetRepository.findById(articleEntity.getTagSetId());
@@ -149,6 +152,7 @@ public class ArticleServiceImpl implements ArticleService {
             };
         }
 
+        @VisibleForTesting
         void updateArticleMetaData(ArticleEntity articleEntity) {
             Long articleId = articleEntity.getId();
             if (articleId != null && articleId != 0) {
@@ -158,6 +162,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
         }
 
+        @VisibleForTesting
         void updateExistingArticle(ArticleEntity articleEntity) {
             Optional<ArticleEntity> optional = articleRepository.findById(articleEntity.getId());
 
@@ -176,6 +181,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
         }
 
+        @VisibleForTesting
         void updateNewArticle(ArticleEntity articleEntity) {
             // Create an ArticleId which is used to relate various versions of the same article
             articleEntity.setArticleCode(RandomStringUtils.randomAlphabetic(50));
@@ -184,6 +190,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleEntity.setUpdatedOn(time);
         }
 
+        @VisibleForTesting
         void updateTagReferences(ArticleEntity articleEntity) {
             TagSetEntity tagSetEntity = articleEntity.getTagSet();
             List<TagEntity> tagEntities = tagSetEntity.getTags();

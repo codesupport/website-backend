@@ -98,6 +98,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
         validation = validationToReturn;
     }
 
+    @VisibleForTesting
     void preGetEntities(List<E> entities) {
         if (preGetEntities != null) {
             entities.forEach(preGetEntities);

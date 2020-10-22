@@ -14,7 +14,7 @@
     <groupId>dev.codesupport.web</groupId>
     <artifactId>api-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>${app.packaging}</packaging>
 
     <name>CodeSupport Website API</name>
     <description>Backend API service for the CodeSupport website</description>
@@ -166,6 +166,7 @@
         <profile>
             <id>prod</id>
             <properties>
+                <app.packaging>war</app.packaging>
                 <active.spring.profile>prod</active.spring.profile>
             </properties>
             <dependencies>
@@ -182,6 +183,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <app.packaging>jar</app.packaging>
                 <active.spring.profile>dev</active.spring.profile>
             </properties>
             <build>

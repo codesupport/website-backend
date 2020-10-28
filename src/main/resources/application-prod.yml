@@ -1,16 +1,16 @@
 spring:
+#  cloud:
+#    gcp:
+#      sql:
+#        instance-connection-name: codesupport-production:europe-west2:<dbid>
+#        database-name: <dbname>
   datasource:
-    url: ${database.url}
-    username: ${database.username}
-    password: ${database.password}
-    driver-class-name: ${database.driver:com.mysql.jdbc.Driver}
-    hikari:
-      maximum-pool-size: ${database.pool.size:4}
-      minimum-idle: ${database.pool.idle:2}
+    url: jdbc:h2:mem:CODESUPPORT
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   jpa:
-    properties:
-      hibernate:
-        dialect: ${database.dialect:org.hibernate.dialect.MySQLDialect}
+    database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: false
     hibernate:
       ddl-auto: none

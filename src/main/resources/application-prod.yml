@@ -19,4 +19,4 @@ logging:
     root: ERROR
     dev.codesupport: ${log.local.level:INFO}
 server:
-  port: ${service.port:8080}
+  port: ${PORT:8080}

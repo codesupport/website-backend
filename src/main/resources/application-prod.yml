@@ -18,5 +18,12 @@ logging:
   level:
     root: ERROR
     dev.codesupport: ${log.local.level:INFO}
+security:
+  require-ssl: true
 server:
   port: ${service.port:8080}
+  ssl:
+    key-store: ${ssl.key.store:}
+    key-store-password: ${ssl.key.store.password:}
+    keyStoreType: ${ssl.key.store.type:PKCS12}
+    keyAlias: ${ssl.key.alias:tomcat}

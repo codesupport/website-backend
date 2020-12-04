@@ -24,7 +24,7 @@ import java.util.List;
  * Defines endpoints and validations for the associated API Contract for the {@link Showcase} resource.
  */
 @RestController
-@RequestMapping("api/showcase/v1")
+@RequestMapping("/showcase/v1")
 @Api(value = "Showcase", description = "REST API for Showcases", tags = {"Showcase"})
 @Validated
 public interface ShowcaseController {

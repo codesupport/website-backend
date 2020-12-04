@@ -19,7 +19,7 @@ import java.util.List;
  * Defines endpoints and validations for the associated API Contract for the {@link User} resource.
  */
 @RestController
-@RequestMapping("api/user/v1")
+@RequestMapping("/user/v1")
 @Api(tags = {"User"})
 @Validated
 public interface UserProfileController {

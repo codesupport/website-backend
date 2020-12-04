@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/article/v1")
+@RequestMapping("/article/v1")
 @Api(value = "Article", description = "REST API for Articles", tags = {"Article"})
 @Validated
 public interface ArticleController {

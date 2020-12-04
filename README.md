@@ -89,6 +89,11 @@ Name | Default | Description
 `DISCORD_APP_REDIRECT` | | The Discord app's redirect for OAuth
 `JWT_ISSUER` | `codesupport.dev` | The JWT issuer
 `JWT_EXPIRATION` | `10m` | The length of time a JWT lasts
+`LOG_ROOT_LEVEL` | `INFO` | Root logging level for spring logs
 `SERVICE_PORT` | `8080` | The port to run the application on
+`SSL_KEY_ALIAS` | `tomcat` | Alias for certificate, used with openssl step
+`SSL_KEY_STORE` | | Path to the keystore (/etc/.../keystore.p12)
+`SSL_KEY_STORE_PASSWORD` | | Password to access keystore
+`SSL_KEY_STORE_TYPE` | `PKCS12` | Format for keystore (Spring likes PKCS12)
 
 **Any Questions?** Feel free to mention @LamboCreeper#6510 in the [CodeSupport Discord](https://discord.gg/Hn9SETt).

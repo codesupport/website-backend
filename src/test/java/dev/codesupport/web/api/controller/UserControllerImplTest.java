@@ -5,21 +5,25 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.service.UserService;
+import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
-import dev.codesupport.web.domain.UserStripped;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -69,14 +73,14 @@ public class UserControllerImplTest {
         List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<UserStripped> expected = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
+        List<User> expected = mapper().convertValue(userList, new TypeReference<List<User>>() {
         });
 
         doReturn(expected)
                 .when(mockService)
                 .findAllUsers();
 
-        List<UserStripped> actual = controller.getAllUsers();
+        List<User> actual = controller.getAllUsers();
 
         assertEquals(expected, actual);
     }
@@ -88,17 +92,37 @@ public class UserControllerImplTest {
         List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<UserStripped> returnedUsers = mapper().convertValue(userList, new TypeReference<List<UserStripped>>() {
+        List<User> returnedUsers = mapper().convertValue(userList, new TypeReference<List<User>>() {
         });
 
         doReturn(returnedUsers.get(0))
                 .when(mockService)
                 .getUserById(id);
 
-        UserStripped expected = returnedUsers.get(0);
-        UserStripped actual = controller.getUserById(id);
+        User expected = returnedUsers.get(0);
+        User actual = controller.getUserById(id);
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectResultsForGetUserPermissions() {
+        long id = 10L;
+
+        Set<Permission> expected = new HashSet<>(
+                Arrays.asList(
+                        mock(Permission.class),
+                        mock(Permission.class)
+                )
+        );
+
+        doReturn(expected)
+                .when(mockService)
+                .getUserPermissionsById(id);
+
+        Set<Permission> actual = controller.getUserPermissions(id);
+
+        assertSame(expected, actual);
     }
 
     @Test

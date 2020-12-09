@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,6 +45,24 @@ public class ArticleControllerImplTest {
                 .findAllArticles(true);
 
         List<PublishedArticle> actual = controller.findAllArticles(true);
+
+        assertSame(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectResultsForFindAllArticleRevisionsById() {
+        long id = 25;
+
+        List<Article> expected = Arrays.asList(
+                mock(Article.class),
+                mock(Article.class)
+        );
+
+        doReturn(expected)
+                .when(mockService)
+                .findAllArticleRevisionsById(id);
+
+        List<Article> actual = controller.findAllArticleRevisionsById(id);
 
         assertSame(expected, actual);
     }

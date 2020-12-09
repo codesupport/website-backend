@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.security;
 
 import dev.codesupport.web.common.security.models.UserDetails;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
  * Token used with the spring authentication context
  * <p>Exists simply so I can override getName() for a better response.</p>
  */
+@EqualsAndHashCode(callSuper = true)
 public class EmailPasswordAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
     public EmailPasswordAuthenticationToken(Object principal, Object credentials) {

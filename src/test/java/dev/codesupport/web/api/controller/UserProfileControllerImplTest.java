@@ -7,7 +7,6 @@ import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
-import dev.codesupport.web.domain.UserProfileStripped;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,15 +66,15 @@ public class UserProfileControllerImplTest {
         List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<UserProfileStripped> expected = mapper()
-                .convertValue(userList, new TypeReference<List<UserProfileStripped>>() {
+        List<UserProfile> expected = mapper()
+                .convertValue(userList, new TypeReference<List<UserProfile>>() {
                 });
 
         doReturn(expected)
                 .when(mockService)
                 .findAllUserProfiles();
 
-        List<UserProfileStripped> actual = controller.getAllUserProfiles();
+        List<UserProfile> actual = controller.getAllUserProfiles();
 
         assertEquals(expected, actual);
     }
@@ -106,16 +105,16 @@ public class UserProfileControllerImplTest {
         List<User> userList = userBuilders.stream()
                 .map(UserBuilder::buildDomain).collect(Collectors.toList());
 
-        List<UserProfileStripped> returnedUsers = mapper()
-                .convertValue(userList, new TypeReference<List<UserProfileStripped>>() {
+        List<UserProfile> returnedUsers = mapper()
+                .convertValue(userList, new TypeReference<List<UserProfile>>() {
                 });
 
         doReturn(returnedUsers.get(0))
                 .when(mockService)
                 .getUserProfileById(id);
 
-        UserProfileStripped expected = returnedUsers.get(0);
-        UserProfileStripped actual = controller.getUserProfileById(id);
+        UserProfile expected = returnedUsers.get(0);
+        UserProfile actual = controller.getUserProfileById(id);
 
         assertEquals(expected, actual);
     }

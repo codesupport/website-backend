@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Data
-    private static class NewUser implements IdentifiableDomain<Long> {
+    static class NewUser implements IdentifiableDomain<Long> {
         private Long id;
         private String alias;
         private String password;

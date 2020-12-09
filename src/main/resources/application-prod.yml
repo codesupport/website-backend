@@ -27,3 +27,7 @@ server:
     key-store-password: ${ssl.key.store.password:}
     keyStoreType: ${ssl.key.store.type:PKCS12}
     keyAlias: ${ssl.key.alias:tomcat}
+healthcheck:
+  ping:
+    url: ${healthcheck.ping.url:}
+    delay: ${healthcheck.ping.delay:5000}

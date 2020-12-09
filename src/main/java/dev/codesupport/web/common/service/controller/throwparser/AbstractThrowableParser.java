@@ -96,4 +96,6 @@ public abstract class AbstractThrowableParser<E extends Throwable> {
         return RestStatus.FAIL;
     }
 
+    public int responseCode() { return 500; }
+
 }

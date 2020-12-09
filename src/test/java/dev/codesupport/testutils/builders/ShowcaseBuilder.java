@@ -27,7 +27,7 @@ public class ShowcaseBuilder {
         Showcase domain = new Showcase();
         domain.setId(id);
         if (user != null)
-        domain.setUser(user.buildUserStrippedDomain());
+        domain.setUser(user.buildDomain());
         domain.setTitle(title);
         domain.setDescription(description);
         domain.setApproved(approved);

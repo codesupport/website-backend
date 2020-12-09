@@ -33,4 +33,9 @@ public class InvalidUserExceptionParser extends AbstractThrowableParser<InvalidU
     protected RestStatus responseStatus() {
         return RestStatus.UNAUTHORIZED;
     }
+
+    @Override
+    public int responseCode() {
+        return 401;
+    }
 }

@@ -144,6 +144,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         return new UserDetails(
+                userEntity.getId(),
                 userEntity.getAlias(),
                 userEntity.getHashPassword(),
                 userEntity.getEmail(),

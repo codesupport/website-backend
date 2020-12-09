@@ -30,4 +30,9 @@ public class HttpMediaTypeNotSupportedExceptionParser extends AbstractThrowableP
         String message = (contentType != null) ? contentType.getType() + "/" + contentType.getSubtype() : "";
         return Collections.singletonList("Content type not supported: " + message);
     }
+
+    @Override
+    public int responseCode() {
+        return 415;
+    }
 }

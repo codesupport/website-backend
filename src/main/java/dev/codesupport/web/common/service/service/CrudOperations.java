@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.service.service;
 
 import com.google.common.annotations.VisibleForTesting;
+import dev.codesupport.web.common.data.repository.CrudRepository;
 import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import dev.codesupport.web.common.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.exception.ConfigurationException;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
  */
 public class CrudOperations<E extends IdentifiableEntity<I>, D extends IdentifiableDomain<I>, I> {
 
-    protected final JpaRepository<E, I> jpaRepository;
+    protected final CrudRepository<E, I> crudRepository;
     protected final Class<E> entityClass;
     protected final Class<D> domainClass;
     private AbstractPersistenceValidator<E, I, D, ? extends JpaRepository<E, I>> validation;
@@ -47,17 +47,17 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     /**
      * Creates a new crudOperations object for a given resource.
      *
-     * @param jpaRepository Reference to the jpaRepository associated with the resource.
+     * @param crudRepository Reference to the jpaRepository associated with the resource.
      * @param entityClass   Reference to the entity class associated with the resource.
      * @param domainClass   Reference to the domain class associated with the resource.
      * @throws ConfigurationException when the ApplicationContext has not been configured.
      */
     public CrudOperations(
-            JpaRepository<E, I> jpaRepository,
+            CrudRepository<E, I> crudRepository,
             Class<E> entityClass,
             Class<D> domainClass
     ) {
-        this.jpaRepository = jpaRepository;
+        this.crudRepository = crudRepository;
         this.entityClass = entityClass;
         this.domainClass = domainClass;
     }
@@ -112,15 +112,9 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      * @return The resource data list for the given id
      */
     public D getById(I id) {
-        Optional<E> optional = jpaRepository.findById(id);
-
-        if (optional.isPresent()) {
-            E entity = optional.get();
-            preGetEntities(Collections.singletonList(entity));
-            return MappingUtils.convertToType(entity, domainClass);
-        }
-
-        throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
+        E entity = crudRepository.getById(id);
+        preGetEntities(Collections.singletonList(entity));
+        return MappingUtils.convertToType(entity, domainClass);
     }
 
     /**
@@ -129,7 +123,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      * @return List of data for the given resource
      */
     public List<D> getAll() {
-        List<E> entities = jpaRepository.findAll();
+        List<E> entities = crudRepository.findAll();
         preGetEntities(entities);
         return MappingUtils.convertToType(entities, domainClass);
     }
@@ -223,7 +217,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
 
         preSaveEntities(entities);
 
-        List<E> savedEntities = jpaRepository.saveAll(entities);
+        List<E> savedEntities = crudRepository.saveAll(entities);
 
         return MappingUtils.convertToType(savedEntities, domainClass);
     }
@@ -255,7 +249,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
 
         List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
 
-        jpaRepository.deleteAll(entities);
+        crudRepository.deleteAll(entities);
 
         return domainObjects.size();
     }
@@ -305,7 +299,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      */
     @VisibleForTesting
     void resourceDoesntExistCheck(D domainObject) {
-        if (domainObject.getId() == null || !jpaRepository.existsById(domainObject.getId())) {
+        if (domainObject.getId() == null || !crudRepository.existsById(domainObject.getId())) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
         }
     }
@@ -331,7 +325,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      */
     @VisibleForTesting
     void resourceAlreadyExistsCheck(D domainObject) {
-        if (domainObject.getId() != null && jpaRepository.existsById(domainObject.getId())) {
+        if (domainObject.getId() != null && crudRepository.existsById(domainObject.getId())) {
             throw new ServiceLayerException(ServiceLayerException.Reason.RESOURCE_ALREADY_EXISTS);
         }
     }

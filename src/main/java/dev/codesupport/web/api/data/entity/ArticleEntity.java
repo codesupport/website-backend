@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 
 @Data
@@ -18,7 +21,7 @@ public class ArticleEntity implements IdentifiableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50, nullable = false)
+    @Column(updatable = false, length = 20, nullable = false)
     private String articleCode;
     @Column(length = 50, nullable = false)
     private String title;
@@ -26,13 +29,12 @@ public class ArticleEntity implements IdentifiableEntity<Long> {
     private String description;
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
-    @Column(nullable = false)
-    private boolean finalized;
     @Transient
     private TagSetEntity tagSet;
     @Column(nullable = false)
     private Long tagSetId;
     @ManyToOne(optional = false)
+    @JoinColumn(updatable = false)
     private UserEntity createdBy;
     @Column(updatable = false, nullable = false)
     private Long createdOn;
@@ -40,5 +42,16 @@ public class ArticleEntity implements IdentifiableEntity<Long> {
     private UserEntity updatedBy;
     @Column(nullable = false)
     private Long updatedOn;
+
+    @PrePersist
+    public void create() {
+        setCreatedOn(System.currentTimeMillis());
+        update();
+    }
+
+    @PreUpdate
+    public void update() {
+        setUpdatedOn(System.currentTimeMillis());
+    }
 
 }

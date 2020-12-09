@@ -35,4 +35,9 @@ public class BadCredentialsExceptionParser extends AbstractThrowableParser<BadCr
     protected RestStatus responseStatus() {
         return RestStatus.UNAUTHORIZED;
     }
+
+    @Override
+    public int responseCode() {
+        return 401;
+    }
 }

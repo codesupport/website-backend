@@ -1,6 +1,8 @@
 package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.domain.Article;
+import dev.codesupport.web.domain.PublishedArticle;
+import dev.codesupport.web.domain.VoidMethodResponse;
 import dev.codesupport.web.domain.validation.annotation.ArticleConstraint;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,15 +27,19 @@ public interface ArticleController {
 
     @ApiOperation("Get all Articles")
     @GetMapping("/articles")
-    List<Article> findAllArticles();
+    List<PublishedArticle> findAllArticles(@RequestParam(required = false) boolean publishedonly);
 
     @ApiOperation("Get an Article by id")
     @GetMapping("/articles/{id}")
-    Article getArticleById(@PathVariable Long id);
+    PublishedArticle getArticleById(@PathVariable Long id);
+
+    @ApiOperation("Get all Article revisions")
+    @GetMapping("/revisions/{id}")
+    List<Article> findAllArticleRevisionsById(@PathVariable Long id);
 
     @ApiOperation("Create an Article")
     @PostMapping("/articles")
-    Article createArticle(@RequestBody @ArticleConstraint Article article);
+    PublishedArticle createArticle(@RequestBody @ArticleConstraint Article article);
 
     @ApiOperation("Create an Article")
     @PutMapping("/articles")
@@ -40,6 +47,10 @@ public interface ArticleController {
 
     @ApiOperation("Create an Article")
     @DeleteMapping("/articles")
-    Article deleteArticle(@RequestBody @ArticleConstraint Article article);
+    VoidMethodResponse deleteArticle(@RequestBody @ArticleConstraint Article article);
+
+    @ApiOperation("Publish an Article")
+    @PostMapping("/publish")
+    VoidMethodResponse publishArticle(@RequestBody PublishedArticle publishedArticle);
 
 }

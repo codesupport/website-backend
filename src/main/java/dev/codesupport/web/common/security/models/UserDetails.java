@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Data
 public class UserDetails {
 
+    private final Long id;
     private final String alias;
     private final String password;
     private final String email;

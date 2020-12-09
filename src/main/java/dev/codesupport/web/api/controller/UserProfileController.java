@@ -2,7 +2,6 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
-import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.validation.annotation.AliasConstraint;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +25,7 @@ public interface UserProfileController {
 
     @ApiOperation("Get all User Profiles")
     @GetMapping("/profiles")
-    List<UserProfileStripped> getAllUserProfiles();
+    List<UserProfile> getAllUserProfiles();
 
     @ApiOperation("Get User Profile by alias")
     @GetMapping(value = "/profiles", params = {"alias"})
@@ -34,6 +33,6 @@ public interface UserProfileController {
 
     @ApiOperation("Get User Profile by id")
     @GetMapping("/profiles/{id}")
-    UserProfileStripped getUserProfileById(@PathVariable Long id);
+    UserProfile getUserProfileById(@PathVariable Long id);
 
 }

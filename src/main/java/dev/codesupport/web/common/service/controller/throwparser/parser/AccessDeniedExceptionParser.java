@@ -35,4 +35,9 @@ public class AccessDeniedExceptionParser extends AbstractThrowableParser<AccessD
     protected RestStatus responseStatus() {
         return RestStatus.UNAUTHORIZED;
     }
+
+    @Override
+    public int responseCode() {
+        return 403;
+    }
 }

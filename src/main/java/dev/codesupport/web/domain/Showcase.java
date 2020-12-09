@@ -9,7 +9,7 @@ import lombok.experimental.FieldNameConstants;
 public class Showcase implements IdentifiableDomain<Long> {
 
     private Long id;
-    private UserStripped user;
+    private User user;
     private String title;
     private String description;
     private boolean approved;

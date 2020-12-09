@@ -21,6 +21,24 @@ public class EmailPasswordAuthenticationToken extends UsernamePasswordAuthentica
     }
 
     /**
+     * Gets user details from the local thread security context
+     *
+     * @return
+     */
+    @Override
+    public Object getDetails() {
+        Object name;
+
+        if (this.getPrincipal() instanceof UserDetails) {
+            name = this.getPrincipal();
+        } else {
+            name = super.getDetails();
+        }
+
+        return name;
+    }
+
+    /**
      * Gets the name associated to the authentication token
      *
      * @return Email if principal is {@link UserDetails}, else returns default implementation.

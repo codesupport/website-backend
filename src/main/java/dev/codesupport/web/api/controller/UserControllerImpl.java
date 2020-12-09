@@ -4,7 +4,6 @@ import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserRegistration;
-import dev.codesupport.web.domain.UserStripped;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -26,12 +25,12 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public List<UserStripped> getAllUsers() {
+    public List<User> getAllUsers() {
         return service.findAllUsers();
     }
 
     @Override
-    public UserStripped getUserById(Long id) {
+    public User getUserById(Long id) {
         return service.getUserById(id);
     }
 

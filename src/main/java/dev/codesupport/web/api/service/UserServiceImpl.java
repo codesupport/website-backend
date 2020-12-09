@@ -2,18 +2,19 @@ package dev.codesupport.web.api.service;
 
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
+import dev.codesupport.web.domain.Role;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
-import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.UserRegistration;
-import dev.codesupport.web.domain.UserStripped;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +27,8 @@ import java.util.Optional;
 @Component
 public class UserServiceImpl implements UserService {
 
-    private final CrudOperations<UserEntity, User, Long> userCrudOperations;
-    private final CrudOperations<UserEntity, UserProfileStripped, Long> userProfileCrudOperations;
+    private final CrudOperations<UserEntity, NewUser, Long> userCrudOperations;
+    private final CrudOperations<UserEntity, UserProfile, Long> userProfileCrudOperations;
 
     private final UserRepository userRepository;
 
@@ -41,8 +42,8 @@ public class UserServiceImpl implements UserService {
             HashingUtility hashingUtility,
             JwtUtility jwtUtility
     ) {
-        userCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, User.class);
-        userProfileCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, UserProfileStripped.class);
+        userCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, NewUser.class);
+        userProfileCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, UserProfile.class);
         this.userRepository = userRepository;
 
         this.hashingUtility = hashingUtility;
@@ -65,33 +66,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileStripped getUserProfileById(Long id) {
+    public UserProfile getUserProfileById(Long id) {
         return userProfileCrudOperations.getById(id);
     }
 
     @Override
-    public List<UserProfileStripped> findAllUserProfiles() {
+    public List<UserProfile> findAllUserProfiles() {
         return userProfileCrudOperations.getAll();
     }
 
     @Override
-    public UserStripped getUserById(Long id) {
-        User users = userCrudOperations.getById(id);
-
-        return MappingUtils.convertToType(users, UserStripped.class);
+    public User getUserById(Long id) {
+        return MappingUtils.convertToType(userCrudOperations.getById(id), User.class);
     }
 
     @Override
-    public List<UserStripped> findAllUsers() {
-        List<User> users = userCrudOperations.getAll();
-
-        return MappingUtils.convertToType(users, UserStripped.class);
+    public List<User> findAllUsers() {
+        return MappingUtils.convertToType(userCrudOperations.getAll(), User.class);
     }
 
     @Override
     public TokenResponse registerUser(UserRegistration userRegistration) {
-        User user = MappingUtils.convertToType(userRegistration, User.class);
-        User createdUser;
+        NewUser user = MappingUtils.convertToType(userRegistration, NewUser.class);
+        NewUser createdUser;
 
         if (!userRepository.existsByAliasIgnoreCase(user.getAlias())) {
             if (!userRepository.existsByEmailIgnoreCase(user.getEmail())) {
@@ -113,6 +110,21 @@ public class UserServiceImpl implements UserService {
                 userProfile,
                 jwtUtility.generateToken(createdUser.getAlias(), createdUser.getEmail())
         );
+    }
+
+    @Data
+    private static class NewUser implements IdentifiableDomain<Long> {
+        private Long id;
+        private String alias;
+        private String password;
+        private String hashPassword;
+        private String email;
+        private String discordId;
+        private String discordUsername;
+        private String avatarLink;
+        private boolean disabled;
+        private Role role;
+        private Long joinDate;
     }
 
 }

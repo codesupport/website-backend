@@ -1,11 +1,11 @@
 package dev.codesupport.web.api.data.repository;
 
 import dev.codesupport.web.api.data.entity.TagSetEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import dev.codesupport.web.common.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TagSetRepository extends JpaRepository<TagSetEntity, Long> {
+public interface TagSetRepository extends CrudRepository<TagSetEntity, Long> {
 
 
 }

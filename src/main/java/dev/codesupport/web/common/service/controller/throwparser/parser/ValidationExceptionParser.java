@@ -29,4 +29,9 @@ public class ValidationExceptionParser extends AbstractThrowableParser<Validatio
                 .map(e -> e.getPropertyName() + ": " + e.getMessage())
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public int responseCode() {
+        return 400;
+    }
 }

@@ -14,6 +14,5 @@ public class Role implements IdentifiableDomain<Long> {
     private Long id;
     private String code;
     private String label;
-    private Set<Permission> permission;
 
 }

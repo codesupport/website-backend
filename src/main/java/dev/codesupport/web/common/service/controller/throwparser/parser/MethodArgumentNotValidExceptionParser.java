@@ -32,4 +32,9 @@ public class MethodArgumentNotValidExceptionParser extends AbstractThrowablePars
                 .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public int responseCode() {
+        return 400;
+    }
 }

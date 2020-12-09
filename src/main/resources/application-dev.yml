@@ -22,3 +22,7 @@ security:
 logging:
   level:
     dev.codesupport: ${log.local.level:DEBUG}
+healthcheck:
+  ping:
+    url: http://localhost:8082/healthcheck
+    delay: 5000

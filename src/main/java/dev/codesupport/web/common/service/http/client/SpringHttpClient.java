@@ -85,7 +85,13 @@ public class SpringHttpClient implements HttpClient {
 
                 String responseString = syncRequest.getResponse();
 
-                responseObject = MappingUtils.convertFromJson(responseString, responseClass);
+                if (responseClass == String.class) {
+                    //unchecked - This is fine, we know it wants a string.
+                    //noinspection unchecked
+                    responseObject = (T)responseString;
+                } else {
+                    responseObject = MappingUtils.convertFromJson(responseString, responseClass);
+                }
             } catch (IOException | HttpRequestException e) {
                 throw new InternalServiceException(InternalServiceException.Reason.EXTERNAL, e);
             }

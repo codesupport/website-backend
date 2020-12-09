@@ -9,6 +9,7 @@ import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
+import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.Role;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Handles the business logic for the various resource operations provided by the API contract endpoints.
@@ -78,6 +80,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long id) {
         return MappingUtils.convertToType(userCrudOperations.getById(id), User.class);
+    }
+
+    @Override
+    public Set<Permission> getUserPermissionsById(Long id) {
+        UserEntity entity = userRepository.getById(id);
+
+        return MappingUtils.convertToType(entity.getPermission(), Permission.class);
     }
 
     @Override

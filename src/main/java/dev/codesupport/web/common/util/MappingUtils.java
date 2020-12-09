@@ -7,6 +7,7 @@ import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Utilities for object transformations and JSON serialization/deserialization
@@ -63,6 +64,21 @@ public class MappingUtils {
     public static <D, S> List<D> convertToType(List<S> objectList, Class<D> clazz) {
         return mapper()
                 .convertValue(objectList, mapper().getTypeFactory().constructCollectionLikeType(List.class, clazz));
+    }
+
+    /**
+     * Converts a set of objects to a specified type.
+     * <p></p>
+     *
+     * @param objectList The set of objects to convert
+     * @param clazz The destination type to convert to
+     * @param <D> The destination type
+     * @param <S> The source object type
+     * @return a new instance of the object set, with every element converted to the specified type
+     */
+    public static <D, S> Set<D> convertToType(Set<S> objectList, Class<D> clazz) {
+        return mapper()
+                .convertValue(objectList, mapper().getTypeFactory().constructCollectionLikeType(Set.class, clazz));
     }
 
     /**

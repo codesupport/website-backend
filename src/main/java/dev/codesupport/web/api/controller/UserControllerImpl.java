@@ -1,6 +1,7 @@
 package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.UserService;
+import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserRegistration;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * API Contract implementation for the {@link User} resource.
@@ -32,6 +34,11 @@ public class UserControllerImpl implements UserController {
     @Override
     public User getUserById(Long id) {
         return service.getUserById(id);
+    }
+
+    @Override
+    public Set<Permission> getUserPermissions(Long id) {
+        return service.getUserPermissionsById(id);
     }
 
     /**

@@ -1,5 +1,6 @@
 package dev.codesupport.web.api.service;
 
+import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
@@ -8,6 +9,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface layer for defining access authorizations, etc.
@@ -23,6 +25,8 @@ public interface UserService {
     List<UserProfile> findAllUserProfiles();
 
     User getUserById(Long id);
+
+    Set<Permission> getUserPermissionsById(Long id);
 
     List<User> findAllUsers();
 

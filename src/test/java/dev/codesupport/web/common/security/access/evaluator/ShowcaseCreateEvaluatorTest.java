@@ -7,8 +7,8 @@ import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.security.access.Permission;
 import dev.codesupport.web.domain.Showcase;
+import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
-import dev.codesupport.web.domain.UserStripped;
 import org.junit.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -209,7 +209,7 @@ public class ShowcaseCreateEvaluatorTest {
                 .isValidAuth(mockAuthentication);
 
         Showcase expected = showcaseBuilder.buildDomain();
-        expected.setUser(new UserStripped());
+        expected.setUser(new User());
         expected.getUser().setId(userEntity.getId());
 
         Showcase actual = showcaseBuilder.buildDomain();

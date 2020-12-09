@@ -14,9 +14,7 @@ import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
-import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.UserRegistration;
-import dev.codesupport.web.domain.UserStripped;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,8 +39,8 @@ public class UserServiceImplTest {
 
     private static HashingUtility mockHashingUtility;
 
-    private static CrudOperations<UserEntity, User, Long> mockUserCrudOperations;
-    private static CrudOperations<UserEntity, UserProfileStripped, Long> mockUserProfileCrudOperations;
+    private static CrudOperations<UserEntity, UserServiceImpl.NewUser, Long> mockUserCrudOperations;
+    private static CrudOperations<UserEntity, UserProfile, Long> mockUserProfileCrudOperations;
 
     private static UserRepository mockUserRepository;
 
@@ -106,15 +104,15 @@ public class UserServiceImplTest {
 
     @Test
     public void shouldReturnCorrectUsersWithFindAllUserProfiles() {
-        List<UserProfileStripped> expected = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserProfileStripped>>() {
+        List<UserProfile> expected = mapper()
+                .convertValue(getUserList, new TypeReference<List<UserProfile>>() {
                 });
 
         doReturn(expected)
                 .when(mockUserProfileCrudOperations)
                 .getAll();
 
-        List<UserProfileStripped> actual = service.findAllUserProfiles();
+        List<UserProfile> actual = service.findAllUserProfiles();
 
         assertEquals(expected, actual);
     }
@@ -157,31 +155,31 @@ public class UserServiceImplTest {
     public void shouldReturnCorrectUsersWithGetUserProfileById() {
         Long id = 1L;
 
-        List<UserProfileStripped> returnedUsers = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserProfileStripped>>() {
+        List<UserProfile> returnedUsers = mapper()
+                .convertValue(getUserList, new TypeReference<List<UserProfile>>() {
                 });
 
         doReturn(returnedUsers.get(0))
                 .when(mockUserProfileCrudOperations)
                 .getById(id);
 
-        UserProfileStripped expected = returnedUsers.get(0);
-        UserProfileStripped actual = service.getUserProfileById(id);
+        UserProfile expected = returnedUsers.get(0);
+        UserProfile actual = service.getUserProfileById(id);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void shouldReturnCorrectUsersWithFindAllUsers() {
-        List<UserStripped> expected = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserStripped>>() {
+        List<User> expected = mapper()
+                .convertValue(getUserList, new TypeReference<List<User>>() {
                 });
 
         doReturn(getUserList)
                 .when(mockUserCrudOperations)
                 .getAll();
 
-        List<UserStripped> actual = service.findAllUsers();
+        List<User> actual = service.findAllUsers();
 
         assertEquals(expected, actual);
     }
@@ -190,16 +188,16 @@ public class UserServiceImplTest {
     public void shouldReturnCorrectUsersWithGetUserById() {
         Long id = 1L;
 
-        List<UserStripped> returnedUsers = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserStripped>>() {
+        List<User> returnedUsers = mapper()
+                .convertValue(getUserList, new TypeReference<List<User>>() {
                 });
 
         doReturn(getUserList.get(0))
                 .when(mockUserCrudOperations)
                 .getById(id);
 
-        UserStripped expected = returnedUsers.get(0);
-        UserStripped actual = service.getUserById(id);
+        User expected = returnedUsers.get(0);
+        User actual = service.getUserById(id);
 
         assertEquals(expected, actual);
     }
@@ -213,7 +211,7 @@ public class UserServiceImplTest {
         userRegistration.setPassword("1234567890abcdef");
         userRegistration.setEmail("valid@email.com");
 
-        User user = mapper().convertValue(userRegistration, User.class);
+        UserServiceImpl.NewUser user = mapper().convertValue(userRegistration, UserServiceImpl.NewUser.class);
 
         doReturn(true)
                 .when(mockUserRepository)
@@ -243,7 +241,7 @@ public class UserServiceImplTest {
         userRegistration.setPassword("1234567890abcdef");
         userRegistration.setEmail("valid@email.com");
 
-        User user = mapper().convertValue(userRegistration, User.class);
+        UserServiceImpl.NewUser user = mapper().convertValue(userRegistration, UserServiceImpl.NewUser.class);
 
         doReturn(false)
                 .when(mockUserRepository)
@@ -276,10 +274,13 @@ public class UserServiceImplTest {
 
         UserRegistration userRegistration = builder.buildUserRegistrationDomain();
 
-        User user = builder.buildDomain();
+        UserServiceImpl.NewUser user = mapper()
+                .convertValue(userRegistration, UserServiceImpl.NewUser.class);
+
         user.setHashPassword(hashPassword);
 
-        User createdUser = builder.buildDomain();
+        UserServiceImpl.NewUser createdUser = mapper()
+                .convertValue(userRegistration, UserServiceImpl.NewUser.class);
 
         doReturn(false)
                 .when(mockUserRepository)

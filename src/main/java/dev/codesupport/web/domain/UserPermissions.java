@@ -6,27 +6,19 @@ import lombok.Data;
 import java.util.Set;
 
 /**
- * Used for returning User Profile information.
- * No additional permissions
- * No password.
- * No email.
+ * Used internally by service to perform actions on a User.  Not to be returned by API.
  */
 @Data
-public class UserProfileStripped implements IdentifiableDomain<Long> {
+public class UserPermissions implements IdentifiableDomain<Long> {
 
     private Long id;
     private String alias;
     private String discordId;
     private String discordUsername;
-    private String githubUsername;
-    private String jobTitle;
-    private String jobCompany;
     private String avatarLink;
     private boolean disabled;
     private Role role;
-    private String biography;
-    private Country country;
-    private Set<UserAward> userAward;
+    private Set<Permission> permission;
     private Long joinDate;
 
 }

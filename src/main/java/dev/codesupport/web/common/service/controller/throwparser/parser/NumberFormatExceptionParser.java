@@ -26,4 +26,9 @@ public class NumberFormatExceptionParser extends AbstractThrowableParser<NumberF
     protected List<String> responseMessage() {
         return Collections.singletonList(throwable.getMessage());
     }
+
+    @Override
+    public int responseCode() {
+        return 400;
+    }
 }

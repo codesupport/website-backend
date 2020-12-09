@@ -1,10 +1,15 @@
 package dev.codesupport.web.api.data.repository;
 
 import dev.codesupport.web.api.data.entity.ArticleEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import dev.codesupport.web.common.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface ArticleRepository extends JpaRepository<ArticleEntity, Long> {
+public interface ArticleRepository extends CrudRepository<ArticleEntity, Long> {
+
+    List<ArticleEntity> findAllByArticleCode(String articleCode);
+    boolean existsByTitleIgnoreCase(String title);
 
 }

@@ -7,19 +7,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class ValidationExceptionTest {
-
-    @Test
-    public void shouldCreateServiceLayerExceptionSubtype() {
-        ValidationException exception = new ValidationException(Collections.emptyList());
-
-        //ConstantConditions - never know till you check!
-        //noinspection ConstantConditions
-        assertTrue(exception instanceof ServiceLayerException);
-    }
 
     @Test
     public void shouldCorrectlySetExceptionMessage() {

@@ -50,26 +50,46 @@ public class ShowcaseControllerImplTest {
 
     @Test
     public void shouldReturnCorrectResultsForFindAllShowcasesByUser() {
+        long id = 5;
+
         List<Showcase> expected = Collections.singletonList(mock(Showcase.class));
 
         doReturn(expected)
                 .when(mockService)
-                .findAllShowcasesByUser(5L);
+                .findAllShowcasesByUser(id);
 
-        List<Showcase> actual = controller.findAllShowcasesByUser(5L);
+        List<Showcase> actual = controller.findAllShowcasesByUser(id);
+
+        assertSame(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectResultsForFindAllShowcasesByAlias() {
+        String alias = "me";
+
+        List<Showcase> expected = Collections.singletonList(
+                mock(Showcase.class)
+        );
+
+        doReturn(expected)
+                .when(mockService)
+                .findAllShowcasesByAlias(alias);
+
+        List<Showcase> actual = controller.findAllShowcasesByAlias(alias);
 
         assertSame(expected, actual);
     }
 
     @Test
     public void shouldReturnCorrectResultsForGetShowcaseById() {
+        long id = 5;
         Showcase expected = mock(Showcase.class);
 
         doReturn(expected)
                 .when(mockService)
-                .getShowcaseById(5L);
+                .getShowcaseById(id);
 
-        Showcase actual = controller.getShowcaseById(5L);
+        Showcase actual = controller.getShowcaseById(id);
 
         assertSame(expected, actual);
     }

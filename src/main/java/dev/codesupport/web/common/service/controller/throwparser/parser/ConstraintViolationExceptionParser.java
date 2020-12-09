@@ -36,4 +36,9 @@ public class ConstraintViolationExceptionParser extends AbstractThrowableParser<
                     return nodes.get(nodes.size() - 1) + ": " + constraintViolation.getMessage();
                 }).collect(Collectors.toList());
     }
+
+    @Override
+    public int responseCode() {
+        return 400;
+    }
 }

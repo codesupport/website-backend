@@ -2,6 +2,7 @@ package dev.codesupport.web.common.service.service;
 
 import dev.codesupport.testutils.domain.MockIdentifiableDomain;
 import dev.codesupport.testutils.entity.MockIdentifiableEntity;
+import dev.codesupport.web.common.data.repository.CrudRepository;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
@@ -21,7 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
 public class CrudOperationsTest {
 
     private static CrudOperations<MockIdentifiableEntity, MockIdentifiableDomain, Long> crudOperationsSpy;
-    private static JpaRepository<MockIdentifiableEntity, Long> mockRepository;
+    private static CrudRepository<MockIdentifiableEntity, Long> mockRepository;
     private static AbstractPersistenceValidator<MockIdentifiableEntity, Long, MockIdentifiableDomain, JpaRepository<MockIdentifiableEntity, Long>> mockValidator;
     private static ApplicationContext mockContext;
 
@@ -64,7 +64,7 @@ public class CrudOperationsTest {
 
         //unchecked - This is not a concern for the purposes of this test.
         //noinspection unchecked
-        mockRepository = mock(JpaRepository.class);
+        mockRepository = mock(CrudRepository.class);
 
         CrudOperations.setContext(mockContext);
 
@@ -122,33 +122,20 @@ public class CrudOperationsTest {
         long id = 1L;
         String value = "value";
 
-        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
+        MockIdentifiableEntity entity = new MockIdentifiableEntity(id, value);
 
-        Optional<MockIdentifiableEntity> optional = Optional.of(
-                new MockIdentifiableEntity(id, "value")
-        );
-
-        doReturn(optional)
+        doReturn(entity)
                 .when(mockRepository)
-                .findById(id);
+                .getById(id);
 
-        MockIdentifiableDomain expected = domainsToReturn.get(0);
+        doNothing()
+                .when(crudOperationsSpy)
+                .preGetEntities(Collections.singletonList(entity));
+
+        MockIdentifiableDomain expected = new MockIdentifiableDomain(entity.getId(), entity.getPropertyA());
         MockIdentifiableDomain actual = crudOperationsSpy.getById(id);
 
         assertEquals(expected, actual);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNotFoundExceptionIfNotFoundById() {
-        long id = 1L;
-
-        doReturn(Optional.empty())
-                .when(mockRepository)
-                .findById(id);
-
-        crudOperationsSpy.getById(id);
     }
 
     @Test

@@ -4,9 +4,7 @@ import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.common.security.models.UserDetails;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
-import dev.codesupport.web.domain.UserProfileStripped;
 import dev.codesupport.web.domain.UserRegistration;
-import dev.codesupport.web.domain.UserStripped;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,40 +44,13 @@ public class UserBuilder {
         User domain = new User();
         domain.setId(id);
         domain.setAlias(alias);
-        domain.setPassword(password);
-        domain.setHashPassword(hashPassword);
         domain.setDiscordId(discordId);
         domain.setDiscordUsername(discordUsername);
-        domain.setGithubUsername(githubUsername);
-        domain.setJobTitle(jobTitle);
-        domain.setJobCompany(jobCompany);
         domain.setEmail(email);
         domain.setAvatarLink(avatarLink);
         domain.setDisabled(disabled);
         if (role != null)
             domain.setRole(role.buildDomain());
-        if (permission != null)
-            domain.setPermission(permission.stream().map(PermissionBuilder::buildDomain).collect(Collectors.toSet()));
-        domain.setBiography(biography);
-        if (country != null)
-            domain.setCountry(country.buildDomain());
-        if (userAward != null)
-            domain.setUserAward(userAward.stream().map(UserAwardBuilder::buildDomain).collect(Collectors.toSet()));
-        domain.setJoinDate(joinDate);
-        return domain;
-    }
-
-    public UserStripped buildUserStrippedDomain() {
-        UserStripped domain = new UserStripped();
-        domain.setId(id);
-        domain.setAlias(alias);
-        domain.setDiscordId(discordId);
-        domain.setAvatarLink(avatarLink);
-        domain.setDisabled(disabled);
-        if (role != null)
-            domain.setRole(role.buildDomain());
-        if (permission != null)
-            domain.setPermission(permission.stream().map(PermissionBuilder::buildDomain).collect(Collectors.toSet()));
         domain.setJoinDate(joinDate);
         return domain;
     }
@@ -107,30 +78,9 @@ public class UserBuilder {
         return domain;
     }
 
-    public UserProfileStripped buildUserProfileStrippedDomain() {
-        UserProfileStripped domain = new UserProfileStripped();
-        domain.setId(id);
-        domain.setAlias(alias);
-        domain.setDiscordId(discordId);
-        domain.setDiscordUsername(discordUsername);
-        domain.setGithubUsername(githubUsername);
-        domain.setJobTitle(jobTitle);
-        domain.setJobCompany(jobCompany);
-        domain.setAvatarLink(avatarLink);
-        domain.setDisabled(disabled);
-        if (role != null)
-            domain.setRole(role.buildDomain());
-        domain.setBiography(biography);
-        if (country != null)
-            domain.setCountry(country.buildDomain());
-        if (userAward != null)
-            domain.setUserAward(userAward.stream().map(UserAwardBuilder::buildDomain).collect(Collectors.toSet()));
-        domain.setJoinDate(joinDate);
-        return domain;
-    }
-
     public UserDetails buildUserDetailsDomain() {
         return new UserDetails(
+                id,
                 alias,
                 hashPassword,
                 email,

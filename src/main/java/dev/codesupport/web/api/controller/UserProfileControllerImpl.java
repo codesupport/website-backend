@@ -3,7 +3,6 @@ package dev.codesupport.web.api.controller;
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
-import dev.codesupport.web.domain.UserProfileStripped;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +24,7 @@ public class UserProfileControllerImpl implements UserProfileController {
     }
 
     @Override
-    public List<UserProfileStripped> getAllUserProfiles() {
+    public List<UserProfile> getAllUserProfiles() {
         return service.findAllUserProfiles();
     }
 
@@ -35,7 +34,7 @@ public class UserProfileControllerImpl implements UserProfileController {
     }
 
     @Override
-    public UserProfileStripped getUserProfileById(Long id) {
+    public UserProfile getUserProfileById(Long id) {
         return service.getUserProfileById(id);
     }
 

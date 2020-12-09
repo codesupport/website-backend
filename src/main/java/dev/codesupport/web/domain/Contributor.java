@@ -10,7 +10,7 @@ public class Contributor implements IdentifiableDomain<Long> {
 
     private Long id;
     private String alias;
-    private UserStripped user;
+    private User user;
     private ContributorList contributorList;
 
 }

@@ -1,7 +1,6 @@
 package dev.codesupport.web.common.service.controller;
 
 import com.google.common.annotations.VisibleForTesting;
-import dev.codesupport.web.common.exception.ErrorControllerException;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.controller.throwparser.ThrowableParserFactory;
 import dev.codesupport.web.common.service.http.DontWrapResponse;
@@ -72,10 +71,9 @@ public class ErrorHandlerController implements ErrorController {
         Throwable throwable = getExceptionOrReturnNull(request);
 
         if (throwable != null) {
-            //RawTypes - Don't need to specify types for this to work correctly.
-            //noinspection rawtypes
-            AbstractThrowableParser throwableParser = throwableParserFactory.createParser(throwable);
+            AbstractThrowableParser<?> throwableParser = throwableParserFactory.createParser(throwable);
             throwableParser.modifyResponse(restResponse);
+            httpStatus = HttpStatus.valueOf(throwableParser.responseCode());
         } else {
             if (HttpStatus.NOT_FOUND.equals(httpStatus)) {
                 restResponse.setStatus(RestStatus.NOT_FOUND);
@@ -90,11 +88,13 @@ public class ErrorHandlerController implements ErrorController {
             }
         }
 
-        if (throwable != null && !RestStatus.NOT_FOUND.equals(restResponse.getStatus())) {
-            log.error("Service exception: [refId: " + restResponse.getReferenceId() + "]", throwable);
+        if (throwable != null) {
+            if (httpStatus.is5xxServerError()) {
+                log.error("Service exception: [refId: " + restResponse.getReferenceId() + "]", throwable);
+            } else {
+                log.debug("Service exception: [refId: " + restResponse.getReferenceId() + "]", throwable);
+            }
         }
-
-        httpStatus = updateHttpStatus(httpStatus, throwable);
 
         if (log.isDebugEnabled()) {
             Object requestedUri = request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
@@ -135,23 +135,6 @@ public class ErrorHandlerController implements ErrorController {
     @VisibleForTesting
     RestResponse<Serializable> createRestResponse() {
         return new RestResponse<>();
-    }
-
-    @VisibleForTesting
-    HttpStatus updateHttpStatus(final HttpStatus httpStatus, Throwable throwable) {
-        Throwable reference = throwable;
-        HttpStatus newStatus = httpStatus;
-
-        while (reference != null) {
-            if (reference instanceof ErrorControllerException) {
-                newStatus = ((ErrorControllerException)reference).getHttpStatus();
-                reference = null;
-            } else {
-                reference = reference.getCause();
-            }
-        }
-
-        return newStatus;
     }
 
     /**

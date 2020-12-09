@@ -30,4 +30,9 @@ public class MethodArgumentTypeMismatchExceptionParser extends AbstractThrowable
                         " (Required: " + throwable.getParameter().getParameterType().getSimpleName() + ")."
         );
     }
+
+    @Override
+    public int responseCode() {
+        return 400;
+    }
 }

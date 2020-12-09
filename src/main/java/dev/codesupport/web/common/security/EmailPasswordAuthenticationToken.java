@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.security;
 
 import dev.codesupport.web.common.security.models.UserDetails;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
  * Token used with the spring authentication context
  * <p>Exists simply so I can override getName() for a better response.</p>
  */
+@EqualsAndHashCode(callSuper = true)
 public class EmailPasswordAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
     public EmailPasswordAuthenticationToken(Object principal, Object credentials) {
@@ -18,6 +20,24 @@ public class EmailPasswordAuthenticationToken extends UsernamePasswordAuthentica
 
     public EmailPasswordAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
+    }
+
+    /**
+     * Gets user details from the local thread security context
+     *
+     * @return
+     */
+    @Override
+    public Object getDetails() {
+        Object name;
+
+        if (this.getPrincipal() instanceof UserDetails) {
+            name = this.getPrincipal();
+        } else {
+            name = super.getDetails();
+        }
+
+        return name;
     }
 
     /**

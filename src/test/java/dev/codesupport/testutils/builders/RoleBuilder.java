@@ -28,9 +28,7 @@ public class RoleBuilder {
         domain.setId(id);
         domain.setCode(code);
         domain.setLabel(label);
-        if (permission != null) {
-            domain.setPermission(permission.stream().map(PermissionBuilder::buildDomain).collect(Collectors.toSet()));
-        }
+
         return domain;
     }
 

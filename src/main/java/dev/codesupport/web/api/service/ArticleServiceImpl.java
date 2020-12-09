@@ -11,9 +11,13 @@ import dev.codesupport.web.api.data.repository.PublishedArticleRepository;
 import dev.codesupport.web.api.data.repository.TagRepository;
 import dev.codesupport.web.api.data.repository.TagSetRepository;
 import dev.codesupport.web.api.data.repository.TagSetToTagsRepository;
-import dev.codesupport.web.common.exception.ResourceNotFoundException;
+import dev.codesupport.web.common.exception.DuplicateEntryException;
+import dev.codesupport.web.common.exception.MalformedDataException;
 import dev.codesupport.web.common.service.service.CrudOperations;
+import dev.codesupport.web.common.util.MappingUtils;
 import dev.codesupport.web.domain.Article;
+import dev.codesupport.web.domain.PublishedArticle;
+import dev.codesupport.web.domain.VoidMethodResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +47,7 @@ public class ArticleServiceImpl implements ArticleService {
             TagRepository tagRepository
     ) {
         crudOperations = new CrudOperations<>(articleRepository, ArticleEntity.class, Article.class);
-        CrudLogic crudLogic = new CrudLogic(articleRepository, tagRepository, tagSetRepository, tagSetToTagsRepository);
+        CrudLogic crudLogic = new CrudLogic(tagRepository, tagSetRepository, tagSetToTagsRepository);
         crudOperations.setPreSaveEntities(crudLogic.preSaveLogic());
         crudOperations.setPreGetEntities(crudLogic.preGetLogic());
         this.publishedArticleRepository = publishedArticleRepository;
@@ -51,80 +55,107 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> findAllArticles() {
-        return crudOperations.getAll();
+    public List<PublishedArticle> findAllArticles(boolean publishedOnly) {
+        List<PublishedArticleEntity> entities;
+
+        if (publishedOnly) {
+            entities = publishedArticleRepository.findAllByPublishedIsTrue();
+        } else {
+            entities = publishedArticleRepository.findAll();
+        }
+
+        // For each published article entity, find the article it points to and return a PublishedArticle DTO
+        return entities.stream().map(entity -> {
+            Article article = crudOperations.getById(entity.getArticleId());
+            PublishedArticle publishedArticle = MappingUtils.convertToType(entity, PublishedArticle.class);
+            publishedArticle.setArticle(article);
+            return publishedArticle;
+        }).collect(Collectors.toList());
     }
 
     @Override
-    public Article getArticleById(Long id) {
-        return crudOperations.getById(id);
+    public List<Article> findAllArticleRevisionsById(Long id) {
+        PublishedArticleEntity entity = publishedArticleRepository.getById(id);
+
+        List<ArticleEntity> entities = articleRepository.findAllByArticleCode(entity.getArticleCode());
+
+        return MappingUtils.convertToType(entities, Article.class);
     }
 
     @Override
-    public Article createArticle(Article article) {
-        return crudOperations.createEntity(article);
+    public PublishedArticle getArticleById(Long id) {
+        PublishedArticleEntity entity = publishedArticleRepository.getById(id);
+        PublishedArticle publishedArticle = MappingUtils.convertToType(entity, PublishedArticle.class);
+        publishedArticle.setArticle(crudOperations.getById(entity.getArticleId()));
+        return publishedArticle;
+    }
+
+    @Override
+    public PublishedArticle createArticle(Article article) {
+        if (!articleRepository.existsByTitleIgnoreCase(article.getTitle())) {
+            generateArticleCode(article);
+
+            Article newArticle = crudOperations.createEntity(article);
+
+            PublishedArticleEntity entity = new PublishedArticleEntity();
+            entity.setArticleCode(newArticle.getArticleCode());
+            entity.setArticleId(newArticle.getId());
+            entity.setPublished(false);
+
+            PublishedArticleEntity savedEntity = publishedArticleRepository.save(entity);
+
+            // Pulling from db to get complete data
+            return getArticleById(savedEntity.getId());
+        } else {
+            throw new DuplicateEntryException("Article already exists with the given title");
+        }
     }
 
     @Override
     public Article updateArticle(Article article) {
-        return null;
+        return crudOperations.updateEntity(article);
     }
 
     @Override
-    public Article deleteArticle(Article article) {
-        return null;
+    public VoidMethodResponse deleteArticle(Article article) {
+        return new VoidMethodResponse("Not implemented", 0);
     }
 
     @Override
-    public Article publishArticle(Article article) {
-        Optional<ArticleEntity> optionalArticle = articleRepository.findById(article.getId());
+    public VoidMethodResponse publishArticle(PublishedArticle publishedArticle) {
+        PublishedArticleEntity existingPublishedArticle = publishedArticleRepository.getById(publishedArticle.getId());
+        ArticleEntity existingArticle = articleRepository.getById(existingPublishedArticle.getArticleId());
 
-        if (optionalArticle.isPresent()) {
-            PublishedArticleEntity publishedArticleEntity;
-            Optional<PublishedArticleEntity> optionalPA = publishedArticleRepository.findByArticleCode(optionalArticle.get().getArticleCode());
+        // Stale data check against existing article
+        if (publishedArticle.getArticle().getUpdatedOn().equals(existingArticle.getUpdatedOn())) {
+            existingPublishedArticle.setPublished(true);
 
-            if (optionalPA.isPresent()) {
-                publishedArticleEntity = updatePublishedArticle(optionalPA.get(), optionalArticle.get());
-            } else {
-                publishedArticleEntity = createPublishedArticle(optionalArticle.get());
-            }
-
-            publishedArticleRepository.save(publishedArticleEntity);
+            publishedArticleRepository.save(existingPublishedArticle);
         } else {
-             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
+            throw new MalformedDataException("Article data is stale, try again.");
         }
-        return null;
+
+        return new VoidMethodResponse("Publish article", 1);
     }
 
     @VisibleForTesting
-    PublishedArticleEntity updatePublishedArticle(PublishedArticleEntity paEntity, ArticleEntity article) {
-        paEntity.setArticleId(article.getId());
-        return paEntity;
-    }
-
-    @VisibleForTesting
-    PublishedArticleEntity createPublishedArticle(ArticleEntity article) {
-        PublishedArticleEntity newPAEntity = new PublishedArticleEntity();
-        newPAEntity.setArticleId(article.getId());
-        newPAEntity.setArticleCode(article.getArticleCode());
-        newPAEntity.setPublished(true);
-        return newPAEntity;
+    void generateArticleCode(Article article) {
+        do {
+            article.setArticleCode(RandomStringUtils.randomAlphabetic(20));
+        } while (publishedArticleRepository.existsByArticleCode(article.getArticleCode()));
     }
 
     static class CrudLogic {
 
-        private final ArticleRepository articleRepository;
         private final TagRepository tagRepository;
         private final TagSetRepository tagSetRepository;
         private final TagSetToTagsRepository tagSetToTagsRepository;
 
         private CrudLogic(
-                ArticleRepository articleRepository,
                 TagRepository tagRepository,
                 TagSetRepository tagSetRepository,
                 TagSetToTagsRepository tagSetToTagsRepository
         ) {
-            this.articleRepository = articleRepository;
             this.tagRepository = tagRepository;
             this.tagSetRepository = tagSetRepository;
             this.tagSetToTagsRepository = tagSetToTagsRepository;
@@ -132,64 +163,18 @@ public class ArticleServiceImpl implements ArticleService {
 
         @VisibleForTesting
         Consumer<ArticleEntity> preSaveLogic() {
-            return (ArticleEntity articleEntity) -> {
-                updateTagReferences(articleEntity);
-                updateArticleMetaData(articleEntity);
-            };
+            return this::updateTagReferences;
         }
 
         @VisibleForTesting
         Consumer<ArticleEntity> preGetLogic() {
             return (ArticleEntity articleEntity) -> {
-                Optional<TagSetEntity> optional = tagSetRepository.findById(articleEntity.getTagSetId());
-                if (optional.isPresent()) {
-                    TagSetEntity tagSet = optional.get();
-                    List<TagSetToTagEntity> xMaps = tagSetToTagsRepository.findAllByTagSetIdOrderByTagId(tagSet.getId());
-                    List<TagEntity> tags = xMaps.stream().map(TagSetToTagEntity::getTag).collect(Collectors.toList());
-                    tagSet.setTags(tags);
-                    articleEntity.setTagSet(tagSet);
-                } else {
-                    log.error("Article (ID: " + articleEntity.getId() + ") had no valid TagSet (ID: " + articleEntity.getTagSetId() + ")");
-                }
+                TagSetEntity tagSet = tagSetRepository.getById(articleEntity.getTagSetId());
+                List<TagSetToTagEntity> xMaps = tagSetToTagsRepository.findAllByTagSetIdOrderByTagId(tagSet.getId());
+                List<TagEntity> tags = xMaps.stream().map(TagSetToTagEntity::getTag).collect(Collectors.toList());
+                tagSet.setTags(tags);
+                articleEntity.setTagSet(tagSet);
             };
-        }
-
-        @VisibleForTesting
-        void updateArticleMetaData(ArticleEntity articleEntity) {
-            Long articleId = articleEntity.getId();
-            if (articleId != null && articleId != 0) {
-                updateExistingArticle(articleEntity);
-            } else {
-                updateNewArticle(articleEntity);
-            }
-        }
-
-        @VisibleForTesting
-        void updateExistingArticle(ArticleEntity articleEntity) {
-            Optional<ArticleEntity> optional = articleRepository.findById(articleEntity.getId());
-
-            if (optional.isPresent()) {
-                ArticleEntity existingArticle = optional.get();
-                articleEntity.setArticleCode(existingArticle.getArticleCode());
-
-                // If the original was finalized, this is a new entry, to preserve history
-                if (existingArticle.isFinalized()) {
-                    articleEntity.setId(null);
-                }
-
-                articleEntity.setUpdatedOn(System.currentTimeMillis());
-            } else {
-                throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
-            }
-        }
-
-        @VisibleForTesting
-        void updateNewArticle(ArticleEntity articleEntity) {
-            // Create an ArticleId which is used to relate various versions of the same article
-            articleEntity.setArticleCode(RandomStringUtils.randomAlphabetic(50));
-            long time = System.currentTimeMillis();
-            articleEntity.setCreatedOn(time);
-            articleEntity.setUpdatedOn(time);
         }
 
         @VisibleForTesting

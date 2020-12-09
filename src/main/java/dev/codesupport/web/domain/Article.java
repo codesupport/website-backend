@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 public class Article implements IdentifiableDomain<Long> {
 
     private Long id;
+    private String articleCode;
     private String title;
     private String description;
     private String content;
-    private boolean published;
     private List<String> tags;
-    private UserStripped createdBy;
+    private User createdBy;
     private Long createdOn;
-    private UserStripped updatedBy;
+    private User updatedBy;
     private Long updatedOn;
 
     public void setTagSet(TagSet tagSet) {

@@ -25,7 +25,7 @@ public class ContributorBuilder {
         domain.setId(id);
         domain.setAlias(alias);
         if (user != null)
-        domain.setUser(user.buildUserStrippedDomain());
+        domain.setUser(user.buildDomain());
         if (contributorList != null) {
             domain.setContributorList(contributorList.buildDomain());
         }

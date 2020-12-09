@@ -2,11 +2,13 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.ArticleService;
 import dev.codesupport.web.domain.Article;
+import dev.codesupport.web.domain.PublishedArticle;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,26 +38,44 @@ public class ArticleControllerImplTest {
 
     @Test
     public void shouldReturnCorrectResultsForFindAllArticles() {
-        List<Article> expected = Collections.singletonList(mock(Article.class));
+        List<PublishedArticle> expected = Collections.singletonList(mock(PublishedArticle.class));
 
         doReturn(expected)
                 .when(mockService)
-                .findAllArticles();
+                .findAllArticles(true);
 
-        List<Article> actual = controller.findAllArticles();
+        List<PublishedArticle> actual = controller.findAllArticles(true);
+
+        assertSame(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCorrectResultsForFindAllArticleRevisionsById() {
+        long id = 25;
+
+        List<Article> expected = Arrays.asList(
+                mock(Article.class),
+                mock(Article.class)
+        );
+
+        doReturn(expected)
+                .when(mockService)
+                .findAllArticleRevisionsById(id);
+
+        List<Article> actual = controller.findAllArticleRevisionsById(id);
 
         assertSame(expected, actual);
     }
 
     @Test
     public void shouldReturnCorrectResultsForGetArticleById() {
-        Article expected = mock(Article.class);
+        PublishedArticle expected = mock(PublishedArticle.class);
 
         doReturn(expected)
                 .when(mockService)
                 .getArticleById(5L);
 
-        Article actual = controller.getArticleById(5L);
+        PublishedArticle actual = controller.getArticleById(5L);
 
         assertSame(expected, actual);
     }
@@ -63,13 +83,13 @@ public class ArticleControllerImplTest {
     @Test
     public void shouldReturnCorrectResponseForCreateArticle() {
         Article submit = mock(Article.class);
-        Article expected = mock(Article.class);
+        PublishedArticle expected = mock(PublishedArticle.class);
 
         doReturn(expected)
                 .when(mockService)
                 .createArticle(submit);
 
-        Article actual = controller.createArticle(submit);
+        PublishedArticle actual = controller.createArticle(submit);
 
         assertSame(expected, actual);
     }

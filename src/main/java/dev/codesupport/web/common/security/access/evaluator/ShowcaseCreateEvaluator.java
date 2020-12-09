@@ -6,7 +6,7 @@ import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
 import dev.codesupport.web.common.security.access.Permission;
 import dev.codesupport.web.domain.Showcase;
-import dev.codesupport.web.domain.UserStripped;
+import dev.codesupport.web.domain.User;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -45,7 +45,7 @@ public class ShowcaseCreateEvaluator extends AbstractAccessEvaluator<Showcase> {
             Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(auth.getName());
             if (optional.isPresent()) {
                 UserEntity userEntity = optional.get();
-                UserStripped user = new UserStripped();
+                User user = new User();
                 user.setId(userEntity.getId());
                 showcase.setUser(user);
             } else {

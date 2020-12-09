@@ -53,6 +53,7 @@ public class EmailPasswordAuthenticationTokenTest {
         String email = "email";
 
         Object principal = new UserDetails(
+                15L,
                 "alias",
                 "password",
                 email,

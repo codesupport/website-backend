@@ -31,7 +31,7 @@ public class ShowcaseRepositoryTest {
             actual.add(entity.toString());
         }
 
-        List<String> expected = Collections.singletonList("ShowcaseEntity(id=1, user=UserEntity(id=2, alias=Lambo, hashPassword=$2a$10$OGVw0XltDpCZS949tqDhu.4ShJLI9sNCdmbjlCb3.PEkk.T0csCGi, discordId=null, discordUsername=LamboCreeper#666, githubUsername=lambocreeper, jobTitle=null, jobCompany=null, email=lambo@cs.dev, avatarLink=lambo.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[], biography=Push my PR!, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[], joinDate=1570406400000), title=Showcase Title, description=Showcase Description, approved=true, link=http://www.example.com/1, contributorList=ContributorListEntity(id=1))");
+        List<String> expected = Collections.singletonList("ShowcaseEntity(id=1, user=UserEntity(id=2, alias=Lambo, hashPassword=$2a$10$OGVw0XltDpCZS949tqDhu.4ShJLI9sNCdmbjlCb3.PEkk.T0csCGi, discordId=null, discordUsername=LamboCreeper#666, githubUsername=lambocreeper, jobTitle=null, jobCompany=null, email=lambo@cs.dev, avatarLink=lambo.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[PermissionEntity(id=2, code=read, label=read), PermissionEntity(id=1, code=write, label=write)], biography=Push my PR!, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[], joinDate=1570406400000), title=Showcase Title, description=Showcase Description, approved=true, link=http://www.example.com/1, contributorList=ContributorListEntity(id=1))");
 
         assertEquals(expected, actual);
     }
@@ -45,7 +45,7 @@ public class ShowcaseRepositoryTest {
             actual.add(entity.toString());
         }
 
-        List<String> expected = Collections.singletonList("ShowcaseEntity(id=1, user=UserEntity(id=2, alias=Lambo, hashPassword=$2a$10$OGVw0XltDpCZS949tqDhu.4ShJLI9sNCdmbjlCb3.PEkk.T0csCGi, discordId=null, discordUsername=LamboCreeper#666, githubUsername=lambocreeper, jobTitle=null, jobCompany=null, email=lambo@cs.dev, avatarLink=lambo.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[], biography=Push my PR!, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[], joinDate=1570406400000), title=Showcase Title, description=Showcase Description, approved=true, link=http://www.example.com/1, contributorList=ContributorListEntity(id=1))");
+        List<String> expected = Collections.singletonList("ShowcaseEntity(id=1, user=UserEntity(id=2, alias=Lambo, hashPassword=$2a$10$OGVw0XltDpCZS949tqDhu.4ShJLI9sNCdmbjlCb3.PEkk.T0csCGi, discordId=null, discordUsername=LamboCreeper#666, githubUsername=lambocreeper, jobTitle=null, jobCompany=null, email=lambo@cs.dev, avatarLink=lambo.jpg, disabled=false, role=RoleEntity(id=1, code=admin, label=admin, permission=[PermissionEntity(id=1, code=write, label=write)]), permission=[PermissionEntity(id=2, code=read, label=read), PermissionEntity(id=1, code=write, label=write)], biography=Push my PR!, country=CountryEntity(id=2, code=uk, label=United Kingdom), userAward=[], joinDate=1570406400000), title=Showcase Title, description=Showcase Description, approved=true, link=http://www.example.com/1, contributorList=ContributorListEntity(id=1))");
 
         assertEquals(expected, actual);
     }

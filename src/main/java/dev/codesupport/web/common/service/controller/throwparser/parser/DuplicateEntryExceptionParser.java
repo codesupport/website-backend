@@ -1,27 +1,27 @@
 package dev.codesupport.web.common.service.controller.throwparser.parser;
 
-import dev.codesupport.web.common.exception.ResourceNotFoundException;
-import lombok.NoArgsConstructor;
+import dev.codesupport.web.common.exception.DuplicateEntryException;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.service.RestStatus;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Used to parse {@link ResourceNotFoundException} type throwables.
+ * Used to parse {@link DuplicateEntryException} type throwables.
  *
- * @see ResourceNotFoundException
+ * @see DuplicateEntryException
  * @see AbstractThrowableParser
  */
 @Component
 @NoArgsConstructor
-public class ResourceNotFoundExceptionParser extends AbstractThrowableParser<ResourceNotFoundException> {
+public class DuplicateEntryExceptionParser extends AbstractThrowableParser<DuplicateEntryException> {
 
     @Override
-    protected AbstractThrowableParser<ResourceNotFoundException> instantiate() {
-        return new ResourceNotFoundExceptionParser();
+    protected AbstractThrowableParser<DuplicateEntryException> instantiate() {
+        return new DuplicateEntryExceptionParser();
     }
 
     @Override
@@ -31,11 +31,11 @@ public class ResourceNotFoundExceptionParser extends AbstractThrowableParser<Res
 
     @Override
     protected RestStatus responseStatus() {
-        return RestStatus.NOT_FOUND;
+        return RestStatus.FAIL;
     }
 
     @Override
     public int responseCode() {
-        return 404;
+        return 409;
     }
 }

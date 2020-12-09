@@ -2,6 +2,8 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.ArticleService;
 import dev.codesupport.web.domain.Article;
+import dev.codesupport.web.domain.PublishedArticle;
+import dev.codesupport.web.domain.VoidMethodResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,17 +20,22 @@ public class ArticleControllerImpl implements ArticleController {
     }
 
     @Override
-    public List<Article> findAllArticles() {
-        return service.findAllArticles();
+    public List<PublishedArticle> findAllArticles(boolean publishedonly) {
+        return service.findAllArticles(publishedonly);
     }
 
     @Override
-    public Article getArticleById(Long id) {
+    public List<Article> findAllArticleRevisionsById(Long id) {
+        return service.findAllArticleRevisionsById(id);
+    }
+
+    @Override
+    public PublishedArticle getArticleById(Long id) {
         return service.getArticleById(id);
     }
 
     @Override
-    public Article createArticle(Article article) {
+    public PublishedArticle createArticle(Article article) {
         return service.createArticle(article);
     }
 
@@ -38,7 +45,12 @@ public class ArticleControllerImpl implements ArticleController {
     }
 
     @Override
-    public Article deleteArticle(Article article) {
+    public VoidMethodResponse deleteArticle(Article article) {
         return service.deleteArticle(article);
+    }
+
+    @Override
+    public VoidMethodResponse publishArticle(PublishedArticle publishedArticle) {
+        return service.publishArticle(publishedArticle);
     }
 }

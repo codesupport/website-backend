@@ -5,7 +5,7 @@ import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
 import dev.codesupport.web.common.security.access.Permission;
 import dev.codesupport.web.domain.Article;
-import dev.codesupport.web.domain.UserStripped;
+import dev.codesupport.web.domain.User;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public class ArticleCreateEvaluator extends AbstractAccessEvaluator<Article> {
             Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(auth.getName());
             if (optional.isPresent()) {
                 UserEntity userEntity = optional.get();
-                UserStripped user = new UserStripped();
+                User user = new User();
                 user.setId(userEntity.getId());
                 article.setCreatedBy(user);
                 article.setUpdatedBy(user);

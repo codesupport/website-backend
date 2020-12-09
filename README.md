@@ -87,6 +87,8 @@ Name | Default | Description
 `DISCORD_APP_ID` | | The Discord app's ID
 `DISCORD_APP_SECRET` | | The Discord app's secret
 `DISCORD_APP_REDIRECT` | | The Discord app's redirect for OAuth
+`HEALTHCHECK_PING_DELAY` | `5000` | Delay between healthchecks (ms)
+`HEALTHCHECK_PING_URL` | | Url of the external healthcheck api to hit
 `JWT_ISSUER` | `codesupport.dev` | The JWT issuer
 `JWT_EXPIRATION` | `10m` | The length of time a JWT lasts
 `LOG_ROOT_LEVEL` | `INFO` | Root logging level for spring logs

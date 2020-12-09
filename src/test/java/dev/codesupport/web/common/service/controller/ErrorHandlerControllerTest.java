@@ -1,12 +1,9 @@
 package dev.codesupport.web.common.service.controller;
 
 import dev.codesupport.testutils.controller.throwparsing.parser.ThrowableParser;
-import dev.codesupport.web.common.exception.ErrorControllerException;
-import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.controller.throwparser.ThrowableParserFactory;
 import dev.codesupport.web.common.service.service.RestResponse;
 import dev.codesupport.web.common.service.service.RestStatus;
-import jdk.nashorn.internal.parser.AbstractParser;
 import org.junit.Test;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
@@ -22,7 +19,6 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;

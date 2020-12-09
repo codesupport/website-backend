@@ -1,7 +1,6 @@
 package dev.codesupport.web.common.security.access;
 
 import dev.codesupport.web.common.exception.InvalidArgumentException;
-import dev.codesupport.web.common.security.models.UserDetails;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

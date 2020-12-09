@@ -2,7 +2,6 @@ package dev.codesupport.testutils.builders;
 
 import dev.codesupport.web.api.data.entity.ArticleEntity;
 import dev.codesupport.web.domain.Article;
-import dev.codesupport.web.domain.User;
 
 import java.util.List;
 
@@ -14,9 +13,9 @@ public class ArticleBuilder {
     private String description;
     private String content;
     private List<String> tags;
-    private User createdBy;
+    private UserBuilder createdBy;
     private Long createdOn;
-    private User updatedBy;
+    private UserBuilder updatedBy;
     private Long updatedOn;
 
     private ArticleBuilder() {
@@ -30,12 +29,33 @@ public class ArticleBuilder {
     public Article buildDomain() {
         Article domain = new Article();
         domain.setId(id);
+        domain.setArticleCode(articleCode);
+        domain.setTitle(title);
+        domain.setDescription(description);
+        domain.setContent(content);
+        domain.setTags(tags);
+        if (createdBy != null)
+            domain.setCreatedBy(createdBy.buildDomain());
+        domain.setCreatedOn(createdOn);
+        if (updatedBy != null)
+            domain.setUpdatedBy(updatedBy.buildDomain());
+        domain.setUpdatedOn(updatedOn);
         return domain;
     }
 
     public ArticleEntity buildEntity() {
         ArticleEntity entity = new ArticleEntity();
         entity.setId(id);
+        entity.setArticleCode(articleCode);
+        entity.setTitle(title);
+        entity.setDescription(description);
+        entity.setContent(content);
+        if (createdBy != null)
+            entity.setCreatedBy(createdBy.buildEntity());
+        entity.setCreatedOn(createdOn);
+        if (updatedBy != null)
+            entity.setUpdatedBy(updatedBy.buildEntity());
+        entity.setUpdatedOn(updatedOn);
         return entity;
     }
 
@@ -69,7 +89,7 @@ public class ArticleBuilder {
         return this;
     }
 
-    public ArticleBuilder createdBy(User createdBy) {
+    public ArticleBuilder createdBy(UserBuilder createdBy) {
         this.createdBy = createdBy;
         return this;
     }
@@ -79,7 +99,7 @@ public class ArticleBuilder {
         return this;
     }
 
-    public ArticleBuilder updatedBy(User updatedBy) {
+    public ArticleBuilder updatedBy(UserBuilder updatedBy) {
         this.updatedBy = updatedBy;
         return this;
     }

@@ -113,7 +113,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article updateArticle(Article article) {
-        return null;
+        return crudOperations.updateEntity(article);
     }
 
     @Override

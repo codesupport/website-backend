@@ -29,5 +29,5 @@ server:
     keyAlias: ${ssl.key.alias:tomcat}
 healthcheck:
   ping:
-    url: ${healthcheck.ping.url:}
-    delay: ${healthcheck.ping.delay:5000}
+    url: ${hc.ping.url:}
+    delay: ${hc.ping.delay:5000}

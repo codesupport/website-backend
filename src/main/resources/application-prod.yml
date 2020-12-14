@@ -14,10 +14,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
-logging:
-  level:
-    root: ERROR
-    dev.codesupport: ${log.local.level:INFO}
 security:
   require-ssl: true
 server:

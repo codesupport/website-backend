@@ -19,9 +19,6 @@ security:
     client-id: 1234
     secret: 4321
     redirect-uri: http://www.example.com
-logging:
-  level:
-    dev.codesupport: ${log.local.level:DEBUG}
 healthcheck:
   ping:
     url: http://localhost:8082/healthcheck

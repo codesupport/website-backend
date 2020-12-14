@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -77,6 +78,7 @@ public class DiscordAppender extends AppenderBase<ILoggingEvent> {
         }
     }
 
+    @VisibleForTesting
     void updateMessage(final ILoggingEvent event) {
         Optional<IThrowableProxy> optional = findException(event);
 
@@ -96,6 +98,7 @@ public class DiscordAppender extends AppenderBase<ILoggingEvent> {
         }
     }
 
+    @VisibleForTesting
     Optional<IThrowableProxy> findException(final ILoggingEvent event) {
         IThrowableProxy exception = event.getThrowableProxy();
 
@@ -106,6 +109,7 @@ public class DiscordAppender extends AppenderBase<ILoggingEvent> {
         return exception == null ? Optional.empty() : Optional.of(exception);
     }
 
+    @VisibleForTesting
     void post(String json) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
         Request request = new Request.Builder()

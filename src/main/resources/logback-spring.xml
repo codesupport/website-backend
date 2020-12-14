@@ -2,6 +2,8 @@
 <configuration>
 
     <property name="LOGS" value="./logs" />
+    <property name="DISCORD_WEBHOOK_URL" value="${DISCORD_LOG_WEBHOOK_URL}" />
+    <property name="DISCORD_USERNAME" value="${DISCORD_LOG_USERNAME:-ApiBackend}"/>
     <property name="DEFAULT_LOG_LEVEL" value="${log.root.level:-INFO}" />
 
     <appender name="Console"
@@ -11,6 +13,18 @@
                 [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5p] | %-28c{1} | - %m%n
             </Pattern>
         </layout>
+    </appender>
+
+    <appender name="Discord" class="dev.codesupport.web.common.logging.appender.DiscordAppender">
+        <webhookUrl>${DISCORD_WEBHOOK_URL}</webhookUrl>
+        <username>${DISCORD_USERNAME}</username>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <appender name="AsyncDiscord" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="Discord" />
     </appender>
 
     <appender name="RollingFile"
@@ -35,6 +49,7 @@
 
     <root level="${DEFAULT_LOG_LEVEL}">
         <appender-ref ref="RollingFile" />
+        <appender-ref ref="AsyncDiscord" />
         <appender-ref ref="Console" />
     </root>
 

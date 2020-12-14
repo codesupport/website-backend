@@ -87,6 +87,8 @@ Name | Default | Description
 `DISCORD_APP_ID` | | The Discord app's ID
 `DISCORD_APP_SECRET` | | The Discord app's secret
 `DISCORD_APP_REDIRECT` | | The Discord app's redirect for OAuth
+`DISCORD_LOG_WEBHOOK_URL` | | Webhook url for posting logs to discord
+`DISCORD_LOG_USERNAME` | ApiBackend | The username used in the discord log embed messages
 `HC_PING_DELAY` | `5000` | Delay between healthchecks (ms)
 `HC_PING_URL` | | Url of the external healthcheck api to hit
 `JWT_ISSUER` | `codesupport.dev` | The JWT issuer

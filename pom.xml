@@ -107,6 +107,19 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger2.version}</version>
         </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.2.0_222</version>
+            <exclusions>
+                <exclusion>
+                    <!-- This is for audio stuff, not needed -->
+                    <groupId>club.minnced</groupId>
+                    <artifactId>opus-java</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- Testing -->
         <!-- TODO: Need to sort out junit/mockito/powermock deps & versions -->
         <dependency>
@@ -161,6 +174,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
 
     <profiles>
         <profile>

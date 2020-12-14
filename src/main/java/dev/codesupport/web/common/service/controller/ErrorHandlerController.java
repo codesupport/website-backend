@@ -96,11 +96,6 @@ public class ErrorHandlerController implements ErrorController {
             }
         }
 
-        if (log.isDebugEnabled()) {
-            Object requestedUri = request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
-            log.debug("HttpStatusCode: {}, Method: {}, URI: {}", httpStatus, request.getMethod(), requestedUri.toString());
-        }
-
         return new ResponseEntity<>(restResponse, httpStatus);
     }
 

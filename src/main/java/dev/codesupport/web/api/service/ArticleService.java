@@ -21,7 +21,8 @@ public interface ArticleService {
     @PreAuthorize("hasPermission(#article, 'update')")
     Article updateArticle(Article article);
 
-    @PreAuthorize("hasPermission(#article, 'delete')")
+    //TODO: Finish implementing
+//    @PreAuthorize("hasPermission(#article, 'delete')")
     VoidMethodResponse deleteArticle(Article article);
 
     @PreAuthorize("hasPermission(#article, 'publish')")

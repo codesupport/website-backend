@@ -13,11 +13,5 @@ security:
     client-id: ${discord.app.id:}
     secret: ${discord.app.secret:}
     redirect-uri: ${discord.app.redirect:}
-logging:
-  level:
-    root: WARN
-    org.springframework: ${log.root.level:INFO}
-  pattern:
-    console: "[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5p] | %-28c{1} | - %m%n"
 server:
   port: 8082

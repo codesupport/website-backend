@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.configuration;
 
+import dev.codesupport.web.api.service.FileServiceImpl;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.service.http.client.HttpClient;
 import dev.codesupport.web.common.service.http.client.HttpMethod;
@@ -10,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,6 +62,20 @@ public class SchedulesConfiguration {
             } else {
                 if (Boolean.TRUE.equals(threshold.getValue())) {
                     threshold.setValue(false);
+                }
+            }
+        }
+    }
+
+    @Scheduled(initialDelay = 30000, fixedDelay = 1800000)
+    public void scheduleFileCleanup() throws IOException {
+        File imageDir = new File(FileServiceImpl.IMAGE_STORAGE_DIR);
+        if (imageDir.exists() && imageDir.isDirectory()) {
+            for( File file : imageDir.listFiles() ) {
+                if (file.isFile()) {
+                    File image = new File(file.getAbsolutePath());
+                    Files.probeContentType(image.toPath());
+//                    Files.readAttributes(image.toPath(), "")
                 }
             }
         }

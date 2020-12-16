@@ -70,12 +70,16 @@ public class AutoWrapHttpResponses implements ResponseBodyAdvice<Object> {
      * @throws InternalServiceException If the returned object does not implement serializable
      */
     @Override
-    public RestResponse<Serializable> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof Serializable) {
-            return new RestResponse<>((Serializable) body);
-        } else {
-            throw new InternalServiceException("Response object was invalid type");
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+        if (!request.getURI().toString().contains("/actuator/")) {
+            if (body instanceof Serializable) {
+                return new RestResponse<>((Serializable) body);
+            } else {
+                throw new InternalServiceException("Response object was invalid type");
+            }
         }
+
+        return body;
     }
 
 }

@@ -5,6 +5,11 @@ spring:
     hibernate:
       naming:
         physical-strategy: dev.codesupport.web.common.service.data.DataPhysicalNamingStrategy
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
 security:
   jwt:
     issuer: ${jwt.issuer:codesupport.dev}

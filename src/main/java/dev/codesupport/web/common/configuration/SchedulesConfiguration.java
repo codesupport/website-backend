@@ -28,6 +28,8 @@ public class SchedulesConfiguration {
     public SchedulesConfiguration(HttpClient httpClient) {
         this.httpClient = httpClient;
         this.memoryThresholds = new ConcurrentHashMap<>();
+        memoryThresholds.put(50, false);
+        memoryThresholds.put(25, false);
         memoryThresholds.put(20, false);
         memoryThresholds.put(15, false);
         memoryThresholds.put(10, false);
@@ -45,9 +47,9 @@ public class SchedulesConfiguration {
         }
     }
 
-    @Scheduled(initialDelay = 60000, fixedDelay = 30000)
+    @Scheduled(initialDelay = 30000, fixedDelay = 30000)
     public void scheduleMemoryCheck() {
-        double freeMemory = (double)Runtime.getRuntime().freeMemory() / Runtime.getRuntime().totalMemory();
+        double freeMemory = (double)Runtime.getRuntime().freeMemory() / Runtime.getRuntime().maxMemory();
         int freePercent = (int)(freeMemory * 100);
         for (Map.Entry<Integer, Boolean> threshold : memoryThresholds.entrySet()) {
             if (freePercent < threshold.getKey()) {

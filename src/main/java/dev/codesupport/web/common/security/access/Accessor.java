@@ -6,5 +6,7 @@ package dev.codesupport.web.common.security.access;
 public enum Accessor {
     NONE,
     DISCORD,
+    PERMISSION,
+    USER,
     TOKEN
 }

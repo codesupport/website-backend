@@ -22,7 +22,7 @@ jobs:
         run: echo $GITHUB_SHA
       - name: Push unit test results to Codacy
         run: CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }} ./codacy-coverage-reporter report -l Java --commit-uuid "$GITHUB_SHA" -r target/site/jacoco/jacoco.xml
-  it:
+  integration-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

@@ -49,8 +49,9 @@ public class SchedulesConfiguration {
 
     @Scheduled(initialDelay = 30000, fixedDelay = 30000)
     public void scheduleMemoryCheck() {
-        double freeMemory = (double)Runtime.getRuntime().freeMemory() / Runtime.getRuntime().maxMemory();
-        int freePercent = (int)(freeMemory * 100);
+        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long freeMemory = Runtime.getRuntime().maxMemory() - usedMemory;
+        int freePercent = (int)(((double)freeMemory / Runtime.getRuntime().maxMemory()) * 100);
         for (Map.Entry<Integer, Boolean> threshold : memoryThresholds.entrySet()) {
             if (freePercent < threshold.getKey()) {
                 if (Boolean.FALSE.equals(threshold.getValue())) {

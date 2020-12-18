@@ -22,3 +22,28 @@ jobs:
         run: echo $GITHUB_SHA
       - name: Push unit test results to Codacy
         run: CODACY_PROJECT_TOKEN=${{ secrets.CODACY_TOKEN }} ./codacy-coverage-reporter report -l Java --commit-uuid "$GITHUB_SHA" -r target/site/jacoco/jacoco.xml
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v1
+      - name: Setup Java Environment
+        uses: actions/setup-java@v1
+        with:
+          java-version: '1.8.0'
+      - name: Build Code (Development)
+        run: ./mvnw clean package -Dmaven.test.skip=true
+      - name: Start Application
+        run: java -jar target/api-service-0.0.1-SNAPSHOT.jar &
+      - name: Wait Service to Start
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: 'http://localhost:8082/actuator/health'
+          responseCode: 200
+          timeout: 120000
+          interval: 500
+      - name: Run Integration Tests
+        uses: matt-ball/newman-action@master
+        with:
+          collection: postman/CodesupportApi.postman_collection.json
+          environment: postman/Local.postman_environment.json

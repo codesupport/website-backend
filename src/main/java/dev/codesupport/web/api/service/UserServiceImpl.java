@@ -2,20 +2,18 @@ package dev.codesupport.web.api.service;
 
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
-import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
+import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.Permission;
-import dev.codesupport.web.domain.Role;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -119,21 +117,6 @@ public class UserServiceImpl implements UserService {
                 userProfile,
                 jwtUtility.generateToken(createdUser.getAlias(), createdUser.getEmail())
         );
-    }
-
-    @Data
-    static class NewUser implements IdentifiableDomain<Long> {
-        private Long id;
-        private String alias;
-        private String password;
-        private String hashPassword;
-        private String email;
-        private String discordId;
-        private String discordUsername;
-        private String avatarLink;
-        private boolean disabled;
-        private Role role;
-        private Long joinDate;
     }
 
 }

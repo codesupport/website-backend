@@ -149,9 +149,6 @@ public class HttpRequestFilter extends OncePerRequestFilter {
             }
         } else { // Missing authorization header
             jwtToken = null;
-            if (log.isDebugEnabled()) {
-                logger.debug("Authorization header value is missing.");
-            }
         }
 
         return jwtToken;

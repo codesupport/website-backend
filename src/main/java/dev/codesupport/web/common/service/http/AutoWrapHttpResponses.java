@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -71,15 +72,23 @@ public class AutoWrapHttpResponses implements ResponseBodyAdvice<Object> {
      */
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+        Object returnObject = body;
+
         if (!request.getURI().toString().contains("/actuator/")) {
             if (body instanceof Serializable) {
-                return new RestResponse<>((Serializable) body);
+                if (body instanceof Collection) {
+                    //unchecked - We checked it all, IDE can't see.
+                    //noinspection unchecked
+                    returnObject = new RestResponse<>((Collection<Serializable>) body);
+                } else {
+                    returnObject = new RestResponse<>((Serializable) body);
+                }
             } else {
                 throw new InternalServiceException("Response object was invalid type");
             }
         }
 
-        return body;
+        return returnObject;
     }
 
 }

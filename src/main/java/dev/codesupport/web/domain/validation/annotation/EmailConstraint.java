@@ -21,7 +21,7 @@ public @interface EmailConstraint {
     /**
      * @return Message to display if property is invalid
      */
-    String message() default "Invalid email";
+    String message() default "Invalid email format";
 
     Class<?>[] groups() default {};
 

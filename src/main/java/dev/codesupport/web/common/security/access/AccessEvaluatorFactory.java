@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,8 +71,8 @@ public class AccessEvaluatorFactory {
             // If list, we use first element to find class type, else we use the base object
             if (targetDomainObject == null) {
                 domainObjectClassName = null;
-            } else if (targetDomainObject instanceof List) {
-                domainObjectClassName = ((List<?>) targetDomainObject).get(0).getClass().getCanonicalName();
+            } else if (targetDomainObject instanceof Collection) {
+                domainObjectClassName = ((Collection<?>) targetDomainObject).iterator().next().getClass().getCanonicalName();
             } else {
                 domainObjectClassName = targetDomainObject.getClass().getCanonicalName();
             }

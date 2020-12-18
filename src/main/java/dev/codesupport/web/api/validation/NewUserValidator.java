@@ -1,34 +1,34 @@
 package dev.codesupport.web.api.validation;
 
-import dev.codesupport.web.common.service.data.validation.ValidationIssue;
-import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
-import dev.codesupport.web.domain.User;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.entity.UserEntity_;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.service.data.validation.ValidationIssue;
+import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
+import dev.codesupport.web.domain.NewUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Persistence level validation for User resources.
- * <p>Validates that no other {@link User} resource exists within the persistent storage with the same username.</p>
+ * <p>Validates that no other user exists within the persistent storage with the same username or email.</p>
  *
  * @see AbstractPersistenceValidator
  */
 @Component
-public class UserValidator extends AbstractPersistenceValidator<UserEntity, Long, User, UserRepository> {
+public class NewUserValidator extends AbstractPersistenceValidator<UserEntity, Long, NewUser, UserRepository> {
 
     @Autowired
-    UserValidator(UserRepository repository) {
+    NewUserValidator(UserRepository repository) {
         super(repository);
     }
 
     @Override
-    public List<ValidationIssue> validate(User domainObject) {
-        List<ValidationIssue> validationIssues = new ArrayList<>();
+    public Set<ValidationIssue> validate(NewUser domainObject) {
+        Set<ValidationIssue> validationIssues = new HashSet<>();
 
         if (repository.existsByAliasIgnoreCase(domainObject.getAlias())) {
             validationIssues.add(ValidationIssue.duplicateParameter(null, UserEntity_.ALIAS));
@@ -37,8 +37,6 @@ public class UserValidator extends AbstractPersistenceValidator<UserEntity, Long
         if (repository.existsByEmailIgnoreCase(domainObject.getEmail())) {
             validationIssues.add(ValidationIssue.duplicateParameter(null, UserEntity_.EMAIL));
         }
-
-        //TODO: Check if avatar image exists
 
         return validationIssues;
     }

@@ -1,14 +1,14 @@
 package dev.codesupport.web.common.service.validation.persistant;
 
+import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import dev.codesupport.web.common.data.entity.IdentifiableEntity;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
-import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import lombok.Data;
 import org.springframework.data.repository.CrudRepository;
 
 import java.lang.reflect.ParameterizedType;
 import java.security.InvalidParameterException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract class for building PersistenceValidation classes.
@@ -60,6 +60,6 @@ public abstract class AbstractPersistenceValidator<E extends IdentifiableEntity<
      * @return a list of ValidationIssues for the given object, returns an empty list if no validation issues found.
      * @see ValidationIssue
      */
-    public abstract List<ValidationIssue> validate(D domainObject);
+    public abstract Set<ValidationIssue> validate(D domainObject);
 
 }

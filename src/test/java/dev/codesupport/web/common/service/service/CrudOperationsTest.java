@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
@@ -527,11 +528,11 @@ public class CrudOperationsTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldThrowValidationExceptionWhenPersistanceLevelValidationIssuesFound() {
+    public void shouldThrowValidationExceptionWhenPersistenceLevelValidationIssuesFound() {
 
         MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
-        List<ValidationIssue> mockValidationIssues = Collections.singletonList(
+        Set<ValidationIssue> mockValidationIssues = Collections.singleton(
                 mock(ValidationIssue.class)
         );
 
@@ -551,7 +552,7 @@ public class CrudOperationsTest {
 
         MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
 
-        doReturn(Collections.emptyList())
+        doReturn(Collections.emptySet())
                 .when(mockValidator)
                 .validate(MockIdentifiableDomain);
 

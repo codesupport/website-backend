@@ -1,7 +1,6 @@
 package dev.codesupport.web.common.service.data.validation;
 
 import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -10,7 +9,6 @@ import lombok.Data;
  * @see AbstractPersistenceValidator
  */
 @Data
-@AllArgsConstructor
 public class ValidationIssue {
 
     /**
@@ -34,19 +32,19 @@ public class ValidationIssue {
     /**
      * Id of the related resource causing the validation issue, if there is one.
      */
-    private String id;
+    private final String id;
     /**
      * The {@link ValidationType} associated to the issue.
      */
-    private ValidationType type;
+    private final ValidationType type;
     /**
      * The name of the property associated with the validation issue, if there is one.
      */
-    private String propertyName;
+    private final String propertyName;
     /**
      * Information regarding the reason for the validation issue.
      */
-    private String message;
+    private final String message;
 
     /**
      * Creates a new {@link ValidationIssue} for a missing property.

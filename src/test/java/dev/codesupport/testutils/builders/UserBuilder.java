@@ -2,6 +2,7 @@ package dev.codesupport.testutils.builders;
 
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.common.security.models.UserDetails;
+import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
@@ -46,7 +47,23 @@ public class UserBuilder {
         domain.setAlias(alias);
         domain.setDiscordId(discordId);
         domain.setDiscordUsername(discordUsername);
+        domain.setAvatarLink(avatarLink);
+        domain.setDisabled(disabled);
+        if (role != null)
+            domain.setRole(role.buildDomain());
+        domain.setJoinDate(joinDate);
+        return domain;
+    }
+
+    public NewUser buildNewUserDomain() {
+        NewUser domain = new NewUser();
+        domain.setId(id);
+        domain.setAlias(alias);
+        domain.setPassword(password);
+        domain.setHashPassword(hashPassword);
         domain.setEmail(email);
+        domain.setDiscordId(discordId);
+        domain.setDiscordUsername(discordUsername);
         domain.setAvatarLink(avatarLink);
         domain.setDisabled(disabled);
         if (role != null)

@@ -11,6 +11,7 @@ import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
+import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
@@ -25,7 +26,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -39,12 +39,12 @@ public class UserServiceImplTest {
 
     private static HashingUtility mockHashingUtility;
 
-    private static CrudOperations<UserEntity, UserServiceImpl.NewUser, Long> mockUserCrudOperations;
+    private static CrudOperations<UserEntity, NewUser, Long> mockUserCrudOperations;
     private static CrudOperations<UserEntity, UserProfile, Long> mockUserProfileCrudOperations;
 
     private static UserRepository mockUserRepository;
 
-    private static List<User> getUserList;
+    private static List<NewUser> expectedUserList;
 
     private static JwtUtility mockJwtUtility;
 
@@ -74,17 +74,15 @@ public class UserServiceImplTest {
         ReflectionTestUtils.setField(service, "userCrudOperations", mockUserCrudOperations);
         ReflectionTestUtils.setField(service, "userProfileCrudOperations", mockUserProfileCrudOperations);
 
-        List<UserBuilder> userBuilders = Collections.singletonList(
-                UserBuilder.builder()
-                        .id(5L)
-                        .alias("timmy")
-                        .hashPassword("1234567890abcdef")
-                        .email("valid@email.com")
-                        .avatarLink("timmeh.jpg")
-                        .joinDate(1L)
-        );
+        UserBuilder userBuilder = UserBuilder.builder()
+            .id(5L)
+            .alias("timmy")
+            .hashPassword("1234567890abcdef")
+            .email("valid@email.com")
+            .avatarLink("timmeh.jpg")
+            .joinDate(1L);
 
-        getUserList = userBuilders.stream().map(UserBuilder::buildDomain).collect(Collectors.toList());
+        expectedUserList = Collections.singletonList(userBuilder.buildNewUserDomain());
     }
 
     @Before
@@ -105,7 +103,7 @@ public class UserServiceImplTest {
     @Test
     public void shouldReturnCorrectUsersWithFindAllUserProfiles() {
         List<UserProfile> expected = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserProfile>>() {
+                .convertValue(expectedUserList, new TypeReference<List<UserProfile>>() {
                 });
 
         doReturn(expected)
@@ -135,10 +133,10 @@ public class UserServiceImplTest {
         String alias = "username";
 
         UserProfile expected = mapper()
-                .convertValue(getUserList.get(0), UserProfile.class);
+                .convertValue(expectedUserList.get(0), UserProfile.class);
 
         UserEntity userEntity = mapper()
-                .convertValue(getUserList.get(0), UserEntity.class);
+                .convertValue(expectedUserList.get(0), UserEntity.class);
 
         Optional<UserEntity> optional = Optional.of(userEntity);
 
@@ -156,7 +154,7 @@ public class UserServiceImplTest {
         Long id = 1L;
 
         List<UserProfile> returnedUsers = mapper()
-                .convertValue(getUserList, new TypeReference<List<UserProfile>>() {
+                .convertValue(expectedUserList, new TypeReference<List<UserProfile>>() {
                 });
 
         doReturn(returnedUsers.get(0))
@@ -172,10 +170,10 @@ public class UserServiceImplTest {
     @Test
     public void shouldReturnCorrectUsersWithFindAllUsers() {
         List<User> expected = mapper()
-                .convertValue(getUserList, new TypeReference<List<User>>() {
+                .convertValue(expectedUserList, new TypeReference<List<User>>() {
                 });
 
-        doReturn(getUserList)
+        doReturn(expectedUserList)
                 .when(mockUserCrudOperations)
                 .getAll();
 
@@ -189,10 +187,10 @@ public class UserServiceImplTest {
         Long id = 1L;
 
         List<User> returnedUsers = mapper()
-                .convertValue(getUserList, new TypeReference<List<User>>() {
+                .convertValue(expectedUserList, new TypeReference<List<User>>() {
                 });
 
-        doReturn(getUserList.get(0))
+        doReturn(expectedUserList.get(0))
                 .when(mockUserCrudOperations)
                 .getById(id);
 
@@ -211,7 +209,7 @@ public class UserServiceImplTest {
         userRegistration.setPassword("1234567890abcdef");
         userRegistration.setEmail("valid@email.com");
 
-        UserServiceImpl.NewUser user = mapper().convertValue(userRegistration, UserServiceImpl.NewUser.class);
+        NewUser user = mapper().convertValue(userRegistration, NewUser.class);
 
         doReturn(true)
                 .when(mockUserRepository)
@@ -221,13 +219,13 @@ public class UserServiceImplTest {
                 .when(mockUserRepository)
                 .existsByEmailIgnoreCase(userRegistration.getEmail());
 
-        doReturn(getUserList.get(0))
+        doReturn(expectedUserList.get(0))
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 
         doReturn(token)
                 .when(mockJwtUtility)
-                .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
+                .generateToken(expectedUserList.get(0).getAlias(), expectedUserList.get(0).getEmail());
 
         service.registerUser(userRegistration);
     }
@@ -241,7 +239,7 @@ public class UserServiceImplTest {
         userRegistration.setPassword("1234567890abcdef");
         userRegistration.setEmail("valid@email.com");
 
-        UserServiceImpl.NewUser user = mapper().convertValue(userRegistration, UserServiceImpl.NewUser.class);
+        NewUser user = mapper().convertValue(userRegistration, NewUser.class);
 
         doReturn(false)
                 .when(mockUserRepository)
@@ -251,13 +249,13 @@ public class UserServiceImplTest {
                 .when(mockUserRepository)
                 .existsByEmailIgnoreCase(userRegistration.getEmail());
 
-        doReturn(getUserList.get(0))
+        doReturn(expectedUserList.get(0))
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 
         doReturn(token)
                 .when(mockJwtUtility)
-                .generateToken(getUserList.get(0).getAlias(), getUserList.get(0).getEmail());
+                .generateToken(expectedUserList.get(0).getAlias(), expectedUserList.get(0).getEmail());
 
         service.registerUser(userRegistration);
     }
@@ -274,13 +272,13 @@ public class UserServiceImplTest {
 
         UserRegistration userRegistration = builder.buildUserRegistrationDomain();
 
-        UserServiceImpl.NewUser user = mapper()
-                .convertValue(userRegistration, UserServiceImpl.NewUser.class);
+        NewUser user = mapper()
+                .convertValue(userRegistration, NewUser.class);
 
         user.setHashPassword(hashPassword);
 
-        UserServiceImpl.NewUser createdUser = mapper()
-                .convertValue(userRegistration, UserServiceImpl.NewUser.class);
+        NewUser createdUser = mapper()
+                .convertValue(userRegistration, NewUser.class);
 
         doReturn(false)
                 .when(mockUserRepository)

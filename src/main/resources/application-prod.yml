@@ -10,7 +10,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: ${database.dialect:org.hibernate.dialect.MySQLDialect}
+        dialect: ${database.dialect:com.mysql.cj.jdbc.Driver}
     open-in-view: false
     hibernate:
       ddl-auto: none

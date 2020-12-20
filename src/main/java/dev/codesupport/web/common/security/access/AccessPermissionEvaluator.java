@@ -4,6 +4,7 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * Used to perform access validation through use of @PreAuthorize and @PostAuthorize.
@@ -25,11 +26,17 @@ public class AccessPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
         boolean hasPermission = targetDomainObject == null;
+
         if (!hasPermission) {
             AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluator(targetDomainObject, permission.toString().toLowerCase());
 
-            hasPermission = evaluator.hasPermission(auth, targetDomainObject);
+            if (targetDomainObject instanceof Collection) {
+                hasPermission = ((Collection<?>) targetDomainObject).stream().allMatch(o -> evaluator.hasPermission(auth, o));
+            } else {
+                hasPermission = evaluator.hasPermission(auth, targetDomainObject);
+            }
         }
+
         return hasPermission;
     }
 
@@ -42,11 +49,13 @@ public class AccessPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication auth, Serializable targetId, String targetType, Object permission) {
         boolean hasPermission = targetId == null;
+
         if (!hasPermission) {
             AbstractAccessEvaluator<?> evaluator = evaluatorFactory.getEvaluatorByName(targetType.toLowerCase(), permission.toString().toLowerCase());
 
             hasPermission = evaluator.hasPermission(auth, targetId);
         }
+
         return hasPermission;
     }
 }

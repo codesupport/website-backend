@@ -21,5 +21,5 @@ security:
     redirect-uri: http://www.example.com
 healthcheck:
   ping:
-    url: http://localhost:8082/healthcheck
+    url: http://localhost:8082/actuator/health
     delay: 5000

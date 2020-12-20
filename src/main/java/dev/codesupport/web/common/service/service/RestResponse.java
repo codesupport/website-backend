@@ -4,6 +4,8 @@ import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,9 +49,9 @@ public class RestResponse<T extends Serializable> {
      *
      * @param response The resource list to add to the object
      */
-    public RestResponse(List<T> response) {
+    public RestResponse(Collection<T> response) {
         this();
-        setResponse(response);
+        setResponse(new ArrayList<>(response));
     }
 
     /**

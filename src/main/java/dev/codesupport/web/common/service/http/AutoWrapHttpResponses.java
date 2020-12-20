@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -70,12 +71,24 @@ public class AutoWrapHttpResponses implements ResponseBodyAdvice<Object> {
      * @throws InternalServiceException If the returned object does not implement serializable
      */
     @Override
-    public RestResponse<Serializable> beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof Serializable) {
-            return new RestResponse<>((Serializable) body);
-        } else {
-            throw new InternalServiceException("Response object was invalid type");
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+        Object returnObject = body;
+
+        if (!request.getURI().toString().contains("/actuator/")) {
+            if (body instanceof Serializable) {
+                if (body instanceof Collection) {
+                    //unchecked - We checked it all, IDE can't see.
+                    //noinspection unchecked
+                    returnObject = new RestResponse<>((Collection<Serializable>) body);
+                } else {
+                    returnObject = new RestResponse<>((Serializable) body);
+                }
+            } else {
+                throw new InternalServiceException("Response object was invalid type");
+            }
         }
+
+        return returnObject;
     }
 
 }

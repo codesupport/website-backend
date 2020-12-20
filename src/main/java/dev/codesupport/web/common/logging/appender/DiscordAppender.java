@@ -31,9 +31,6 @@ public class DiscordAppender extends AppenderBase<ILoggingEvent> {
 
     private final OkHttpClient client = new OkHttpClient();
 
-    //Temporary solution
-    private String lastMessage;
-
     private String webhookUrl;
     private String username;
     private String avatarUrl;
@@ -50,12 +47,9 @@ public class DiscordAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     protected void append(ILoggingEvent event) {
-        updateMessage(event);
-
-        String messageData = event.getLevel().toString() + event.getMessage() + event.getFormattedMessage();
-        if (!messageData.equalsIgnoreCase(lastMessage)) {
-            //Prevent duplicate posts
-            lastMessage = messageData;
+        // We don't need dispatcher logs, we get them from ErrorHandlerController
+        if (!event.getLoggerName().contains("dispatcherServlet")) {
+            updateMessage(event);
             String description = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getTimeStamp()), ZoneId.systemDefault()).toString();
             String embed = new EmbedBuilder()
                     .setColor(levelColorMap.get(event.getLevel().toInteger()))
@@ -73,8 +67,6 @@ public class DiscordAppender extends AppenderBase<ILoggingEvent> {
 
             embed = "{\"embeds\":[" + embed + "]}";
             post(embed);
-        } else {
-            lastMessage = null;
         }
     }
 

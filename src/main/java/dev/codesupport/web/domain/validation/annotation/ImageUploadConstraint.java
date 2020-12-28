@@ -22,12 +22,12 @@ public @interface ImageUploadConstraint {
     /**
      * @return Message to display if property is invalid
      */
-    String message() default "Invalid filetype, only accept png, jpg, svg";
+    String message() default "Invalid filetype, only accept png, jpg, gif, svg";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    String[] types() default {"image/png", "image/jpg", "image/jpeg", "image/svg+xml"};
+    String[] types() default {"image/png", "image/jpg", "image/jpeg", "image/svg+xml", "image/gif"};
 
 }

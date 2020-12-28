@@ -14,7 +14,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d3e3544f-faba-4ab3-a637-8e479f0f59e6",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -43,7 +42,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f24c0187-da52-4179-8ec0-0103465be044",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -113,7 +111,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e8e031c9-f7e3-45b9-ba70-7ba40f002f08",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -142,7 +139,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fca6d423-bb14-401e-864f-ea5bf107af28",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -207,7 +203,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "42b2229a-a415-4514-a799-b78bffd4a619",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -236,7 +231,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e27dbbff-f94e-40bb-b4e9-ddf44eb9a6c3",
 								"exec": [
 									"pm.environment.set('PREVIOUS_ARTICLE_ID', pm.response.json().response[0].id);",
 									"pm.environment.set('LAST_ARTICLE_UPDATE_DATE', pm.response.json().response[0].article.updatedOn);",
@@ -308,7 +302,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "371d10f9-75b2-4e11-81e1-91153bce3219",
 								"exec": [
 									"const articleId = pm.environment.get(\"PREVIOUS_ARTICLE_ID\");",
 									"",
@@ -358,7 +351,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "4d4a4488-6344-4bd7-a9f6-c172b95ca23e",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -387,7 +379,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bb21b5d3-b12e-4e85-8974-22a04e316527",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -453,7 +444,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3f932849-4829-40a5-b1af-d12793d72115",
 								"exec": [
 									"const articleId = pm.environment.get(\"PREVIOUS_ARTICLE_ID\");",
 									"",
@@ -503,7 +493,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "ad42f2f9-09fb-4237-944d-31b9e827b4a9",
 								"exec": [
 									""
 								],
@@ -513,7 +502,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "29c14bab-70df-4b66-813e-5f56adc21458",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -571,7 +559,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bcb1cc76-c63c-4dd0-a3f3-aff2f302382b",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -629,8 +616,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Authentication",
@@ -641,7 +627,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "132fbbef-9d1c-4fe4-b4d0-d53cc9752cb5",
 								"exec": [
 									"pm.test(\"Status code is 401\", function () {",
 									"    pm.response.to.have.status(401)",
@@ -697,7 +682,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "47317284-ee0d-4b50-bcd4-8cd833f262e3",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -754,7 +738,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "68cf91c8-3321-46ef-bb01-e6373ba08c30",
 								"exec": [
 									"pm.test(\"Status code is 401\", function () {",
 									"    pm.response.to.have.status(403)",
@@ -811,7 +794,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b309a1d1-becf-4309-8d05-d8f418092ce3",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -840,7 +822,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "46bfb04b-9f77-464e-b7f2-a7da7e026a4e",
 								"exec": [
 									"const codesupportBackend = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -893,7 +874,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7fa7c790-2695-4b99-a1f4-ba782fd809b0",
 								"exec": [
 									"const codesupportBackend = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -946,8 +926,398 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
+		},
+		{
+			"name": "File",
+			"item": [
+				{
+					"name": "CreateImage_InvalidType",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql([",
+									"        \"file: Invalid filetype, only accept png, jpg, gif, svg\"",
+									"    ]);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const result = res.json();",
+									"      const token = result.response[0].token;",
+									"      pm.environment.set('JWT_TOKEN', token);",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "./postman/sometextfile.txt"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/file/v1/images",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"file",
+								"v1",
+								"images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateImage_InvalidSize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(413)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql([",
+									"        \"File is too large, max size is 1000 bytes\"",
+									"    ]);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const result = res.json();",
+									"      const token = result.response[0].token;",
+									"      pm.environment.set('JWT_TOKEN', token);",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "./postman/largeimage.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/file/v1/images",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"file",
+								"v1",
+								"images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateImage_Valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('LAST_IMAGE_UPLOAD_NAME', pm.response.json().response[0].name);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response.length).to.eq(1);",
+									"",
+									"    const firstResult = jsonData.response[0];",
+									"    pm.expect(firstResult.id).to.not.be.null;",
+									"    pm.expect(firstResult.contentType.type).to.eq(\"image/gif\");",
+									"    pm.expect(firstResult.contentType.extension).to.eq(\"gif\");",
+									"    pm.expect(firstResult.fileSizeB).to.eql(810);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const result = res.json();",
+									"      const token = result.response[0].token;",
+									"      pm.environment.set('JWT_TOKEN', token);",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "./postman/tinyimage.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/file/v1/images",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"file",
+								"v1",
+								"images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetImage_Valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    console.log(pm.response.size());",
+									"    pm.expect(pm.response.size().body).to.eql(810);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/file/v1/images/{{LAST_IMAGE_UPLOAD_NAME}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"file",
+								"v1",
+								"images",
+								"{{LAST_IMAGE_UPLOAD_NAME}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetImage_Invalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(404)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"NOT_FOUND\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql([",
+									"        \"Resource with the given ID was not found\"",
+									"    ]);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/file/v1/images/abcdefg123456.gif",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"file",
+								"v1",
+								"images",
+								"abcdefg123456.gif"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Showcase",
@@ -958,7 +1328,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4dc23978-7598-41fb-b39a-018858a0d67c",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1003,7 +1372,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cac4e0db-e554-4449-a58e-8e34efeb1ca1",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1065,7 +1433,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5bbc7951-b47d-4e98-ad1f-e13a72d27b00",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1121,8 +1488,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "User",
@@ -1133,7 +1499,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "81dfbf2e-7a6f-415b-ba8a-0cfc472ca5d4",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1180,7 +1545,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5f46f36b-5377-4bc2-82df-3dad1af6d06b",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1229,7 +1593,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b47057e6-c599-4035-89c1-dede0931af14",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(404)",
@@ -1279,7 +1642,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "115aaccd-56dd-4bfe-93bc-f653f442cf2b",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1327,7 +1689,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "19b20b93-2295-491e-af3b-a32877219e67",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1377,7 +1738,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "98398ba3-dc28-4e82-8660-0af7b29487f6",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(404)",
@@ -1427,7 +1787,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "caebcb37-94ec-4284-a021-057c43055138",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1482,7 +1841,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0d0b6a58-be57-4c36-9f0b-80ef72388c86",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(404)",
@@ -1537,7 +1895,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bc682292-edc3-4fd3-a4f0-493431e373e9",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1563,7 +1920,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d54b5b28-2ade-4746-868b-d86af24c3c80",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -1624,7 +1980,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "32db671a-76c4-4e61-aa9d-d57105b6d32c",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(404)",
@@ -1650,7 +2005,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "45fe5c2f-231d-400d-b5ee-4d520d29ed8c",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -1711,7 +2065,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ded573cb-6a73-400c-b9ee-748939f20c4f",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -1740,7 +2093,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a30fd99f-d817-4f13-b20f-591b71dfb887",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -1809,7 +2161,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "65fb5490-c22a-440b-8bcb-8e9c3ae2336f",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(403)",
@@ -1835,7 +2186,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "77b187c4-5069-4e24-9a7d-051d6456622b",
 								"exec": [
 									""
 								],
@@ -1844,9 +2194,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1878,7 +2225,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4f6c2379-ddab-46ec-a480-c9288f618a45",
 								"exec": [
 									"pm.test(\"Status code is 500\", function () {",
 									"    pm.response.to.have.status(500)",
@@ -1905,7 +2251,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "2c81e130-326b-4130-8834-3924bcc9bfc3",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -1974,7 +2319,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "05839d37-22ce-4dfe-a7db-698cf04f8985",
 								"exec": [
 									"pm.test(\"Status code is 500\", function () {",
 									"    pm.response.to.have.status(500)",
@@ -2001,7 +2345,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "5c8e688b-902c-489b-a327-e1250e80cbae",
 								"exec": [
 									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
@@ -2064,9 +2407,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

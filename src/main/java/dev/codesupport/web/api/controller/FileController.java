@@ -1,8 +1,10 @@
 package dev.codesupport.web.api.controller;
 
+import dev.codesupport.web.common.service.http.DontWrapResponse;
 import dev.codesupport.web.domain.FileReference;
 import dev.codesupport.web.domain.validation.annotation.ImageUploadConstraint;
 import io.swagger.annotations.Api;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Validated
 public interface FileController {
 
-    @GetMapping("/images/{fileId}")
-    void getImage(@PathVariable String fileId);
+    @DontWrapResponse
+    @GetMapping("/images/{fileName}")
+    ResponseEntity<?> getImage(@PathVariable String fileName);
 
     @PostMapping("/images")
     FileReference storeImage(@RequestParam("file") @ImageUploadConstraint MultipartFile file);

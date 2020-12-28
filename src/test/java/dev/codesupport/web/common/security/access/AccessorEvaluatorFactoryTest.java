@@ -93,7 +93,7 @@ public class AccessorEvaluatorFactoryTest {
         doReturn(mockClassEvaluator)
                 .when(accessEvaluatorFactorySpy)
                 .getEvaluatorByName(
-                        object,
+                        object.toLowerCase(),
                         permission
                 );
 
@@ -108,8 +108,6 @@ public class AccessorEvaluatorFactoryTest {
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
-        AbstractAccessEvaluator<?> mockClassEvaluator = mock(AbstractAccessEvaluator.class);
-
         AccessEvaluatorFactory accessEvaluatorFactorySpy = spy(new AccessEvaluatorFactory(mockContext));
 
         doThrow(InvalidArgumentException.class)
@@ -119,9 +117,7 @@ public class AccessorEvaluatorFactoryTest {
                         permission
                 );
 
-        AbstractAccessEvaluator<?> actual = accessEvaluatorFactorySpy.getEvaluator(null, permission);
-
-        assertEquals(mockClassEvaluator, actual);
+        accessEvaluatorFactorySpy.getEvaluator(null, permission);
     }
 
     @Test
@@ -183,8 +179,6 @@ public class AccessorEvaluatorFactoryTest {
         //noinspection unchecked
         Map<String, AbstractAccessEvaluator<?>> mockEvaluatorMap = mock(HashMap.class);
 
-        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock.
-        //noinspection ResultOfMethodCallIgnored
         doReturn(false)
                 .when(mockEvaluatorMap)
                 .containsKey(evaluatorName);
@@ -218,8 +212,6 @@ public class AccessorEvaluatorFactoryTest {
         //noinspection unchecked
         Map<String, AbstractAccessEvaluator<?>> mockEvaluatorMap = mock(HashMap.class);
 
-        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock.
-        //noinspection ResultOfMethodCallIgnored
         doReturn(true)
                 .when(mockEvaluatorMap)
                 .containsKey(evaluatorName);

@@ -8,7 +8,8 @@ import java.io.Serializable;
 public class FileReference implements Serializable {
 
     private String id;
-    private String contentType;
+    private String name;
+    private ContentType contentType;
     private Long fileSizeB;
 
 }

@@ -64,7 +64,7 @@ public class AccessEvaluatorFactory {
         AbstractAccessEvaluator<?> evaluator;
 
         if (targetDomainObject instanceof String) {
-            evaluator = getEvaluatorByName(targetDomainObject.toString(), permission);
+            evaluator = getEvaluatorByName(targetDomainObject.toString().toLowerCase(), permission);
         } else {
             String domainObjectClassName;
 

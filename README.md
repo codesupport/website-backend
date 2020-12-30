@@ -15,56 +15,13 @@ Please see [pom.xml](https://github.com/codesupport/website-backend/blob/develop
 2. On Unix systems run `./mnvw clean package` and on Windows run `./mvnw.cmd clean package`
 3. Run `java -jar target/api-service-0.0.1-SNAPSHOT.jar`
 
-## Structure
-- Domain is the business model and handles business related validation
-- Controller defines the API contract and enforces it with validation
-- ControllerImpl translates the HTTP requests to service calls and handles simple parameter transformations prior to service calls
-- Service is the business logic, the bulk of logic in the request and gathering data happens here
-- Repository is the DAL (data access layer) and handles communication with the database
-- Entity is the database contract definition and validation enforcement of that contract
-
-## Conventions
-### Resource
-This is a consumable offered via API interaction. The naming for an example resource:
-- `User` - the domain model
-- `api/v1/users/{ID}` - the API endpoint (plural)
-- `UserController` - the API contract
-- `UserControllerImpl` - the API contract implementation
-- `UserService` - the business logic
-- `UserRepository` - the data access
-- `UserEntity` - the database contract
-- `UserValidation` - the persistence level validation
-
-### Exceptions
-Any business logic exceptions throw `ServiceLayerExceptio`n in the service class. Validation and Resource exceptions are handled by the framework if utilizing provided APIs. All exceptions are caught and handled by the framework to provide feedback to the user and log to the system.
-
-### Validations
-#### Domain Level (Business Validations)
-Domain level validations are done on the domain models via implementing the `Validatable` interface. This is for business validations such as required fields and field checks.
-
-#### Persistence Level (Database Data)
-Persistence level validations are done via validation classes that extend the `AbstractPersistenceValidation` class and are used for validation checks against the DB, such as unique column value checks.
-
-#### Entity Validations (Database Contracts)
-Validations on the entities are only to protect the integrity of the database and enforce the DB contracts. No business logic validations are done here (meaning no messages back to the user).
-
-#### API Validations (API Contracts)
-These validations are done on the API interfaces, and are used as basic API contract enforcements, done via the constraint annotations on the API interfaces. API implementations contain no validation checks.
-
-### CRUD Operations
-Basic crud requirements are fulfilled (with preset mechanics) by utilizing the `CrudOperation`s class:
-- `getAll()` gets all avalaible entities
-- `getById()` gets by a specific id
-  - Throws `ResourceNotFoundException`, resulting in 404, if not found
-- `createEntities()` saves entities to the database
-  - Throws `Exception` if already exists by id, performs validation checks (domain and persistence level)
-- `updateEntities()` updates entities in the database
-  - Throws `ResourceNotFoundException`, resulting in 404, if not found, performs validation checks (domain and persistence level)
-- `deleteEntities()` deletes entities from the database
-  - Throws `ResourceNotFoundException`, resulting in 404, if not found
-
 ## Tests
 We are using [JUnit](https://junit.org/junit4/) for our tests. **All code should be tested**.
+
+## Integration Tests
+Integration tests are written with postman and can be excuted through the postman GUI or via the CLI utility, `newman`.
+
+`newman run -e postman/Local.postman_environment.json postman/CodesupportApi.postman_collection.json`
 
 ## Scripts
 - To delete the `target/` build folder use `./mvnw clean`
@@ -94,6 +51,7 @@ Name | Default | Description
 `JWT_ISSUER` | `codesupport.dev` | The JWT issuer
 `JWT_EXPIRATION` | `10m` | The length of time a JWT lasts
 `LOG_ROOT_LEVEL` | `INFO` | Root logging level for spring logs
+`MAX_IMAGE_SIZE` | `512000` | Max image upload size (in bytes)
 `SERVICE_PORT` | `8080` | The port to run the application on
 `SSL_KEY_ALIAS` | `tomcat` | Alias for certificate, used with openssl step
 `SSL_KEY_STORE` | | Path to the keystore (/etc/.../keystore.p12)

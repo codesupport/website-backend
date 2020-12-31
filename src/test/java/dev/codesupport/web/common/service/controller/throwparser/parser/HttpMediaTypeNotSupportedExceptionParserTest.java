@@ -95,4 +95,15 @@ public class HttpMediaTypeNotSupportedExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        HttpMediaTypeNotSupportedExceptionParser parser = new HttpMediaTypeNotSupportedExceptionParser();
+
+        int expected = 415;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

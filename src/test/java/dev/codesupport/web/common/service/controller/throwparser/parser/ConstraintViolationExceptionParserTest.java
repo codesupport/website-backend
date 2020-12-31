@@ -86,11 +86,22 @@ public class ConstraintViolationExceptionParserTest {
 
     @Test
     public void shouldReturnCorrectStatus() {
-        ServiceLayerExceptionParser parser = new ServiceLayerExceptionParser();
+        ConstraintViolationExceptionParser parser = new ConstraintViolationExceptionParser();
 
         RestStatus expected = RestStatus.FAIL;
         RestStatus actual = ReflectionTestUtils.invokeMethod(parser, "responseStatus");
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        ConstraintViolationExceptionParser parser = new ConstraintViolationExceptionParser();
+
+        int expected = 400;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

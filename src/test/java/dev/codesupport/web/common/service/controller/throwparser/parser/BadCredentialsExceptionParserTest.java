@@ -12,7 +12,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class BadCredentialsExceptionParserTest {
 
@@ -39,10 +38,6 @@ public class BadCredentialsExceptionParserTest {
     public void shouldReturnCorrectMessage() {
         BadCredentialsExceptionParser parser = new BadCredentialsExceptionParser();
 
-        BadCredentialsException mockException = mock(BadCredentialsException.class);
-
-        ReflectionTestUtils.setField(parser, "throwable", mockException);
-
         List<String> expected = Collections.singletonList("The username/password supplied was invalid/inactive.");
         List<String> actual = parser.responseMessage();
 
@@ -58,4 +53,15 @@ public class BadCredentialsExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        BadCredentialsExceptionParser parser = new BadCredentialsExceptionParser();
+
+        int expected = 401;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

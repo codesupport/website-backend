@@ -44,6 +44,8 @@ public class ServiceLayerExceptionParserTest {
 
         ServiceLayerException mockException = mock(ServiceLayerException.class);
 
+        //ResultOfMethodCallIgnored - We're not calling a method, we're making a mock
+        //noinspection ResultOfMethodCallIgnored
         doReturn(exceptionMessage)
                 .when(mockException)
                 .getMessage();

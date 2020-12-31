@@ -87,4 +87,15 @@ public class ValidationExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        ValidationExceptionParser parser = new ValidationExceptionParser();
+
+        int expected = 400;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

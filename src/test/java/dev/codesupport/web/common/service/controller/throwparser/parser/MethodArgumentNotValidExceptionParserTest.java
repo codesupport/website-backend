@@ -79,4 +79,15 @@ public class MethodArgumentNotValidExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        MethodArgumentNotValidExceptionParser parser = new MethodArgumentNotValidExceptionParser();
+
+        int expected = 400;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

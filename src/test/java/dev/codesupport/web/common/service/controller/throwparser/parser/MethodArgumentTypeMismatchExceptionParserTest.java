@@ -79,4 +79,15 @@ public class MethodArgumentTypeMismatchExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        MethodArgumentTypeMismatchExceptionParser parser = new MethodArgumentTypeMismatchExceptionParser();
+
+        int expected = 400;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

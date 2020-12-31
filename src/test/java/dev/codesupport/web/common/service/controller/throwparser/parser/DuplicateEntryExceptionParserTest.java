@@ -1,6 +1,6 @@
 package dev.codesupport.web.common.service.controller.throwparser.parser;
 
-import dev.codesupport.web.common.exception.InvalidUserException;
+import dev.codesupport.web.common.exception.DuplicateEntryException;
 import dev.codesupport.web.common.service.controller.throwparser.AbstractThrowableParser;
 import dev.codesupport.web.common.service.service.RestStatus;
 import org.junit.Test;
@@ -15,44 +15,44 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-public class InvalidUserExceptionParserTest {
+public class DuplicateEntryExceptionParserTest {
 
     @Test
     public void shouldReturnCorrectParserType() {
-        InvalidUserExceptionParser parser = new InvalidUserExceptionParser();
+        DuplicateEntryExceptionParser parser = new DuplicateEntryExceptionParser();
 
-        AbstractThrowableParser<InvalidUserException> instancedParser = parser.instantiate();
+        AbstractThrowableParser<DuplicateEntryException> instancedParser = parser.instantiate();
 
-        assertTrue(instancedParser instanceof InvalidUserExceptionParser);
+        assertTrue(instancedParser instanceof DuplicateEntryExceptionParser);
     }
 
     @Test
     public void shouldCreateNewInstance() {
-        InvalidUserExceptionParser parser = new InvalidUserExceptionParser();
+        DuplicateEntryExceptionParser parser = new DuplicateEntryExceptionParser();
 
-        AbstractThrowableParser<InvalidUserException> firstInstance = parser.instantiate();
-        AbstractThrowableParser<InvalidUserException> secondInstance = parser.instantiate();
+        AbstractThrowableParser<DuplicateEntryException> firstInstance = parser.instantiate();
+        AbstractThrowableParser<DuplicateEntryException> secondInstance = parser.instantiate();
 
         assertNotSame(firstInstance, secondInstance);
     }
 
     @Test
     public void shouldReturnCorrectMessage() {
-        String exceptionMessage = "Invalid user exception message";
+        String message = "exception message";
 
-        InvalidUserExceptionParser parser = new InvalidUserExceptionParser();
+        DuplicateEntryExceptionParser parser = new DuplicateEntryExceptionParser();
 
-        InvalidUserException mockException = mock(InvalidUserException.class);
+        DuplicateEntryException mockException = mock(DuplicateEntryException.class);
 
-        //ResultOfMethodCallIgnored - We're creating a mock, not invoking a function
+        //ResultOfMethodCallIgnored - We're not calling a method, we're making a mock
         //noinspection ResultOfMethodCallIgnored
-        doReturn(exceptionMessage)
+        doReturn(message)
                 .when(mockException)
                 .getMessage();
 
         ReflectionTestUtils.setField(parser, "throwable", mockException);
 
-        List<String> expected = Collections.singletonList(exceptionMessage);
+        List<String> expected = Collections.singletonList(message);
         List<String> actual = parser.responseMessage();
 
         assertEquals(expected, actual);
@@ -60,9 +60,9 @@ public class InvalidUserExceptionParserTest {
 
     @Test
     public void shouldReturnCorrectStatus() {
-        InvalidUserExceptionParser parser = new InvalidUserExceptionParser();
+        DuplicateEntryExceptionParser parser = new DuplicateEntryExceptionParser();
 
-        RestStatus expected = RestStatus.UNAUTHORIZED;
+        RestStatus expected = RestStatus.FAIL;
         RestStatus actual = ReflectionTestUtils.invokeMethod(parser, "responseStatus");
 
         assertEquals(expected, actual);
@@ -70,12 +70,11 @@ public class InvalidUserExceptionParserTest {
 
     @Test
     public void shouldReturnCorrectStatusCode() {
-        InvalidUserExceptionParser parser = new InvalidUserExceptionParser();
+        DuplicateEntryExceptionParser parser = new DuplicateEntryExceptionParser();
 
-        int expected = 401;
+        int expected = 409;
         int actual = parser.responseCode();
 
         assertEquals(expected, actual);
     }
-
 }

@@ -44,6 +44,8 @@ public class ResourceNotFoundExceptionParserTest {
 
         ResourceNotFoundException mockException = mock(ResourceNotFoundException.class);
 
+        //ResultOfMethodCallIgnored - We're creating a mock, not invoking a function
+        //noinspection ResultOfMethodCallIgnored
         doReturn(exceptionMessage)
                 .when(mockException)
                 .getMessage();
@@ -65,4 +67,15 @@ public class ResourceNotFoundExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        ResourceNotFoundExceptionParser parser = new ResourceNotFoundExceptionParser();
+
+        int expected = 404;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

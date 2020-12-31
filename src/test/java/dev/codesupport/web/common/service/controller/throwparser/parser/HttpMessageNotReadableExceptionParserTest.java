@@ -53,4 +53,15 @@ public class HttpMessageNotReadableExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        HttpMessageNotReadableExceptionParser parser = new HttpMessageNotReadableExceptionParser();
+
+        int expected = 400;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

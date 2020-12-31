@@ -43,6 +43,8 @@ public class NumberFormatExceptionParserTest {
 
         NumberFormatException mockException = mock(NumberFormatException.class);
 
+        //ResultOfMethodCallIgnored - We're creating a mock, not invoking a function
+        //noinspection ResultOfMethodCallIgnored
         doReturn(exceptionMessage)
                 .when(mockException)
                 .getMessage();
@@ -64,4 +66,15 @@ public class NumberFormatExceptionParserTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void shouldReturnCorrectStatusCode() {
+        NumberFormatExceptionParser parser = new NumberFormatExceptionParser();
+
+        int expected = 400;
+        int actual = parser.responseCode();
+
+        assertEquals(expected, actual);
+    }
+
 }

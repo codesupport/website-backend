@@ -20,6 +20,15 @@ public class NumberUtilsTest {
     }
 
     @Test
+    public void shouldCorrectlyParseValidNegativeLong() {
+        Optional<Long> expected = Optional.of(-10L);
+
+        Optional<Long> actual = NumberUtils.parseLong(expected.get().toString());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void shouldCorrectlyParseEmptyLong() {
         Optional<Long> expected = Optional.empty();
 
@@ -67,6 +76,15 @@ public class NumberUtilsTest {
     @Test
     public void shouldCorrectlyParseValidInteger() {
         Optional<Integer> expected = Optional.of(10);
+
+        Optional<Integer> actual = NumberUtils.parseInt(expected.get().toString());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldCorrectlyParseValidNegativeInteger() {
+        Optional<Integer> expected = Optional.of(-10);
 
         Optional<Integer> actual = NumberUtils.parseInt(expected.get().toString());
 

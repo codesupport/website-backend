@@ -24,6 +24,8 @@ public class NumberUtils {
         return parseNumber(value, radix, -Integer.MAX_VALUE, Integer.MIN_VALUE).map(Long::intValue);
     }
 
+    //S3776 - Complexity - Not worrying about this right now
+    @SuppressWarnings({"java:S3776"})
     private static Optional<Long> parseNumber(String value, int radix, long limitMax, long limitMin) {
         Optional<Long> resultOptional;
 
@@ -66,7 +68,8 @@ public class NumberUtils {
                                 }
                             }
 
-                            resultOptional = (invalid) ? Optional.empty() : Optional.of(negative ? result : -result);
+                            long finalResult = negative ? result : -result;
+                            resultOptional = (invalid) ? Optional.empty() : Optional.of(finalResult);
                         } else {
                             resultOptional = Optional.empty();
                         }

@@ -45,6 +45,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+//S5976 - ParameterizedTests - Not doing that right now.
+@SuppressWarnings({"java:S5976"})
 public class ServiceServiceImplTest {
 
     private ServiceServiceImpl serviceSpy;
@@ -341,7 +343,7 @@ public class ServiceServiceImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyOptionalForNullAnnotationInRequestMappingMethod() throws NoSuchMethodException {
+    public void shouldReturnEmptyOptionalForNullAnnotationInRequestMappingMethod() {
         Optional<String> expected = Optional.empty();
         Optional<String> actual = serviceSpy.getRequestMappingMethod(null);
 
@@ -559,15 +561,15 @@ public class ServiceServiceImplTest {
         assertSame(expected, actual);
     }
 
-    private class ControllerBExtended extends ControllerB {
+    private static class ControllerBExtended extends ControllerB {
 
     }
 
-    private class ControllerA {
+    private static class ControllerA {
 
     }
 
-    private class ControllerB implements SomeOtherInterface, InterfaceB {
+    private static class ControllerB implements SomeOtherInterface, InterfaceB {
 
         @Override
         public String someMethod(String propertyA) {
@@ -580,6 +582,8 @@ public class ServiceServiceImplTest {
 
     }
 
+    //unused - This is a test class
+    @SuppressWarnings("unused")
     @RestController
     @RequestMapping("/api")
     private interface InterfaceA {
@@ -600,6 +604,8 @@ public class ServiceServiceImplTest {
 
     }
 
+    //unused - This is a test class
+    @SuppressWarnings("unused")
     @RestController
     private interface InterfaceB {
 

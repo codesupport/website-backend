@@ -45,10 +45,16 @@ public class DiscordAppender extends AppenderBase<ILoggingEvent> {
         levelColorMap.put(Level.ERROR_INTEGER, Color.RED);
     }
 
+    @VisibleForTesting
+    boolean fromBlacklistedClassLogger(ILoggingEvent event) {
+        return event.getLoggerName().contains("dispatcherServlet")
+                || event.getLoggerName().contains("DefaultHandlerExceptionResolver");
+    }
+
     @Override
     protected void append(ILoggingEvent event) {
         // We don't need dispatcher logs, we get them from ErrorHandlerController
-        if (!event.getLoggerName().contains("dispatcherServlet")) {
+        if (!fromBlacklistedClassLogger(event)) {
             updateMessage(event);
             String description = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getTimeStamp()), ZoneId.systemDefault()).toString();
             String embed = new EmbedBuilder()

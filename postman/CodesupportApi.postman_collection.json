@@ -2194,6 +2194,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "ABC123",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -2402,6 +2412,57 @@
 								"user",
 								"v1",
 								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service",
+			"item": [
+				{
+					"name": "GetEndpoints",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response.length).to.be.greaterThan(0);",
+									"    const expectedProperties = [\"name\", \"version\", \"method\", \"uri\", \"returns\", \"expectsBody\", \"urlParameters\"].sort();",
+									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/service/v1/endpoints",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"service",
+								"v1",
+								"endpoints"
 							]
 						}
 					},

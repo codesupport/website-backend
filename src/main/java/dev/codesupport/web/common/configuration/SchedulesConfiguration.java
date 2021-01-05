@@ -28,7 +28,6 @@ public class SchedulesConfiguration {
     public SchedulesConfiguration(HttpClient httpClient) {
         this.httpClient = httpClient;
         this.memoryThresholds = new ConcurrentHashMap<>();
-        memoryThresholds.put(50, false);
         memoryThresholds.put(25, false);
         memoryThresholds.put(20, false);
         memoryThresholds.put(15, false);

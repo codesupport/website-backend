@@ -9,7 +9,7 @@
 			"name": "Article",
 			"item": [
 				{
-					"name": "CreateArticle_Valid",
+					"name": "CreateArticle_Valid_ExtraInfo",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -176,7 +176,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of making websites.\",\n  \"description\": \"Description for making websitesl\",\n  \"tags\": [\n    \t\"HTTP\",\n\t    \"Website\"\n  ],\n  \"title\": \"Website Development\",\n  \"visible\": true\n}",
+							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of making websites.\",\n  \"description\": \"Description for making websitesl\",\n  \"tags\": [\n    \t\"HTTP\",\n\t    \"Website\"\n  ],\n  \"title\": \"Website Development\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -275,7 +275,148 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the AMQP protocol.\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\",\n  \"visible\": true\n}",
+							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the AMQP protocol.\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateArticle_Invalid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"title: can not be null/empty\",",
+									"        \"content: can not be null/empty\",",
+									"        \"description: can not be null/empty\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateArticle_Invalid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"content: can not be null/empty\",",
+									"        \"title: can not be null/empty\",",
+									"        \"id: can not be null\",",
+									"        \"description: can not be null/empty\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -418,6 +559,330 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n  },\n  \"published\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/publish",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PublishArticle_InvalidStale",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const result = res.json();",
+									"      const token = result.response[0].token;",
+									"      pm.environment.set('JWT_TOKEN', token);",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"Article data is stale, try again.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": 1\n  },\n  \"published\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/publish",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PublishArticle_Duplicate",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const result = res.json();",
+									"      const token = result.response[0].token;",
+									"      pm.environment.set('JWT_TOKEN', token);",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const response = jsonData.response[0];",
+									"    pm.expect(response.action).to.eql(\"Publish article\");",
+									"    pm.expect(response.affectedEntities).to.eql(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n  },\n  \"published\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/publish",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PublishArticle_Invalid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"article: can not be null\",",
+									"        \"id: can not be null\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/publish",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PublishArticle_InvalidAritcle",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"article.updatedOn: can not be null\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"article\": {},\n  \"published\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1107,6 +1572,105 @@
 									"key": "file",
 									"type": "file",
 									"src": "./postman/largeimage.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/file/v1/images",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"file",
+								"v1",
+								"images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateImage_InvalidPayload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql([",
+									"        \"file: Invalid filetype, only accept png, jpg, gif, svg\"",
+									"    ]);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const result = res.json();",
+									"      const token = result.response[0].token;",
+									"      pm.environment.set('JWT_TOKEN', token);",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
 								}
 							],
 							"options": {

@@ -11,6 +11,13 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ArticleValidator implements MultiViolationConstraintValidator<ArticleConstraint, Article> {
 
+    private boolean idRequired;
+
+    @Override
+    public void initialize(ArticleConstraint constraintAnnotation) {
+        idRequired = constraintAnnotation.requireId();
+    }
+
     /**
      * Validates a {@link Article} object
      *
@@ -19,6 +26,14 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
      */
     @Override
     public void validate(Article article, Violation violation) {
+        if (idRequired) {
+            if (article.getId() == null) {
+                violation.nullValue(Article.Fields.id);
+            } else if (article.getId() == 0){
+                violation.invalid(Article.Fields.id);
+            }
+        }
+        
         if (StringUtils.isBlank(article.getTitle())) {
             violation.missing(Article.Fields.title);
         }

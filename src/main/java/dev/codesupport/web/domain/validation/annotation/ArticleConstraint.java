@@ -17,6 +17,8 @@ import java.lang.annotation.Target;
 public @interface ArticleConstraint {
     String message() default "Invalid article";
 
+    boolean requireId() default false;
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

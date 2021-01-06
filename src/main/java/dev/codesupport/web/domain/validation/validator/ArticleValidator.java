@@ -29,11 +29,11 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
         if (idRequired) {
             if (article.getId() == null) {
                 violation.nullValue(Article.Fields.id);
-            } else if (article.getId() == 0){
+            } else if (article.getId() == 0) {
                 violation.invalid(Article.Fields.id);
             }
         }
-        
+
         if (StringUtils.isBlank(article.getTitle())) {
             violation.missing(Article.Fields.title);
         }

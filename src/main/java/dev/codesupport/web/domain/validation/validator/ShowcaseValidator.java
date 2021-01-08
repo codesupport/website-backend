@@ -12,6 +12,13 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ShowcaseValidator implements MultiViolationConstraintValidator<ShowcaseConstraint, Showcase> {
 
+    private boolean idRequired;
+
+    @Override
+    public void initialize(ShowcaseConstraint constraintAnnotation) {
+        idRequired = constraintAnnotation.requireId();
+    }
+
     /**
      * Validates a {@link Showcase} object
      *
@@ -20,6 +27,14 @@ public class ShowcaseValidator implements MultiViolationConstraintValidator<Show
      */
     @Override
     public void validate(Showcase showcase, Violation violation) {
+        if (idRequired) {
+            if (showcase.getId() == null) {
+                violation.nullValue(Showcase.Fields.id);
+            } else if (showcase.getId() == 0){
+                violation.invalid(Showcase.Fields.id);
+            }
+        }
+
         if (StringUtils.isBlank(showcase.getTitle())) {
             violation.missing(Showcase.Fields.title);
         }
@@ -33,7 +48,7 @@ public class ShowcaseValidator implements MultiViolationConstraintValidator<Show
         }
 
         if (showcase.getContributorList() == null) {
-            violation.missing(Showcase.Fields.contributorList);
+            violation.nullValue(Showcase.Fields.contributorList);
         } else {
             // If ContributorList exists, validate it
             ContributorListValidator contributorListValidator = contributorListValidator();

@@ -3,12 +3,12 @@ package dev.codesupport.web.domain.validation.validator;
 import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import dev.codesupport.web.domain.validation.MultiViolationConstraintValidator;
 import dev.codesupport.web.domain.validation.Violation;
-import dev.codesupport.web.domain.validation.annotation.EntityDeleteConstraint;
+import dev.codesupport.web.domain.validation.annotation.IdentifiableDomainConstraint;
 
 /**
- * Validation logic to be performed on properties annotated with {@link EntityDeleteConstraint}
+ * Validation logic to be performed on properties annotated with {@link IdentifiableDomainConstraint}
  */
-public class EntityDeleteValidator implements MultiViolationConstraintValidator<EntityDeleteConstraint, IdentifiableDomain<Long>> {
+public class IdentifiableDomainValidator implements MultiViolationConstraintValidator<IdentifiableDomainConstraint, IdentifiableDomain<Long>> {
 
     /**
      * Validates a {@link IdentifiableDomain} object

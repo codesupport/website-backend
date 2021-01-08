@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-public class EntityDeleteValidatorTest {
+public class IdentifiableDomainValidatorTest {
 
     @Test
     public void shouldFindCorrectIssuesForValidator() {
-        EntityDeleteValidator validator = new EntityDeleteValidator();
+        IdentifiableDomainValidator validator = new IdentifiableDomainValidator();
         //unchecked - This is fine for the purposes of this test
         //noinspection unchecked
         IdentifiableDomain<Long> mockIdentifiableDomain = mock(IdentifiableDomain.class);
@@ -36,7 +36,7 @@ public class EntityDeleteValidatorTest {
 
     @Test
     public void shouldFindNoIssuesForValidator() {
-        EntityDeleteValidator validator = new EntityDeleteValidator();
+        IdentifiableDomainValidator validator = new IdentifiableDomainValidator();
         //unchecked - This is fine for the purposes of this test
         //noinspection unchecked
         IdentifiableDomain<Long> mockIdentifiableDomain = mock(IdentifiableDomain.class);

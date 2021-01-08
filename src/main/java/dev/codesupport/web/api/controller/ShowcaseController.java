@@ -2,7 +2,7 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.domain.Showcase;
 import dev.codesupport.web.domain.VoidMethodResponse;
-import dev.codesupport.web.domain.validation.annotation.EntityDeleteConstraint;
+import dev.codesupport.web.domain.validation.annotation.IdentifiableDomainConstraint;
 import dev.codesupport.web.domain.validation.annotation.ShowcaseConstraint;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,10 +51,10 @@ public interface ShowcaseController {
 
     @ApiOperation("Update a Showcase")
     @PutMapping("/showcases")
-    Showcase updateShowcase(@RequestBody @ShowcaseConstraint Showcase showcase);
+    Showcase updateShowcase(@RequestBody @ShowcaseConstraint(requireId = true) Showcase showcase);
 
     @ApiOperation("Delete a Showcase")
     @DeleteMapping("/showcases")
-    VoidMethodResponse deleteShowcase(@RequestBody @EntityDeleteConstraint Showcase showcase);
+    VoidMethodResponse deleteShowcase(@RequestBody @IdentifiableDomainConstraint Showcase showcase);
 
 }

@@ -1,6 +1,6 @@
 package dev.codesupport.web.domain;
 
-import dev.codesupport.web.common.data.domain.IdentifiableDomain;
+import dev.codesupport.web.common.data.domain.AuditableDomain;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Data
 @FieldNameConstants
-public class Article implements IdentifiableDomain<Long> {
+public class Article implements AuditableDomain<Long, Long> {
 
     private Long id;
     private String articleCode;

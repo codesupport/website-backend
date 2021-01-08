@@ -4,6 +4,8 @@ import dev.codesupport.web.domain.Article;
 import dev.codesupport.web.domain.PublishedArticle;
 import dev.codesupport.web.domain.VoidMethodResponse;
 import dev.codesupport.web.domain.validation.annotation.ArticleConstraint;
+import dev.codesupport.web.domain.validation.annotation.AuditableDomainConstraint;
+import dev.codesupport.web.domain.validation.annotation.PublishedArticleConstraint;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -43,14 +45,14 @@ public interface ArticleController {
 
     @ApiOperation("Create an Article")
     @PutMapping("/articles")
-    Article updateArticle(@RequestBody @ArticleConstraint Article article);
+    Article updateArticle(@RequestBody @ArticleConstraint(requireId = true) Article article);
 
     @ApiOperation("Create an Article")
     @DeleteMapping("/articles")
-    VoidMethodResponse deleteArticle(@RequestBody @ArticleConstraint Article article);
+    VoidMethodResponse deleteArticle(@RequestBody @AuditableDomainConstraint Article article);
 
     @ApiOperation("Publish an Article")
     @PostMapping("/publish")
-    VoidMethodResponse publishArticle(@RequestBody PublishedArticle publishedArticle);
+    VoidMethodResponse publishArticle(@RequestBody @PublishedArticleConstraint PublishedArticle publishedArticle);
 
 }

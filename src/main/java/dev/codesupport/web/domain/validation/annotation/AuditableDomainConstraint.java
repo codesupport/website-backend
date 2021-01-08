@@ -1,6 +1,6 @@
 package dev.codesupport.web.domain.validation.annotation;
 
-import dev.codesupport.web.domain.validation.validator.EntityDeleteValidator;
+import dev.codesupport.web.domain.validation.validator.AuditableDomainValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,11 +11,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = EntityDeleteValidator.class)
+@Constraint(validatedBy = AuditableDomainValidator.class)
 @Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EntityDeleteConstraint {
-    String message() default "Invalid entity";
+public @interface AuditableDomainConstraint {
+    String message() default "Invalid article";
+
+    boolean requireId() default false;
 
     Class<?>[] groups() default {};
 

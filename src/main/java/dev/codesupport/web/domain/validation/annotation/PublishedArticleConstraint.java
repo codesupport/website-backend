@@ -1,6 +1,6 @@
 package dev.codesupport.web.domain.validation.annotation;
 
-import dev.codesupport.web.domain.validation.validator.ShowcaseValidator;
+import dev.codesupport.web.domain.validation.validator.PublishedArticleValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,13 +11,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = ShowcaseValidator.class)
+@Constraint(validatedBy = PublishedArticleValidator.class)
 @Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ShowcaseConstraint {
-    String message() default "Invalid showcase";
-
-    boolean requireId() default false;
+public @interface PublishedArticleConstraint {
+    String message() default "Invalid public article";
 
     Class<?>[] groups() default {};
 

@@ -124,18 +124,24 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public VoidMethodResponse publishArticle(PublishedArticle publishedArticle) {
         PublishedArticleEntity existingPublishedArticle = publishedArticleRepository.getById(publishedArticle.getId());
-        ArticleEntity existingArticle = articleRepository.getById(existingPublishedArticle.getArticleId());
+        int affectedEntities = 0;
 
-        // Stale data check against existing article
-        if (publishedArticle.getArticle().getUpdatedOn().equals(existingArticle.getUpdatedOn())) {
-            existingPublishedArticle.setPublished(true);
+        // If the publish state wasn't changed, do nothing
+        if (existingPublishedArticle.isPublished() != publishedArticle.isPublished()) {
+            affectedEntities++;
+            ArticleEntity existingArticle = articleRepository.getById(existingPublishedArticle.getArticleId());
 
-            publishedArticleRepository.save(existingPublishedArticle);
-        } else {
-            throw new MalformedDataException("Article data is stale, try again.");
+            // Stale data check against existing article
+            if (publishedArticle.getArticle().getUpdatedOn().equals(existingArticle.getUpdatedOn())) {
+                existingPublishedArticle.setPublished(publishedArticle.isPublished());
+
+                publishedArticleRepository.save(existingPublishedArticle);
+            } else {
+                throw new MalformedDataException("Article data is stale, try again.");
+            }
         }
 
-        return new VoidMethodResponse("Publish article", 1);
+        return new VoidMethodResponse("Publish article", affectedEntities);
     }
 
     @VisibleForTesting

@@ -1,7 +1,6 @@
 package dev.codesupport.web.api.validation;
 
 import dev.codesupport.web.api.data.entity.UserEntity;
-import dev.codesupport.web.api.data.entity.UserEntity_;
 import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.service.data.validation.ValidationIssue;
 import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
@@ -31,11 +30,11 @@ public class NewUserValidator extends AbstractPersistenceValidator<UserEntity, L
         Set<ValidationIssue> validationIssues = new HashSet<>();
 
         if (repository.existsByAliasIgnoreCase(domainObject.getAlias())) {
-            validationIssues.add(ValidationIssue.duplicateParameter(null, UserEntity_.ALIAS));
+            validationIssues.add(ValidationIssue.duplicateParameter(null, NewUser.Fields.alias));
         }
 
         if (repository.existsByEmailIgnoreCase(domainObject.getEmail())) {
-            validationIssues.add(ValidationIssue.duplicateParameter(null, UserEntity_.EMAIL));
+            validationIssues.add(ValidationIssue.duplicateParameter(null, NewUser.Fields.email));
         }
 
         return validationIssues;

@@ -2,15 +2,12 @@ package dev.codesupport.web.common.service.controller;
 
 import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
-import dev.codesupport.web.common.security.AuthorizationService;
+import dev.codesupport.web.common.security.AuthenticationService;
 import dev.codesupport.web.common.security.models.AuthenticationRequest;
-import dev.codesupport.web.domain.OkResponse;
-import dev.codesupport.web.domain.TokenResponse;
-import dev.codesupport.web.domain.UserProfile;
 import org.junit.Test;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -31,16 +28,16 @@ public class AuthenticationControllerImplTest {
         request.setEmail(email);
         request.setPassword(password);
 
-        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+        AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
 
         doThrow(InvalidUserException.class)
-                .when(mockAuthorizationService)
-                .createTokenForEmailAndPassword(
+                .when(mockAuthenticationService)
+                .authenticate(
                         request.getEmail(),
                         request.getPassword()
                 );
 
-        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthenticationService);
 
         controller.authenticate(request);
     }
@@ -50,59 +47,39 @@ public class AuthenticationControllerImplTest {
         String email = "user@domain.com";
         String password = "clearpassword";
         String token = "mytokenstring";
-        UserProfile mockUserProfile = mock(UserProfile.class);
-        TokenResponse expected = new TokenResponse(mockUserProfile, token);
 
         AuthenticationRequest request = new AuthenticationRequest();
         request.setEmail(email);
         request.setPassword(password);
 
-        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+        AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
 
-        doReturn(expected)
-                .when(mockAuthorizationService)
-                .createTokenForEmailAndPassword(
+        doReturn(token)
+                .when(mockAuthenticationService)
+                .authenticate(
                         request.getEmail(),
                         request.getPassword()
                 );
 
-        AuthenticationControllerImpl spyController = spy(new AuthenticationControllerImpl(mockAuthorizationService));
+        AuthenticationControllerImpl spyController = spy(new AuthenticationControllerImpl(mockAuthenticationService));
 
-        TokenResponse response = spyController.authenticate(request);
+        ResponseEntity<Void> expected = ResponseEntity.ok().header("Set-Cookie", token).body(null);
+        ResponseEntity<Void> actual = spyController.authenticate(request);
 
-        assertSame(expected, response);
-    }
-
-    @Test
-    public void shouldReturnTokenIfRefreshToken() {
-        String token = "mytokenstring";
-        UserProfile mockUserProfile = mock(UserProfile.class);
-        TokenResponse expected = new TokenResponse(mockUserProfile, token);
-
-        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
-
-        doReturn(expected)
-                .when(mockAuthorizationService)
-                .refreshToken();
-
-        AuthenticationControllerImpl spyController = spy(new AuthenticationControllerImpl(mockAuthorizationService));
-
-        TokenResponse response = spyController.refreshToken();
-
-        assertSame(expected, response);
+        assertEquals(expected, actual);
     }
 
     @Test(expected = ServiceLayerException.class)
     public void shouldBubbleUpExceptionThrownByAuthorizationService() {
         String code = "code";
 
-        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+        AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
 
         doThrow(ServiceLayerException.class)
-                .when(mockAuthorizationService)
+                .when(mockAuthenticationService)
                 .linkDiscord(code);
 
-        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthenticationService);
 
         controller.linkDiscord(code);
     }
@@ -111,13 +88,13 @@ public class AuthenticationControllerImplTest {
     public void shouldInvokeLinkDiscord() {
         String code = "code";
 
-        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+        AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
 
-        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthenticationService);
 
         controller.linkDiscord(code);
 
-        verify(mockAuthorizationService, times(1))
+        verify(mockAuthenticationService, times(1))
                 .linkDiscord(code);
     }
 
@@ -125,12 +102,12 @@ public class AuthenticationControllerImplTest {
     public void shouldReturnOkForLinkDiscord() {
         String code = "code";
 
-        AuthorizationService mockAuthorizationService = mock(AuthorizationService.class);
+        AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
 
-        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthorizationService);
+        AuthenticationControllerImpl controller = new AuthenticationControllerImpl(mockAuthenticationService);
 
-        OkResponse expected = new OkResponse();
-        OkResponse actual = controller.linkDiscord(code);
+        ResponseEntity<Void> expected = ResponseEntity.ok().body(null);
+        ResponseEntity<Void> actual = controller.linkDiscord(code);
 
         assertEquals(expected, actual);
     }

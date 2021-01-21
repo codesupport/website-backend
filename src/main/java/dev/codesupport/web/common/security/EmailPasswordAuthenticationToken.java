@@ -1,31 +1,30 @@
 package dev.codesupport.web.common.security;
 
 import dev.codesupport.web.common.security.models.UserDetails;
-import lombok.EqualsAndHashCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Token used with the spring authentication context
  * <p>Exists simply so I can override getName() for a better response.</p>
  */
-@EqualsAndHashCode(callSuper = true)
 public class EmailPasswordAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
-    public EmailPasswordAuthenticationToken(Object principal, Object credentials) {
-        super(principal, credentials);
+    public EmailPasswordAuthenticationToken(UserDetails principal, Object credentials) {
+        this(principal, credentials, null);
     }
 
-    public EmailPasswordAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+    public EmailPasswordAuthenticationToken(UserDetails principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
     }
 
     /**
-     * Gets user details from the local thread security context
+     * Gets {@link UserDetails} from the local thread security context
      *
-     * @return
+     * @return The {@link UserDetails} object from the principal
      */
     @Override
     public Object getDetails() {
@@ -52,9 +51,32 @@ public class EmailPasswordAuthenticationToken extends UsernamePasswordAuthentica
         if (this.getPrincipal() instanceof UserDetails) {
             name = ((UserDetails) this.getPrincipal()).getEmail();
         } else {
-            name = super.getName();
+            throw new IllegalStateException("This can't happen");
         }
 
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (!(o instanceof EmailPasswordAuthenticationToken)) {
+            return false;
+        } else {
+            EmailPasswordAuthenticationToken other = (EmailPasswordAuthenticationToken) o;
+            return Objects.equals(getPrincipal(), other.getPrincipal())
+                    && Objects.equals(getCredentials(), other.getCredentials())
+                    && Objects.equals(getAuthorities(), other.getAuthorities());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = result * 59 + (getPrincipal() == null ? 43 : getPrincipal().hashCode());
+        result = result * 59 + (getCredentials() == null ? 43 : getCredentials().hashCode());
+        result = result * 59 + (getAuthorities() == null ? 43 : getAuthorities().hashCode());
+        return result;
     }
 }

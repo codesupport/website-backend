@@ -15,7 +15,7 @@ import javax.persistence.PrePersist;
 import java.util.Set;
 
 /**
- * API contract with the persistent storage for the {@link dev.codesupport.web.domain.User} resource.
+ * API contract with the persistent storage for Users.
  */
 @Data
 @Entity
@@ -24,17 +24,28 @@ public class UserEntity implements IdentifiableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, updatable = false, length = 50)
+    @Column(updatable = false, length = 50, nullable = false)
     private String alias;
-    @Column(nullable = false)
+    @Column(length = 100, nullable = false)
     private String hashPassword;
+    @Column(length = 50)
+    private String verifyToken;
+    @Column(length = 50)
     private String discordId;
+    @Column(length = 50)
     private String discordUsername;
+    @Column(length = 50)
     private String githubUsername;
+    @Column(length = 50)
     private String jobTitle;
+    @Column(length = 50)
     private String jobCompany;
-    @Column(nullable = false)
+    @Column(length = 50)
+    private String accessToken;
+    private Long accessTokenExpireOn;
+    @Column(length = 100, nullable = false)
     private String email;
+    @Column(length = 100)
     private String avatarLink;
     @Column(nullable = false)
     private boolean disabled;
@@ -42,6 +53,7 @@ public class UserEntity implements IdentifiableEntity<Long> {
     private RoleEntity role;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<PermissionEntity> permission;
+    @Column
     private String biography;
     @ManyToOne(fetch = FetchType.EAGER)
     private CountryEntity country;

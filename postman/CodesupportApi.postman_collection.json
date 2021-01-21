@@ -28,9 +28,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -71,17 +73,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol.\",\n  \"description\": \"Description of the HTTP Protocol\",\n  \"tags\": [\n\t\t  \"HTTP\",\n\t    \"Protocol\",\n\t    \"Website\"\n  ],\n  \"title\": \"HTTP Protocol\",\n  \"articleCode\": \"abcdefgh\",\n  \"createdBy\": {\n      \"id\": 2\n  },\n  \"createdOn\": 1,\n  \"updatedBy\": {\n      \"id\": 2\n  },\n  \"updatedOn\": 1\n}",
@@ -125,9 +126,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -163,17 +166,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of making websites.\",\n  \"description\": \"Description for making websitesl\",\n  \"tags\": [\n    \t\"HTTP\",\n\t    \"Website\"\n  ],\n  \"title\": \"Website Development\"\n}",
@@ -217,9 +219,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -262,17 +266,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the AMQP protocol.\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\"\n}",
@@ -506,9 +509,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -545,17 +550,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n  },\n  \"published\": true\n}",
@@ -599,9 +603,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -639,17 +645,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": 1\n  },\n  \"published\": false\n}",
@@ -693,9 +698,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -732,17 +739,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n  },\n  \"published\": true\n}",
@@ -1151,22 +1157,12 @@
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
 									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"OK\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.be.null;",
-									"});",
 									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response.length).to.eq(1);",
-									"",
-									"    const firstResult = jsonData.response[0];",
-									"    pm.expect(firstResult.user.id).to.not.be.null;",
-									"    pm.expect(firstResult.user.alias).to.eq(\"Iffy\");",
-									"    pm.expect(firstResult.token).to.not.be.null;",
+									"    const cookie = pm.response.headers.get('Set-Cookie').split(';')[0];",
+									"    const cookieName = cookie.split('=')[0];",
+									"    const token = cookie.split('=')[1];",
+									"    pm.expect(cookieName).to.eq('AccessToken');",
+									"    pm.expect(token.length).to.eq(50);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1186,41 +1182,30 @@
 							}
 						},
 						"url": {
-							"raw": "{{codesupportBackend}}/authenticate",
+							"raw": "{{codesupportBackend}}/authenticate/",
 							"host": [
 								"{{codesupportBackend}}"
 							],
 							"path": [
-								"authenticate"
+								"authenticate",
+								""
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "RefreshToken_Invalid",
+					"name": "RefreshToken_NoToken",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 401\", function () {",
-									"    pm.response.to.have.status(403)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const expected = [",
-									"        \"You are not permitted to perform the requested action on the requested resource.\"",
-									"    ];",
-									"    pm.expect(jsonData.message).to.deep.eq(expected);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
 									"});",
 									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response).to.be.null;",
+									"    pm.expect(pm.response.headers.has('Set-Cookie')).to.be.false;",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1229,14 +1214,7 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "BLAHBLAHLBAH",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -1254,7 +1232,7 @@
 					"response": []
 				},
 				{
-					"name": "RefreshToken_Valid",
+					"name": "RefreshToken_Token",
 					"event": [
 						{
 							"listen": "test",
@@ -1263,22 +1241,12 @@
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
 									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"OK\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.be.null;",
-									"});",
 									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response.length).to.eq(1);",
-									"",
-									"    const firstResult = jsonData.response[0];",
-									"    pm.expect(firstResult.user.id).to.not.be.null;",
-									"    pm.expect(firstResult.user.alias).to.eq(\"Iffy\");",
-									"    pm.expect(firstResult.token).to.not.be.null;",
+									"    const cookie = pm.response.headers.get('Set-Cookie').split(';')[0];",
+									"    const cookieName = cookie.split('=')[0];",
+									"    const token = cookie.split('=')[1];",
+									"    pm.expect(cookieName).to.eq('AccessToken');",
+									"    pm.expect(token.length).to.eq(50);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1288,19 +1256,27 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackend = pm.environment.get(\"codesupportBackend\");",
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
 									"",
-									"pm.sendRequest({",
-									"    url: codesupportBackend + '/authenticate',",
-									"    method: 'POST',",
-									"    header: 'Content-Type: application/json',",
-									"    body: {",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify({\"email\":\"iffy@cs.dev\",\"password\":\"supersecretpassword\"})",
-									"    }",
-									"}, function (err, res) {",
-									"    const token = res.json().response[0].token;",
-									"    pm.environment.set(\"JWT_TOKEN\", token);",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1309,17 +1285,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{codesupportBackend}}/authenticate/refresh",
 							"host": [
@@ -1340,20 +1315,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackend = pm.environment.get(\"codesupportBackend\");",
-									"",
-									"pm.sendRequest({",
-									"    url: codesupportBackend + '/authenticate',",
-									"    method: 'POST',",
-									"    header: 'Content-Type: application/json',",
-									"    body: {",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify({\"email\":\"iffy@cs.dev\",\"password\":\"supersecretpassword\"})",
-									"    }",
-									"}, function (err, res) {",
-									"    const token = res.json().response[0].token;",
-									"    pm.environment.set(\"JWT_TOKEN\", token);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1361,14 +1323,7 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -1441,9 +1396,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -1455,17 +1412,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
@@ -1540,9 +1496,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -1554,17 +1512,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
@@ -1639,9 +1596,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -1653,17 +1612,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
@@ -1743,9 +1701,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -1757,17 +1717,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
@@ -2297,6 +2256,91 @@
 					"response": []
 				},
 				{
+					"name": "GetUserProfileById_Valid_Self",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response.length).to.eql(1);",
+									"    pm.expect(jsonData.response[0].alias.toLowerCase()).to.eql(\"atrum\");",
+									"    const expectedProperties = [\"id\", \"alias\", \"email\", \"discordId\", \"discordUsername\", \"githubUsername\", \"jobTitle\", \"jobCompany\", \"avatarLink\", \"disabled\", \"role\", \"biography\", \"country\", \"userAward\", \"joinDate\"].sort();",
+									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
+									"    pm.expect(jsonData.response[0].email).to.not.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/user/v1/profiles/4",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"user",
+								"v1",
+								"profiles",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GetUserProfileById_Invalid",
 					"event": [
 						{
@@ -2393,6 +2437,96 @@
 								{
 									"key": "alias",
 									"value": "ifFy"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUserProfileByAlias_Valid_Self",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response.length).to.eql(1);",
+									"    pm.expect(jsonData.response[0].alias.toLowerCase()).to.eql(\"atrum\");",
+									"    const expectedProperties = [\"id\", \"alias\", \"email\", \"discordId\", \"discordUsername\", \"githubUsername\", \"jobTitle\", \"jobCompany\", \"avatarLink\", \"disabled\", \"role\", \"biography\", \"country\", \"userAward\", \"joinDate\"].sort();",
+									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
+									"    pm.expect(jsonData.response[0].email).to.not.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/user/v1/profiles?alias=aTrUm",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"user",
+								"v1",
+								"profiles"
+							],
+							"query": [
+								{
+									"key": "alias",
+									"value": "aTrUm"
 								}
 							]
 						}
@@ -2498,9 +2632,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      let result = res.json();",
-									"      let token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -2512,17 +2648,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{codesupportBackend}}/user/v1/permissions/2",
 							"host": [
@@ -2583,9 +2718,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      let result = res.json();",
-									"      let token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -2597,17 +2734,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{codesupportBackend}}/user/v1/permissions/-2",
 							"host": [
@@ -2646,9 +2782,8 @@
 									"    pm.expect(jsonData.response.length).to.eq(1);",
 									"",
 									"    const firstResult = jsonData.response[0];",
-									"    pm.expect(firstResult.user.id).to.not.be.null;",
-									"    pm.expect(firstResult.user.alias).to.eq(\"joeshmo\");",
-									"    pm.expect(firstResult.token).to.not.be.null;",
+									"    pm.expect(firstResult.id).to.not.be.null;",
+									"    pm.expect(firstResult.alias).to.eq(\"joeshmo\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2671,9 +2806,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -2685,17 +2822,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"alias\": \"joeshmo\",\n\t\"email\": \"joeshmo@cs.dev\",\n\t\"password\": \"supersecretpassword\"\n}",
@@ -2726,8 +2862,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(403)",
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",
 									"    const jsonData = pm.response.json();",
@@ -2736,7 +2872,7 @@
 									"pm.test(\"Message is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    pm.expect(jsonData.message).to.eql([",
-									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"        \"Invalid user credentials\"",
 									"    ]);",
 									"});",
 									"pm.test(\"Payload is correct\", function () {",
@@ -2759,17 +2895,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "ABC123",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "AccessToken=blahblahblahblah",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"alias\": \"joeshmo\",\n\t\"email\": \"joeshmo@cs.dev\",\n\t\"password\": \"supersecretpassword\"\n}",
@@ -2839,9 +2974,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -2853,17 +2990,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"alias\": \"ifFY\",\n\t\"email\": \"iffy2@cs.dev\",\n\t\"password\": \"supersecretpassword\"\n}",
@@ -2933,9 +3069,11 @@
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
 									"  if (!err) {",
-									"      const result = res.json();",
-									"      const token = result.response[0].token;",
-									"      pm.environment.set('JWT_TOKEN', token);",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
 									"  } else {",
 									"      console.log(err);",
 									"  }",
@@ -2947,17 +3085,16 @@
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT_TOKEN}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"alias\": \"iffies\",\n\t\"email\": \"iffy@cs.dev\",\n\t\"password\": \"supersecretpassword\"\n}",

@@ -1,8 +1,8 @@
 package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.domain.Permission;
-import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
+import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +41,6 @@ public interface UserController {
 
     @ApiOperation("Register User")
     @PostMapping("/users")
-    TokenResponse registerUser(@RequestBody @Valid UserRegistration userRegistration);
+    UserProfile registerUser(@RequestBody @Valid UserRegistration userRegistration);
 
 }

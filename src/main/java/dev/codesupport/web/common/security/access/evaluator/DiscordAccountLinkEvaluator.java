@@ -18,7 +18,7 @@ public class DiscordAccountLinkEvaluator extends AbstractAccessEvaluator<String>
 
     /**
      * Checks if user has right to link an account
-     * <p>Only authenticated users (with valid JWT) are allowed to link their account, as this is needed
+     * <p>Only authenticated users (with valid token) are allowed to link their account, as this is needed
      * to know who the user is.</p>
      *
      * @param auth               The Authentication associated with the access evaluation

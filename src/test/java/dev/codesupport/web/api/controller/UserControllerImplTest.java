@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.Permission;
-import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
@@ -127,10 +126,7 @@ public class UserControllerImplTest {
 
     @Test
     public void shouldReturnCorrectResponseForRegisterUser() {
-        String token = "Tokentokentoken";
-        UserProfile mockUserProfile = mock(UserProfile.class);
-
-        TokenResponse expected = new TokenResponse(mockUserProfile, token);
+        UserProfile expected = mock(UserProfile.class);
 
         UserRegistration userRegistration = new UserRegistration();
         userRegistration.setAlias("user");
@@ -139,7 +135,7 @@ public class UserControllerImplTest {
                 .when(mockService)
                 .registerUser(userRegistration);
 
-        TokenResponse actual = controller.registerUser(userRegistration);
+        UserProfile actual = controller.registerUser(userRegistration);
 
         assertEquals(expected, actual);
     }

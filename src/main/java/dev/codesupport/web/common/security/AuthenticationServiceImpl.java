@@ -2,23 +2,20 @@ package dev.codesupport.web.common.security;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.net.HttpHeaders;
-import dev.codesupport.web.api.data.entity.PermissionEntity;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.configuration.HttpSessionProperties;
 import dev.codesupport.web.common.exception.DisabledUserException;
 import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
-import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenResponse;
 import dev.codesupport.web.common.security.models.DiscordUser;
 import dev.codesupport.web.common.security.models.UserDetails;
 import dev.codesupport.web.common.service.http.client.HttpClient;
 import dev.codesupport.web.common.service.http.client.HttpMethod;
-import dev.codesupport.web.common.util.MappingUtils;
-import dev.codesupport.web.domain.TokenResponse;
-import dev.codesupport.web.domain.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,88 +24,33 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service for performing logic to check authorizations.
  */
 @Component
-public class AuthorizationServiceImpl implements AuthorizationService {
+@RequiredArgsConstructor
+public class AuthenticationServiceImpl implements AuthenticationService {
 
+    private final HttpSessionProperties httpSessionProperties;
     private final UserRepository userRepository;
     private final HashingUtility hashingUtility;
-    private final JwtUtility jwtUtility;
     private final HttpClient httpClient;
-
-    @Autowired
-    public AuthorizationServiceImpl(
-            UserRepository userRepository,
-            HashingUtility hashingUtility,
-            JwtUtility jwtUtility,
-            HttpClient httpClient
-    ) {
-        this.userRepository = userRepository;
-        this.hashingUtility = hashingUtility;
-        this.jwtUtility = jwtUtility;
-        this.httpClient = httpClient;
-    }
 
     /**
      * Creates a token if the given credentials are valid.
      *
      * @param email    The email for the credentials.
      * @param password The clear text password for the credentials
-     * @return The {@link TokenResponse} containing the encoded JWT and associated user information.
      * @throws InvalidUserException If the authorization could not be completed for the given credentials.
      */
     @Override
-    public TokenResponse createTokenForEmailAndPassword(String email, String password) {
-        UserProfile user;
+    public String authenticate(String email, String password) {
+        UserEntity userEntity = getUserByEmail(email);
 
-        try {
-            Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
-            if (optional.isPresent()) {
-                UserEntity userEntity = optional.get();
-
-                if (hashingUtility.verifyPassword(password, userEntity.getHashPassword())) {
-                    if (!userEntity.isDisabled()) {
-                        user = MappingUtils.convertToType(userEntity, UserProfile.class);
-                    } else {
-                        throw new DisabledUserException("User is disabled.");
-                    }
-                } else {
-                    throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
-                }
-            } else {
-                throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
-            }
-        } catch (DisabledUserException e) {
-            throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER, e);
-        }
-
-        return new TokenResponse(
-                user,
-                jwtUtility.generateToken(user.getAlias(), user.getEmail())
-        );
-    }
-
-    /**
-     * Creates a new token from the existing authorization in the security context.
-     *
-     * @return The {@link TokenResponse} containing the encoded JWT and associated user information.
-     */
-    @Override
-    public TokenResponse refreshToken() {
-        UserProfile user;
-
-        String email = getUserEmailFromAuthorization();
-
-        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
-
-        if (optional.isPresent()) {
-            UserEntity userEntity = optional.get();
+        if (hashingUtility.verifyPassword(password, userEntity.getHashPassword())) {
             if (!userEntity.isDisabled()) {
-                user = MappingUtils.convertToType(userEntity, UserProfile.class);
+                return createTokenCookieForUser(userEntity);
             } else {
                 throw new InvalidUserException(
                         InvalidUserException.Reason.INVALID_USER,
@@ -116,41 +58,53 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 );
             }
         } else {
-            throw new InvalidUserException(InvalidUserException.Reason.MISSING_USER);
+            throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
         }
-
-        return new TokenResponse(
-                user,
-                jwtUtility.generateToken(user.getAlias(), user.getEmail())
-        );
     }
 
-    /**
-     * Gets {@link UserDetails} associated with the given email if it exists.
-     *
-     * @param email The email associated to the desired {@link UserDetails}
-     * @return The {@link UserDetails} associated to the given email, if it exists.
-     * @throws InvalidUserException If the email does not exist in the repository.
-     */
-    @Override
-    public UserDetails getUserDetailsByEmail(String email) {
-        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
+    @VisibleForTesting
+    UserEntity getUserByEmail(String email) {
         UserEntity userEntity;
+        Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(email);
 
         if (optional.isPresent()) {
             userEntity = optional.get();
         } else {
-            throw new InvalidUserException(InvalidUserException.Reason.MISSING_USER);
+            throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
         }
 
-        return new UserDetails(
-                userEntity.getId(),
-                userEntity.getAlias(),
-                userEntity.getHashPassword(),
-                userEntity.getEmail(),
-                userEntity.getPermission().stream().map(PermissionEntity::getCode).collect(Collectors.toSet()),
-                userEntity.isDisabled()
-        );
+        return userEntity;
+    }
+
+    @VisibleForTesting
+    public UserEntity getUserByToken(String token) {
+        UserEntity userEntity;
+        Optional<UserEntity> optional = userRepository.findByAccessTokenIgnoreCase(token);
+
+        if (optional.isPresent()) {
+            userEntity = optional.get();
+        } else {
+            throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
+        }
+
+        return userEntity;
+    }
+
+    @VisibleForTesting
+    public String createTokenCookieForUser(UserEntity userEntity) {
+        userEntity.setAccessToken(RandomStringUtils.randomAlphanumeric(50));
+        userEntity.setAccessTokenExpireOn(System.currentTimeMillis() + (httpSessionProperties.getCookie().getMaxAge() * 1000));
+        userRepository.save(userEntity);
+
+        String headerValue = httpSessionProperties.getCookie().getName()
+                + "=" + userEntity.getAccessToken()
+                + "; Secure; HttpOnly; Path=/";
+
+        if (httpSessionProperties.getCookie().getMaxAge() > 0) {
+            headerValue += "; MaxAge=" + httpSessionProperties.getCookie().getMaxAge();
+        }
+
+        return headerValue;
     }
 
     /**
@@ -160,7 +114,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public void linkDiscord(String code) {
-        String email = getUserEmailFromAuthorization();
+        String email = getUserEmailFromAuthentication();
 
         DiscordOAuthTokenResponse tokenResponse = getTokenFromDiscordApi(code);
 
@@ -238,7 +192,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @throws InvalidUserException If there is no valid user authentication in the Security Context
      */
     @VisibleForTesting
-    String getUserEmailFromAuthorization() {
+    String getUserEmailFromAuthentication() {
         Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = userAuthentication.getPrincipal();
         UserDetails userDetails;

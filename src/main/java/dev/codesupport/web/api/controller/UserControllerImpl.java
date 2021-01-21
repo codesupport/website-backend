@@ -2,8 +2,8 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.Permission;
-import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
+import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,13 +42,13 @@ public class UserControllerImpl implements UserController {
     }
 
     /**
-     * Registers a user, creating a user entry and returning a valid JWT
+     * Registers a user, creating a user entry and returning the user's profile
      *
-     * @param userRegistration The user registration object with appriate information.
-     * @return A valid JWT for the created user.
+     * @param userRegistration The user registration object with appropriate information.
+     * @return The profile for the created user.
      */
     @Override
-    public TokenResponse registerUser(UserRegistration userRegistration) {
+    public UserProfile registerUser(UserRegistration userRegistration) {
         return service.registerUser(userRegistration);
     }
 

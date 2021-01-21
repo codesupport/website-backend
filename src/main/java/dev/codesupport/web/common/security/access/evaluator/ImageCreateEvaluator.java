@@ -18,7 +18,7 @@ public class ImageCreateEvaluator extends AbstractAccessEvaluator<String> {
 
     /**
      * Checks if user has right to create images
-     * <p>Only authenticated users (with valid JWT) are allowed to create images</p>
+     * <p>Only authenticated users (with valid token) are allowed to create images</p>
      *
      * @param auth               The Authentication associated with the access evaluation
      * @param targetDomainObject The object associated with the access evaluation

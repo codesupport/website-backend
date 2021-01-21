@@ -11,44 +11,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class AuthorizationServiceTest {
+public class AuthenticationServiceTest {
 
     @Test
     public void shouldBeAnnotatedWithService() {
-        Service annotation = AuthorizationService.class.getAnnotation(Service.class);
+        Service annotation = AuthenticationService.class.getAnnotation(Service.class);
 
         assertNotNull(annotation);
     }
 
     @Test
     public void shouldNotBeAnnotatedWithPreAuthorizeOnCreateTokenForEmailAndPassword() throws NoSuchMethodException {
-        Method method = AuthorizationService.class.getMethod("createTokenForEmailAndPassword", String.class, String.class);
+        Method method = AuthenticationService.class.getMethod("authenticate", String.class, String.class);
         Service annotation = method.getAnnotation(Service.class);
 
         assertNull(annotation);
     }
 
     @Test
-    public void shouldBeAnnotatedWithPreAuthorizeOnRefreshToken() throws NoSuchMethodException {
-        Method method = AuthorizationService.class.getMethod("refreshToken");
-        String expected = "hasPermission('token', 'update')";
-        String actual;
-
-        PreAuthorize annotation = method.getAnnotation(PreAuthorize.class);
-
-        if (annotation != null) {
-            actual = annotation.value();
-        } else {
-            actual = null;
-            fail("Annotation missing");
-        }
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void shouldNotBeAnnotatedWithPreAuthorizeOnGetUserDetailsByEmail() throws NoSuchMethodException {
-        Method method = AuthorizationService.class.getMethod("getUserDetailsByEmail", String.class);
+        Method method = AuthenticationService.class.getMethod("getUserByToken", String.class);
         Service annotation = method.getAnnotation(Service.class);
 
         assertNull(annotation);
@@ -56,7 +38,7 @@ public class AuthorizationServiceTest {
 
     @Test
     public void shouldBeAnnotatedWithPreAuthorizeOnLinkDiscord() throws NoSuchMethodException {
-        Method method = AuthorizationService.class.getMethod("linkDiscord", String.class);
+        Method method = AuthenticationService.class.getMethod("linkDiscord", String.class);
         String expected = "hasPermission('discord', 'link')";
         String actual;
 

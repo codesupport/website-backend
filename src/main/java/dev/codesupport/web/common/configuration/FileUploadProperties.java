@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configurations for JWTs
+ * Configurations for file uploads
  * <p>This is populated automatically at startup by spring via the application.yml files.</p>
  */
 @Setter

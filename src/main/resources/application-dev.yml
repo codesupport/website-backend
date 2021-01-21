@@ -13,12 +13,17 @@ spring:
     console:
       enabled: true
 security:
-  jwt:
-    issuer: test.CodeSupport.dev
   discord:
     client-id: 1234
     secret: 4321
-    redirect-uri: http://www.example.com
+    redirect-uri: http://localhost:8082/actuator/health
+  http:
+    cookie:
+      name: ${cookie.name:AccessToken}
+      max-age: ${cookie.max.age:600} #10 min
+    cors:
+      origins:
+        - ${cors.origin:*}
 healthcheck:
   ping:
     url: http://localhost:8082/actuator/health

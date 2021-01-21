@@ -1,7 +1,6 @@
 package dev.codesupport.web.api.service;
 
 import dev.codesupport.web.domain.Permission;
-import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
@@ -35,6 +34,6 @@ public interface UserService {
     List<User> findAllUsers();
 
     @PreAuthorize("hasPermission('user', 'create')")
-    TokenResponse registerUser(UserRegistration userRegistration);
+    UserProfile registerUser(UserRegistration userRegistration);
 
 }

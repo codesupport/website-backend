@@ -5,12 +5,10 @@ import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
-import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
 import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.Permission;
-import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
@@ -34,21 +32,16 @@ public class UserServiceImpl implements UserService {
 
     private final HashingUtility hashingUtility;
 
-    private final JwtUtility jwtUtility;
-
     @Autowired
     UserServiceImpl(
             UserRepository userRepository,
-            HashingUtility hashingUtility,
-            JwtUtility jwtUtility
+            HashingUtility hashingUtility
     ) {
         userCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, NewUser.class);
         userProfileCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, UserProfile.class);
         this.userRepository = userRepository;
 
         this.hashingUtility = hashingUtility;
-
-        this.jwtUtility = jwtUtility;
     }
 
     @Override
@@ -93,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokenResponse registerUser(UserRegistration userRegistration) {
+    public UserProfile registerUser(UserRegistration userRegistration) {
         NewUser user = MappingUtils.convertToType(userRegistration, NewUser.class);
         NewUser createdUser;
 
@@ -111,12 +104,7 @@ public class UserServiceImpl implements UserService {
             throw new ServiceLayerException("User already exists with that alias.");
         }
 
-        UserProfile userProfile = MappingUtils.convertToType(createdUser, UserProfile.class);
-
-        return new TokenResponse(
-                userProfile,
-                jwtUtility.generateToken(createdUser.getAlias(), createdUser.getEmail())
-        );
+        return MappingUtils.convertToType(createdUser, UserProfile.class);
     }
 
 }

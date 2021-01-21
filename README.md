@@ -34,7 +34,10 @@ Integration tests are written with postman and can be excuted through the postma
 ## Environment Variables
 Name | Default | Description
 ---|---|---
-`DATABASE_URL` |  | The URL to the database
+`COOKIE_NAME` | | The name of the auth cookie
+`COOKIE_MAX_AGE` | | The max age of the auth cookie in seconds
+`CORS_ORIGIN` | | Origin used for CORS header
+`DATABASE_URL` | | The URL to the database
 `DATABASE_USERNAME` | | The username for the database
 `DATABASE_PASSWORD` | | The password for the database
 `DATABASE_DRIVER` | `com.mysql.jdbc.Driver` | The driver for the database
@@ -48,8 +51,6 @@ Name | Default | Description
 `DISCORD_LOG_USERNAME` | ApiBackend | The username used in the discord log embed messages
 `HC_PING_DELAY` | `5000` | Delay between healthchecks (ms)
 `HC_PING_URL` | | Url of the external healthcheck api to hit
-`JWT_ISSUER` | `codesupport.dev` | The JWT issuer
-`JWT_EXPIRATION` | `10m` | The length of time a JWT lasts
 `LOG_ROOT_LEVEL` | `INFO` | Root logging level for spring logs
 `MAX_IMAGE_SIZE` | `512000` | Max image upload size (in bytes)
 `SERVICE_PORT` | `8080` | The port to run the application on

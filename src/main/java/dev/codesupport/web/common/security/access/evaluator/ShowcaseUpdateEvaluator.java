@@ -26,7 +26,7 @@ public class ShowcaseUpdateEvaluator extends AbstractAccessEvaluator<Showcase> {
 
     /**
      * Checks if user has right to update a showcase
-     * <p>Only authenticated users (with valid JWT) that are the original showcase author are allowed to update
+     * <p>Only authenticated users (with valid token) that are the original showcase author are allowed to update
      * the requested showcase.</p>
      *
      * @param auth     The Authentication associated with the access evaluation

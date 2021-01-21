@@ -1,10 +1,10 @@
 package dev.codesupport.web.common.service.controller;
 
 import dev.codesupport.web.common.security.models.AuthenticationRequest;
-import dev.codesupport.web.domain.OkResponse;
-import dev.codesupport.web.domain.TokenResponse;
+import dev.codesupport.web.common.service.http.DontWrapResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,16 +25,19 @@ import javax.validation.Valid;
 @RequestMapping("/authenticate")
 public interface AuthenticationController {
 
+    @DontWrapResponse
     @ApiOperation("Authenticate user credentials")
     @PostMapping
-    TokenResponse authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest);
+    ResponseEntity<Void> authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest);
 
+    @DontWrapResponse
     @ApiOperation("Refresh user token")
     @GetMapping("/refresh")
-    TokenResponse refreshToken();
+    ResponseEntity<Void> refreshToken();
 
+    @DontWrapResponse
     @ApiOperation("Authenticate and link discord account")
     @GetMapping("/discord")
-    OkResponse linkDiscord(@RequestParam String code);
+    ResponseEntity<Void> linkDiscord(@RequestParam String code);
 
 }

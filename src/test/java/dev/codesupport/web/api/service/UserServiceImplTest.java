@@ -9,10 +9,8 @@ import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
-import dev.codesupport.web.common.security.jwt.JwtUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.domain.NewUser;
-import dev.codesupport.web.domain.TokenResponse;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
@@ -46,8 +44,6 @@ public class UserServiceImplTest {
 
     private static List<NewUser> expectedUserList;
 
-    private static JwtUtility mockJwtUtility;
-
     @BeforeClass
     public static void init() {
         mapper = new ObjectMapper()
@@ -61,7 +57,6 @@ public class UserServiceImplTest {
         mockUserProfileCrudOperations = mock(CrudOperations.class);
 
         mockUserRepository = mock(UserRepository.class);
-        mockJwtUtility = mock(JwtUtility.class);
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
 
@@ -70,7 +65,7 @@ public class UserServiceImplTest {
 
         mockHashingUtility = mock(HashingUtility.class);
 
-        service = new UserServiceImpl(mockUserRepository, mockHashingUtility, mockJwtUtility);
+        service = new UserServiceImpl(mockUserRepository, mockHashingUtility);
         ReflectionTestUtils.setField(service, "userCrudOperations", mockUserCrudOperations);
         ReflectionTestUtils.setField(service, "userProfileCrudOperations", mockUserProfileCrudOperations);
 
@@ -91,8 +86,7 @@ public class UserServiceImplTest {
                 mockUserCrudOperations,
                 mockUserProfileCrudOperations,
                 mockUserRepository,
-                mockHashingUtility,
-                mockJwtUtility
+                mockHashingUtility
         );
     }
 
@@ -202,8 +196,6 @@ public class UserServiceImplTest {
 
     @Test(expected = ServiceLayerException.class)
     public void shouldThrowServiceLayerExceptionIfRegisteringWithNonUniqueAlias() {
-        String token = "tokentokentokentoken";
-
         UserRegistration userRegistration = new UserRegistration();
         userRegistration.setAlias("timmy");
         userRegistration.setPassword("1234567890abcdef");
@@ -222,18 +214,12 @@ public class UserServiceImplTest {
         doReturn(expectedUserList.get(0))
                 .when(mockUserCrudOperations)
                 .createEntity(user);
-
-        doReturn(token)
-                .when(mockJwtUtility)
-                .generateToken(expectedUserList.get(0).getAlias(), expectedUserList.get(0).getEmail());
 
         service.registerUser(userRegistration);
     }
 
     @Test(expected = ServiceLayerException.class)
     public void shouldThrowServiceLayerExceptionIfRegisterWithNonUniqueEmail() {
-        String token = "tokentokentokentoken";
-
         UserRegistration userRegistration = new UserRegistration();
         userRegistration.setAlias("timmy");
         userRegistration.setPassword("1234567890abcdef");
@@ -252,10 +238,6 @@ public class UserServiceImplTest {
         doReturn(expectedUserList.get(0))
                 .when(mockUserCrudOperations)
                 .createEntity(user);
-
-        doReturn(token)
-                .when(mockJwtUtility)
-                .generateToken(expectedUserList.get(0).getAlias(), expectedUserList.get(0).getEmail());
 
         service.registerUser(userRegistration);
     }
@@ -263,7 +245,6 @@ public class UserServiceImplTest {
     @Test
     public void shouldReturnCorrectUsersWhenRegisteringUniqueUser() {
         String hashPassword = "abc123";
-        String token = "tokentokentokentokentoken";
 
         UserBuilder builder = UserBuilder.builder()
                 .alias("timmy")
@@ -296,14 +277,8 @@ public class UserServiceImplTest {
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 
-        doReturn(token)
-                .when(mockJwtUtility)
-                .generateToken(createdUser.getAlias(), createdUser.getEmail());
-
-        UserProfile userProfile = builder.buildUserProfileDomain();
-
-        TokenResponse expected = new TokenResponse(userProfile, token);
-        TokenResponse actual = service.registerUser(userRegistration);
+        UserProfile expected = builder.buildUserProfileDomain();
+        UserProfile actual = service.registerUser(userRegistration);
 
         assertEquals(expected, actual);
     }

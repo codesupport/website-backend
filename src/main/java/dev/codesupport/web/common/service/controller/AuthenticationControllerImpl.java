@@ -1,55 +1,54 @@
 package dev.codesupport.web.common.service.controller;
 
-import dev.codesupport.web.common.security.AuthorizationService;
+import dev.codesupport.web.common.security.AuthenticationService;
 import dev.codesupport.web.common.security.models.AuthenticationRequest;
-import dev.codesupport.web.domain.OkResponse;
-import dev.codesupport.web.domain.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
  * Accepts post requests containing username/password credentials
- * to then be validated, resulting in returned JWT if found valid.
+ * to then be validated, resulting in returned token cookie if found valid.
  */
 @Component
 public class AuthenticationControllerImpl implements AuthenticationController {
 
-    private final AuthorizationService authorizationService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
     public AuthenticationControllerImpl(
-            AuthorizationService authorizationService
+            AuthenticationService authenticationService
     ) {
-        this.authorizationService = authorizationService;
+        this.authenticationService = authenticationService;
     }
 
     /**
      * Handles authentication post requests
      * <p>Accepts posts with a {@link AuthenticationRequest} body, authenticating the credentials and
-     * returning a JWT if valid.
+     * returning a token cookie if valid.
      * If authentication fails, an exception is thrown, bubbling back up and resulting in a call
      * to the {@link ErrorHandlerController}</p>
      *
      * @param authenticationRequest The {@link AuthenticationRequest} body
-     * @return The {@link TokenResponse}, with encoded JWT and associated user information
+     * @return Response entity with created cookie header
      */
     @Override
-    public TokenResponse authenticate(AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<Void> authenticate(AuthenticationRequest authenticationRequest) {
         String email = authenticationRequest.getEmail();
         String password = authenticationRequest.getPassword();
 
-        return authorizationService.createTokenForEmailAndPassword(email, password);
+        String cookieValue = authenticationService.authenticate(email, password);
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookieValue).body(null);
     }
 
     /**
-     * Handles token refresh requests.
-     * <p>If the request comes from a user with a valid JWT, it will return a new JWT.</p>
-     *
-     * @return The {@link TokenResponse}, with encoded JWT and associated user information
+     * Placeholder endpoint to refresh tokens.
      */
     @Override
-    public TokenResponse refreshToken() {
-        return authorizationService.refreshToken();
+    public ResponseEntity<Void> refreshToken() {
+        return ResponseEntity.ok().body(null);
     }
 
     /**
@@ -61,10 +60,10 @@ public class AuthenticationControllerImpl implements AuthenticationController {
      * @return Returns simple OK - 200 response if successful
      */
     @Override
-    public OkResponse linkDiscord(String code) {
-        authorizationService.linkDiscord(code);
+    public ResponseEntity<Void> linkDiscord(String code) {
+        authenticationService.linkDiscord(code);
 
-        return new OkResponse();
+        return ResponseEntity.ok().body(null);
     }
 
 }

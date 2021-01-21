@@ -6,7 +6,8 @@ package dev.codesupport.web.common.exception;
 public class InvalidUserException extends RuntimeException {
     public enum Reason {
         MISSING_USER("User does not exist with the given email"),
-        INVALID_USER("Invalid user credentials");
+        INVALID_USER("Invalid user credentials"),
+        INVALID_TOKEN("Invalid user access token");
 
         private final String message;
 

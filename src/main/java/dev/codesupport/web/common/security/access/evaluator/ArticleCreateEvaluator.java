@@ -28,7 +28,7 @@ public class ArticleCreateEvaluator extends AbstractAccessEvaluator<Article> {
 
     /**
      * Checks if user has right to create an article
-     * <p>Only authenticated users (with valid JWT) are allowed to create an article, as this is needed
+     * <p>Only authenticated users (with valid token) are allowed to create an article, as this is needed
      * to know who the user is.</p>
      *
      * @param auth    The Authentication associated with the access evaluation

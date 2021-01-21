@@ -22,7 +22,7 @@ public class ShowcaseDeleteEvaluator extends AbstractAccessEvaluator<Showcase> {
 
     /**
      * Checks if user has right to delete a showcase
-     * <p>Only authenticated users (with valid JWT) that are the original showcase author are allowed to delete
+     * <p>Only authenticated users (with valid token) that are the original showcase author are allowed to delete
      * the requested showcase.</p>
      *
      * @param auth     The Authentication associated with the access evaluation

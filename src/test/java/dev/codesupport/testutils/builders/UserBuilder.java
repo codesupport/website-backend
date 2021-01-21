@@ -6,6 +6,7 @@ import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ public class UserBuilder {
     private Long id;
     private String alias;
     private String hashPassword;
+    private String verifyToken;
     private String password;
     private String discordId;
     private String discordUsername;
@@ -102,7 +104,8 @@ public class UserBuilder {
                 hashPassword,
                 email,
                 permission.stream().map(PermissionBuilder::buildPrivilege).collect(Collectors.toSet()),
-                disabled
+                disabled,
+                StringUtils.isBlank(verifyToken)
         );
     }
 
@@ -119,6 +122,7 @@ public class UserBuilder {
         entity.setId(id);
         entity.setAlias(alias);
         entity.setHashPassword(hashPassword);
+        entity.setVerifyToken(verifyToken);
         entity.setDiscordId(discordId);
         entity.setDiscordUsername(discordUsername);
         entity.setGithubUsername(githubUsername);
@@ -152,6 +156,11 @@ public class UserBuilder {
 
     public UserBuilder hashPassword(String hashPassword) {
         this.hashPassword = hashPassword;
+        return this;
+    }
+
+    public UserBuilder verifyToken(String verifyToken) {
+        this.verifyToken = verifyToken;
         return this;
     }
 

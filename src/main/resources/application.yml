@@ -14,12 +14,18 @@ upload:
   image:
     max-size: ${max.image.size:512000} #default is 500kB
 security:
-  jwt:
-    issuer: ${jwt.issuer:codesupport.dev}
-    expiration: ${jwt.expiration:10m}
   discord:
     client-id: ${discord.app.id:}
     secret: ${discord.app.secret:}
     redirect-uri: ${discord.app.redirect:}
+  http:
+    cookie:
+      name: ${cookie.name:}
+      max-age: ${cookie.max.age:}
+    cors:
+      origins:
+        - ${cors.origin:}
+      methods:
+        - "*"
 server:
   port: 8082

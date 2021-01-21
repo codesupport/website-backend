@@ -18,6 +18,8 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByEmailIgnoreCase(String email);
 
+    Optional<UserEntity> findByAccessTokenIgnoreCase(String token);
+
     Optional<UserEntity> findByAliasIgnoreCase(String alias);
 
 }

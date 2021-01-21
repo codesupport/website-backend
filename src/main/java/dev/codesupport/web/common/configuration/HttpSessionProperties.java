@@ -16,8 +16,8 @@ import java.util.Set;
 @ConfigurationProperties(prefix = "security.http")
 public class HttpSessionProperties {
 
-    CookieConfiguration cookie;
-    CorsConfiguration cors;
+    private CookieConfiguration cookie;
+    private CorsConfiguration cors;
 
     @Data
     public static class CookieConfiguration {

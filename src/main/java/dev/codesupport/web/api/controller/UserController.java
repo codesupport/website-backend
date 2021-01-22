@@ -35,6 +35,10 @@ public interface UserController {
     @GetMapping("/users/{id}")
     User getUserById(@PathVariable Long id);
 
+    @ApiOperation("Get current User")
+    @GetMapping("/current")
+    User getCurrentUser();
+
     @ApiOperation("Get User permissions by id")
     @GetMapping("/permissions/{id}")
     Set<Permission> getUserPermissions(@PathVariable Long id);

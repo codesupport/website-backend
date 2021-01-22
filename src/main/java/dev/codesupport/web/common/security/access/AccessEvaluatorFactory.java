@@ -2,7 +2,7 @@ package dev.codesupport.web.common.security.access;
 
 import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.InvalidArgumentException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -14,20 +14,12 @@ import java.util.Map;
  * Gets the appropriate evaluator for a given access evaluation
  */
 @Component
+@RequiredArgsConstructor
 public class AccessEvaluatorFactory {
 
     private Map<String, AbstractAccessEvaluator<?>> evaluatorMap;
-    private ApplicationContext context;
 
-    /**
-     * Builds evaluator maps for all found AccessEvaluator components
-     *
-     * @param context The spring application context
-     */
-    @Autowired
-    public AccessEvaluatorFactory(ApplicationContext context) {
-        this.context = context;
-    }
+    private final ApplicationContext context;
 
     /**
      * Lazy loads the evaluatorMap
@@ -91,8 +83,7 @@ public class AccessEvaluatorFactory {
      */
     //S1452 - No way to know what type of evaluator it will be.
     @SuppressWarnings("squid:S1452")
-    @VisibleForTesting
-    AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName, String permission) {
+    public AbstractAccessEvaluator<?> getEvaluatorByName(String canonicalClassName, String permission) {
         AbstractAccessEvaluator<?> evaluator;
 
         String evaluatorName = permission + " " + canonicalClassName;

@@ -28,7 +28,10 @@ public interface UserService {
 
     User getUserById(Long id);
 
-    @PostAuthorize("hasPermission(#id, 'Permission', 'read')")
+    @PreAuthorize("hasPermission(#user, 'current', 'read')")
+    User getCurrentUser(User user);
+
+    @PostAuthorize("hasPermission(#id, 'permission', 'read')")
     Set<Permission> getUserPermissionsById(Long id);
 
     List<User> findAllUsers();

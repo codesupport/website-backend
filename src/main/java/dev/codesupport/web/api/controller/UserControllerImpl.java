@@ -37,6 +37,11 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
+    public User getCurrentUser() {
+        return service.getCurrentUser(new User());
+    }
+
+    @Override
     public Set<Permission> getUserPermissions(Long id) {
         return service.getUserPermissionsById(id);
     }

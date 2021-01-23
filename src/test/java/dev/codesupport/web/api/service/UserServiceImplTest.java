@@ -28,12 +28,13 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 public class UserServiceImplTest {
 
     private static ObjectMapper mapper;
 
-    private static UserServiceImpl service;
+    private static UserServiceImpl serviceSpy;
 
     private static HashingUtility mockHashingUtility;
 
@@ -65,9 +66,9 @@ public class UserServiceImplTest {
 
         mockHashingUtility = mock(HashingUtility.class);
 
-        service = new UserServiceImpl(mockUserRepository, mockHashingUtility);
-        ReflectionTestUtils.setField(service, "userCrudOperations", mockUserCrudOperations);
-        ReflectionTestUtils.setField(service, "userProfileCrudOperations", mockUserProfileCrudOperations);
+        serviceSpy = spy(new UserServiceImpl(mockUserRepository, mockHashingUtility));
+        ReflectionTestUtils.setField(serviceSpy, "userCrudOperations", mockUserCrudOperations);
+        ReflectionTestUtils.setField(serviceSpy, "userProfileCrudOperations", mockUserProfileCrudOperations);
 
         UserBuilder userBuilder = UserBuilder.builder()
             .id(5L)
@@ -86,7 +87,8 @@ public class UserServiceImplTest {
                 mockUserCrudOperations,
                 mockUserProfileCrudOperations,
                 mockUserRepository,
-                mockHashingUtility
+                mockHashingUtility,
+                serviceSpy
         );
     }
 
@@ -104,7 +106,7 @@ public class UserServiceImplTest {
                 .when(mockUserProfileCrudOperations)
                 .getAll();
 
-        List<UserProfile> actual = service.findAllUserProfiles();
+        List<UserProfile> actual = serviceSpy.findAllUserProfiles();
 
         assertEquals(expected, actual);
     }
@@ -119,7 +121,7 @@ public class UserServiceImplTest {
                 .when(mockUserRepository)
                 .findByAliasIgnoreCase(alias);
 
-        service.getUserProfileByAlias(alias);
+        serviceSpy.getUserProfileByAlias(alias);
     }
 
     @Test
@@ -138,7 +140,7 @@ public class UserServiceImplTest {
                 .when(mockUserRepository)
                 .findByAliasIgnoreCase(alias);
 
-        UserProfile actual = service.getUserProfileByAlias(alias);
+        UserProfile actual = serviceSpy.getUserProfileByAlias(alias);
 
         assertEquals(expected, actual);
     }
@@ -156,7 +158,7 @@ public class UserServiceImplTest {
                 .getById(id);
 
         UserProfile expected = returnedUsers.get(0);
-        UserProfile actual = service.getUserProfileById(id);
+        UserProfile actual = serviceSpy.getUserProfileById(id);
 
         assertEquals(expected, actual);
     }
@@ -171,7 +173,7 @@ public class UserServiceImplTest {
                 .when(mockUserCrudOperations)
                 .getAll();
 
-        List<User> actual = service.findAllUsers();
+        List<User> actual = serviceSpy.findAllUsers();
 
         assertEquals(expected, actual);
     }
@@ -189,7 +191,24 @@ public class UserServiceImplTest {
                 .getById(id);
 
         User expected = returnedUsers.get(0);
-        User actual = service.getUserById(id);
+        User actual = serviceSpy.getUserById(id);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnCurrentUserWithGetUserById() {
+        User expected = UserBuilder.builder()
+                .id(5L)
+                .alias("dude")
+                .email("dude@email.com")
+                .buildDomain();
+
+        doReturn(expected)
+                .when(serviceSpy)
+                .getUserById(expected.getId());
+
+        User actual = serviceSpy.getCurrentUser(UserBuilder.builder().id(expected.getId()).buildDomain());
 
         assertEquals(expected, actual);
     }
@@ -215,7 +234,7 @@ public class UserServiceImplTest {
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 
-        service.registerUser(userRegistration);
+        serviceSpy.registerUser(userRegistration);
     }
 
     @Test(expected = ServiceLayerException.class)
@@ -239,7 +258,7 @@ public class UserServiceImplTest {
                 .when(mockUserCrudOperations)
                 .createEntity(user);
 
-        service.registerUser(userRegistration);
+        serviceSpy.registerUser(userRegistration);
     }
 
     @Test
@@ -278,7 +297,7 @@ public class UserServiceImplTest {
                 .createEntity(user);
 
         UserProfile expected = builder.buildUserProfileDomain();
-        UserProfile actual = service.registerUser(userRegistration);
+        UserProfile actual = serviceSpy.registerUser(userRegistration);
 
         assertEquals(expected, actual);
     }

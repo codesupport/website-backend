@@ -74,6 +74,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getCurrentUser(User user) {
+        return getUserById(user.getId());
+    }
+
+    @Override
     public Set<Permission> getUserPermissionsById(Long id) {
         UserEntity entity = userRepository.getById(id);
 

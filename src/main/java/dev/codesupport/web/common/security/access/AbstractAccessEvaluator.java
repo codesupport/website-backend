@@ -1,6 +1,8 @@
 package dev.codesupport.web.common.security.access;
 
 import dev.codesupport.web.common.exception.InvalidArgumentException;
+import dev.codesupport.web.common.exception.InvalidUserException;
+import dev.codesupport.web.common.security.models.UserDetails;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -119,6 +121,16 @@ public abstract class AbstractAccessEvaluator<T> {
      */
     protected boolean isValidAuth(Authentication authentication) {
         return authentication != null && !(authentication instanceof AnonymousAuthenticationToken);
+    }
+
+    protected UserDetails getUserDetails(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return (UserDetails) principal;
+        } else {
+            throw new InvalidUserException(InvalidUserException.Reason.INVALID_TOKEN);
+        }
     }
 
 }

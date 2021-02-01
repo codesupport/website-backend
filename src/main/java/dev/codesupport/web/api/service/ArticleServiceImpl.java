@@ -181,6 +181,7 @@ public class ArticleServiceImpl implements ArticleService {
         } while (publishedArticleRepository.existsByArticleCode(article.getArticleCode()));
     }
 
+    @VisibleForTesting
     void updateImageReferences(Article article) {
         Set<ImageReferenceEntity> newReferences = scanForImageReferences(article);
         Set<ImageReferenceEntity> oldReferences = imageReferenceRepository.findAllByArticleId(article.getId());
@@ -191,6 +192,7 @@ public class ArticleServiceImpl implements ArticleService {
         imageReferenceRepository.saveAll(newReferences);
     }
 
+    @VisibleForTesting
     Set<ImageReferenceEntity> scanForImageReferences(Article article) {
         Set<String> fileNames = imageReferenceScanner.scan(article.getContent());
 
@@ -202,6 +204,7 @@ public class ArticleServiceImpl implements ArticleService {
         }).collect(Collectors.toSet());
     }
 
+    @VisibleForTesting
     void calculateReferenceDelta(Set<ImageReferenceEntity> currentReferences, Set<ImageReferenceEntity> previousReferences) {
         Set<ImageReferenceEntity> newReferences = new HashSet<>();
 

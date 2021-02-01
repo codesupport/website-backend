@@ -1,6 +1,7 @@
 package dev.codesupport.web.common.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 
 import java.util.regex.Pattern;
 
@@ -62,6 +63,17 @@ public class ValidationUtils {
     public static boolean isValidEmail(String email) {
         return !StringUtils.isEmpty(email) &&
                 emailPattern.matcher(email).matches();
+    }
+
+    /**
+     * Determines if the provided string is of valid format for a URL
+     *
+     * @param url The URL string to test
+     * @return True if the string is a valid URL, Talse otherwise
+     */
+    public static boolean isValidUrl(String url) {
+        UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+        return urlValidator.isValid(url);
     }
 
 }

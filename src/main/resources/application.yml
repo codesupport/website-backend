@@ -11,6 +11,7 @@ management:
       exposure:
         include: health,prometheus
 upload:
+  host-name: ${api.hostname:}
   image:
     max-size: ${max.image.size:512000} #default is 500kB
 security:

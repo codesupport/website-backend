@@ -33,10 +33,12 @@ public class Article implements AuditableDomain<Long, Long> {
         TagSet tagSet = new TagSet();
         List<Tag> tagList = new ArrayList<>();
 
-        for (String label : tags) {
-            Tag tag = new Tag();
-            tag.setLabel(label);
-            tagList.add(tag);
+        if (tags != null) {
+            for (String label : tags) {
+                Tag tag = new Tag();
+                tag.setLabel(label);
+                tagList.add(tag);
+            }
         }
 
         tagSet.setTags(tagList);

@@ -3,28 +3,23 @@ package dev.codesupport.web.common.service.service;
 import dev.codesupport.testutils.domain.MockIdentifiableDomain;
 import dev.codesupport.testutils.entity.MockIdentifiableEntity;
 import dev.codesupport.web.common.data.repository.CrudRepository;
-import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
-import dev.codesupport.web.common.exception.ValidationException;
-import dev.codesupport.web.common.service.data.validation.ValidationIssue;
-import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyIterable;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -37,31 +32,11 @@ public class CrudOperationsTest {
 
     private static CrudOperations<MockIdentifiableEntity, MockIdentifiableDomain, Long> crudOperationsSpy;
     private static CrudRepository<MockIdentifiableEntity, Long> mockRepository;
-    private static AbstractPersistenceValidator<MockIdentifiableEntity, Long, MockIdentifiableDomain, JpaRepository<MockIdentifiableEntity, Long>> mockValidator;
     private static ApplicationContext mockContext;
 
     @BeforeClass
     public static void init() {
         mockContext = mock(ApplicationContext.class);
-
-        //unchecked - This is not a concern for the purposes of this test.
-        //noinspection unchecked
-        mockValidator = mock(AbstractPersistenceValidator.class);
-
-        //ResultOfMethodCallIgnored - Not calling a method, making a mock
-        //noinspection ResultOfMethodCallIgnored
-        doReturn(MockIdentifiableEntity.class)
-                .when(mockValidator)
-                .getEntityType();
-
-        //rawtypes - This is fine for hte purposes of this test.
-        //noinspection rawtypes
-        Map<String, AbstractPersistenceValidator> abstractValidationMap = new HashMap<>();
-        abstractValidationMap.put("mockValidator", mockValidator);
-
-        doReturn(abstractValidationMap)
-                .when(mockContext)
-                .getBeansOfType(AbstractPersistenceValidator.class);
 
         //unchecked - This is not a concern for the purposes of this test.
         //noinspection unchecked
@@ -84,38 +59,8 @@ public class CrudOperationsTest {
 
         Mockito.reset(
                 crudOperationsSpy,
-                mockRepository,
-                mockValidator
+                mockRepository
         );
-    }
-
-    @Test(expected = ConfigurationException.class)
-    public void shouldThrowConfigurationExceptionIfNoContextConfigured() {
-        CrudOperations.setContext(null);
-        CrudOperations<MockIdentifiableEntity, MockIdentifiableDomain, Long> crudOperations = new CrudOperations<>(
-                mockRepository,
-                MockIdentifiableEntity.class,
-                MockIdentifiableDomain.class
-        );
-
-        crudOperations.setupValidationBean();
-    }
-
-    @Test
-    public void shouldGetFirstCorrectValidationBean() {
-        //ResultOfMethodCallIgnored - Not calling a method, making a mock
-        //noinspection ResultOfMethodCallIgnored
-        doReturn(MockIdentifiableEntity.class)
-                .when(mockValidator)
-                .getEntityType();
-
-        crudOperationsSpy.setupValidationBean();
-
-        //rawtypes - Fine for the purposes of this test.
-        //noinspection rawtypes
-        AbstractPersistenceValidator actual = (AbstractPersistenceValidator) ReflectionTestUtils.getField(crudOperationsSpy, "validation");
-
-        assertEquals(mockValidator, actual);
     }
 
     @Test
@@ -162,65 +107,6 @@ public class CrudOperationsTest {
     }
 
     @Test
-    public void shouldInvokeValidationCheckOnCreateEntities() {
-        long id = 1L;
-        String value = "value";
-
-        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .resourcesAlreadyExistCheck(domainsToSave);
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
-
-        doReturn(domainsToReturn)
-                .when(crudOperationsSpy)
-                .saveEntities(domainsToSave);
-
-        crudOperationsSpy.createEntities(domainsToSave);
-
-        verify(crudOperationsSpy, times(1))
-                .validationCheck(domainsToSave);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldBubbleValidationExceptionFromValidationCheckOnCreateEntities() {
-        long id = 1L;
-        String value = "value";
-
-        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .resourcesAlreadyExistCheck(domainsToSave);
-
-        doThrow(ValidationException.class)
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
-
-        doReturn(domainsToReturn)
-                .when(crudOperationsSpy)
-                .saveEntities(domainsToSave);
-
-        crudOperationsSpy.createEntities(domainsToSave);
-    }
-
-    @Test
     public void shouldCallCreateEntitiesOnCreateEntity() {
         long id = 1L;
         String value = "value";
@@ -259,10 +145,6 @@ public class CrudOperationsTest {
                 .when(crudOperationsSpy)
                 .resourcesAlreadyExistCheck(domainsToSave);
 
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
-
         doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
                 .saveEntities(domainsToSave);
@@ -273,7 +155,7 @@ public class CrudOperationsTest {
     }
 
     @Test
-    public void shouldInvokeResourcesDontExistsCheckOnUpdateEntities() {
+    public void shouldInvokePreUpdate() {
         long id = 1L;
         String value = "value";
 
@@ -287,11 +169,7 @@ public class CrudOperationsTest {
 
         doNothing()
                 .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToSave);
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
+                .preUpdate(anyList());
 
         doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
@@ -300,7 +178,7 @@ public class CrudOperationsTest {
         crudOperationsSpy.updateEntities(domainsToSave);
 
         verify(crudOperationsSpy, times(1))
-                .resourcesDontExistCheck(domainsToSave);
+                .preUpdate(domainsToSave);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -318,70 +196,7 @@ public class CrudOperationsTest {
 
         doThrow(ResourceNotFoundException.class)
                 .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToSave);
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
-
-        doReturn(domainsToReturn)
-                .when(crudOperationsSpy)
-                .saveEntities(domainsToSave);
-
-        crudOperationsSpy.updateEntities(domainsToSave);
-    }
-
-    @Test
-    public void shouldInvokeValidationCheckOnUpdateEntities() {
-        long id = 1L;
-        String value = "value";
-
-        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToSave);
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
-
-        doReturn(domainsToReturn)
-                .when(crudOperationsSpy)
-                .saveEntities(domainsToSave);
-
-        crudOperationsSpy.updateEntities(domainsToSave);
-
-        verify(crudOperationsSpy, times(1))
-                .validationCheck(domainsToSave);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldBubbleValidationExceptionFromValidationCheckOnUpdateEntities() {
-        long id = 1L;
-        String value = "value";
-
-        List<MockIdentifiableDomain> domainsToSave = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        List<MockIdentifiableDomain> domainsToReturn = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToSave);
-
-        doThrow(ValidationException.class)
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
+                .resourcesDoNotExistCheck(domainsToSave);
 
         doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
@@ -405,11 +220,7 @@ public class CrudOperationsTest {
 
         doNothing()
                 .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToSave);
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .validationCheck(domainsToSave);
+                .preUpdate(anyList());
 
         doReturn(domainsToReturn)
                 .when(crudOperationsSpy)
@@ -418,33 +229,6 @@ public class CrudOperationsTest {
         List<MockIdentifiableDomain> actual = crudOperationsSpy.updateEntities(domainsToSave);
 
         assertEquals(domainsToReturn, actual);
-    }
-
-    @Test
-    public void shouldInvokeResourcesDontExistsCheckOnDeleteEntities() {
-        long id = 1L;
-        String value = "value";
-
-        List<MockIdentifiableDomain> domainsToDelete = Collections.singletonList(
-                new MockIdentifiableDomain(id, value)
-        );
-
-        List<MockIdentifiableEntity> entitiesToDelete = Collections.singletonList(
-                new MockIdentifiableEntity(id, value)
-        );
-
-        doNothing()
-                .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToDelete);
-
-        doNothing()
-                .when(mockRepository)
-                .deleteAll(entitiesToDelete);
-
-        crudOperationsSpy.deleteEntities(domainsToDelete);
-
-        verify(crudOperationsSpy, times(1))
-                .resourcesDontExistCheck(domainsToDelete);
     }
 
     @Test
@@ -468,9 +252,21 @@ public class CrudOperationsTest {
                 new MockIdentifiableEntity(id, value)
         );
 
+        doReturn(null)
+                .when(mockRepository)
+                .saveAll(anyIterable());
+
         doReturn(returnedEntities)
                 .when(mockRepository)
                 .saveAll(entitiesToSave);
+
+        doReturn(null)
+                .when(mockRepository)
+                .getById(anyLong());
+
+        doReturn(returnedEntities.get(0))
+                .when(mockRepository)
+                .getById(returnedEntities.get(0).getId());
 
         List<MockIdentifiableDomain> actual = crudOperationsSpy.saveEntities(domainsToSave);
 
@@ -478,7 +274,7 @@ public class CrudOperationsTest {
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void shouldBubbleResourceNotFoundExceptionFromResourcesDontExistCheckOnDeleteEntities() {
+    public void shouldBubbleResourceNotFoundExceptionFromResourcesDoNotExistCheckOnDeleteEntities() {
         long id = 1L;
         String value = "value";
 
@@ -486,25 +282,23 @@ public class CrudOperationsTest {
                 new MockIdentifiableDomain(id, value)
         );
 
-        List<MockIdentifiableEntity> entitiesToDelete = Collections.singletonList(
-                new MockIdentifiableEntity(id, value)
-        );
+        doNothing()
+                .when(crudOperationsSpy)
+                .resourcesDoNotExistCheck(anyCollection());
 
         doThrow(ResourceNotFoundException.class)
                 .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToDelete);
+                .resourcesDoNotExistCheck(domainsToDelete);
 
         doNothing()
                 .when(mockRepository)
-                .deleteAll(entitiesToDelete);
+                .deleteAll(anyCollection());
 
         crudOperationsSpy.deleteEntities(domainsToDelete);
     }
 
-    //DefaultAnnotationParam - SonarQube requires an assertion, be explicit!
-    @SuppressWarnings("DefaultAnnotationParam")
-    @Test(expected = Test.None.class)
-    public void shouldGenerateNoExceptionWhenSuccessfulOnDeleteEntities() {
+    @Test
+    public void shouldInvokePreDelete() {
         long id = 1L;
         String value = "value";
 
@@ -512,53 +306,18 @@ public class CrudOperationsTest {
                 new MockIdentifiableDomain(id, value)
         );
 
-        List<MockIdentifiableEntity> entitiesToDelete = Collections.singletonList(
-                new MockIdentifiableEntity(id, value)
-        );
-
         doNothing()
                 .when(crudOperationsSpy)
-                .resourcesDontExistCheck(domainsToDelete);
+                .preDelete(anyList());
 
         doNothing()
                 .when(mockRepository)
-                .deleteAll(entitiesToDelete);
+                .deleteAll(anyCollection());
 
         crudOperationsSpy.deleteEntities(domainsToDelete);
-    }
 
-    @Test(expected = ValidationException.class)
-    public void shouldThrowValidationExceptionWhenPersistenceLevelValidationIssuesFound() {
-
-        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
-
-        Set<ValidationIssue> mockValidationIssues = Collections.singleton(
-                mock(ValidationIssue.class)
-        );
-
-        doReturn(mockValidationIssues)
-                .when(mockValidator)
-                .validate(MockIdentifiableDomain);
-
-        List<MockIdentifiableDomain> MockIdentifiableDomains = Collections.singletonList(MockIdentifiableDomain);
-
-        crudOperationsSpy.validationCheck(MockIdentifiableDomains);
-    }
-
-    //DefaultAnnotationParam - SonarQube requires an assertion, be explicit!
-    @SuppressWarnings("DefaultAnnotationParam")
-    @Test(expected = Test.None.class)
-    public void shouldThrowNoExceptionsIfNoValidationIssuesFoundOnAnyLevel() {
-
-        MockIdentifiableDomain MockIdentifiableDomain = mock(MockIdentifiableDomain.class);
-
-        doReturn(Collections.emptySet())
-                .when(mockValidator)
-                .validate(MockIdentifiableDomain);
-
-        List<MockIdentifiableDomain> MockIdentifiableDomains = Collections.singletonList(MockIdentifiableDomain);
-
-        crudOperationsSpy.validationCheck(MockIdentifiableDomains);
+        verify(crudOperationsSpy, times(1))
+                .preDelete(domainsToDelete);
     }
 
     @Test
@@ -572,12 +331,12 @@ public class CrudOperationsTest {
 
         doNothing()
                 .when(crudOperationsSpy)
-                .resourceDoesntExistCheck(MockIdentifiableDomain);
+                .resourceDoesNotExistCheck(MockIdentifiableDomain);
 
-        crudOperationsSpy.resourcesDontExistCheck(MockIdentifiableDomains);
+        crudOperationsSpy.resourcesDoNotExistCheck(MockIdentifiableDomains);
 
         verify(crudOperationsSpy, times(MockIdentifiableDomains.size()))
-                .resourceDoesntExistCheck(MockIdentifiableDomain);
+                .resourceDoesNotExistCheck(MockIdentifiableDomain);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -593,9 +352,9 @@ public class CrudOperationsTest {
         doNothing()
                 .doThrow(ResourceNotFoundException.class)
                 .when(crudOperationsSpy)
-                .resourceDoesntExistCheck(MockIdentifiableDomain);
+                .resourceDoesNotExistCheck(MockIdentifiableDomain);
 
-        crudOperationsSpy.resourcesDontExistCheck(MockIdentifiableDomains);
+        crudOperationsSpy.resourcesDoNotExistCheck(MockIdentifiableDomains);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -608,7 +367,7 @@ public class CrudOperationsTest {
                 .when(MockIdentifiableDomain)
                 .getId();
 
-        crudOperationsSpy.resourceDoesntExistCheck(MockIdentifiableDomain);
+        crudOperationsSpy.resourceDoesNotExistCheck(MockIdentifiableDomain);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -627,7 +386,7 @@ public class CrudOperationsTest {
                 .when(mockRepository)
                 .existsById(id);
 
-        crudOperationsSpy.resourceDoesntExistCheck(MockIdentifiableDomain);
+        crudOperationsSpy.resourceDoesNotExistCheck(MockIdentifiableDomain);
     }
 
     //DefaultAnnotationParam - SonarQube requires an assertion, be explicit!
@@ -648,7 +407,7 @@ public class CrudOperationsTest {
                 .when(mockRepository)
                 .existsById(id);
 
-        crudOperationsSpy.resourceDoesntExistCheck(MockIdentifiableDomain);
+        crudOperationsSpy.resourceDoesNotExistCheck(MockIdentifiableDomain);
     }
 
 
@@ -663,7 +422,7 @@ public class CrudOperationsTest {
 
         doNothing()
                 .when(crudOperationsSpy)
-                .resourceDoesntExistCheck(MockIdentifiableDomain);
+                .resourceDoesNotExistCheck(MockIdentifiableDomain);
 
         crudOperationsSpy.resourcesAlreadyExistCheck(MockIdentifiableDomains);
 

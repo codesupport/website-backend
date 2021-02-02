@@ -19,3 +19,7 @@ spring:
   h2:
     console:
       enabled: true
+upload:
+  host-name: ${api.hostname:http://localhost:8082}
+  image:
+    max-size: ${max.image.size:1000}

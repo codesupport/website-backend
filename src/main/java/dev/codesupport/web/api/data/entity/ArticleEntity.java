@@ -1,6 +1,6 @@
 package dev.codesupport.web.api.data.entity;
 
-import dev.codesupport.web.common.data.entity.IdentifiableEntity;
+import dev.codesupport.web.common.data.entity.AuditableEntity;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -16,7 +16,7 @@ import javax.persistence.Transient;
 
 @Data
 @Entity
-public class ArticleEntity implements IdentifiableEntity<Long> {
+public class ArticleEntity implements AuditableEntity<Long, Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

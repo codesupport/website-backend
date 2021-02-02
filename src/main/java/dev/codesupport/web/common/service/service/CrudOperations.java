@@ -1,26 +1,22 @@
 package dev.codesupport.web.common.service.service;
 
 import com.google.common.annotations.VisibleForTesting;
-import dev.codesupport.web.common.data.repository.CrudRepository;
 import dev.codesupport.web.common.data.domain.IdentifiableDomain;
 import dev.codesupport.web.common.data.entity.IdentifiableEntity;
+import dev.codesupport.web.common.data.repository.CrudRepository;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
-import dev.codesupport.web.common.exception.ValidationException;
-import dev.codesupport.web.common.service.data.validation.ValidationIssue;
-import dev.codesupport.web.common.service.validation.persistant.AbstractPersistenceValidator;
 import dev.codesupport.web.common.util.MappingUtils;
 import lombok.Setter;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * A class for performing generic CRUD operations of a particular resource
@@ -33,10 +29,13 @@ import java.util.function.Consumer;
  */
 public class CrudOperations<E extends IdentifiableEntity<I>, D extends IdentifiableDomain<I>, I> {
 
+    private final List<PrePersistCheck<D, I>> preCreateChecks;
+    private final List<PrePersistCheck<D, I>> preUpdateChecks;
+    private final List<PrePersistCheck<D, I>> preDeleteChecks;
     protected final CrudRepository<E, I> crudRepository;
     protected final Class<E> entityClass;
     protected final Class<D> domainClass;
-    private AbstractPersistenceValidator<E, I, D, ? extends JpaRepository<E, I>> validation;
+
     @Setter
     private static ApplicationContext context;
     @Setter
@@ -60,42 +59,41 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
         this.crudRepository = crudRepository;
         this.entityClass = entityClass;
         this.domainClass = domainClass;
+        this.preCreateChecks = new ArrayList<>();
+        this.preUpdateChecks = new ArrayList<>();
+        this.preDeleteChecks = new ArrayList<>();
+        setUpPrePersistChecks();
     }
 
     /**
-     * Locates the desired validation component for the given resource if one exists.
-     *
-     * @throws ConfigurationException when the ApplicationContext has not been configured.
+     * Configures pre-persist checks
      */
-    @PostConstruct
     @VisibleForTesting
-    void setupValidationBean() {
-        if (context == null) {
-            throw new ConfigurationException("CrudOperations ApplicationContext not configured");
+    void setUpPrePersistChecks() {
+        addPreCreateCheck((domains -> domains.forEach(o -> o.setId(null))));
+
+        addPreUpdateCheck(this::resourcesDoNotExistCheck);
+
+        addPreDeleteCheck(this::resourcesDoNotExistCheck);
+    }
+
+    protected void addPreCreateCheck(PrePersistCheck<D, I> check) {
+        preCreateChecks.add(check);
+    }
+
+    protected void addPreUpdateCheck(PrePersistCheck<D, I> check) {
+        preUpdateChecks.add(check);
+    }
+
+    protected void addPreDeleteCheck(PrePersistCheck<D, I> check) {
+        preDeleteChecks.add(check);
+    }
+
+    @VisibleForTesting
+    void runPrePersistChecks(Collection<PrePersistCheck<D, I>> checks, List<D> objects) {
+        for (PrePersistCheck<D, I> check : checks) {
+            check.check(objects);
         }
-
-        AbstractPersistenceValidator<E, I, D, JpaRepository<E, I>> validationToReturn = null;
-
-        //rawtypes - This is fine for this logic.
-        //noinspection rawtypes
-        Map<String, AbstractPersistenceValidator> beans = context.getBeansOfType(AbstractPersistenceValidator.class);
-
-        //rawtypes - This is fine for this logic.
-        //noinspection rawtypes
-        for (Map.Entry<String, AbstractPersistenceValidator> bean : beans.entrySet()) {
-            //rawtypes - This is fine for this logic.
-            //noinspection rawtypes
-            AbstractPersistenceValidator validationBean = bean.getValue();
-            if (
-                    validationToReturn == null &&
-                            validationBean.getEntityType().equals(entityClass)
-            ) {
-                //This cast should be fine, but would be nice to write it in a better way
-                //noinspection unchecked
-                validationToReturn = validationBean;
-            }
-        }
-        validation = validationToReturn;
     }
 
     @VisibleForTesting
@@ -141,9 +139,9 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
         return createEntities(Collections.singletonList(domainObject)).get(0);
     }
 
-    protected void preCreate(List<D> domainObjects) {
-        domainObjects.forEach(object -> object.setId(null));
-        validationCheck(domainObjects);
+    @VisibleForTesting
+    void preCreate(List<D> domainObjects) {
+        runPrePersistChecks(preCreateChecks, domainObjects);
     }
 
     /**
@@ -174,9 +172,9 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
         return updateEntities(Collections.singletonList(domainObject)).get(0);
     }
 
-    protected void preUpdate(List<D> domainObjects) {
-        resourcesDontExistCheck(domainObjects);
-        validationCheck(domainObjects);
+    @VisibleForTesting
+    void preUpdate(List<D> domainObjects) {
+        runPrePersistChecks(preUpdateChecks, domainObjects);
     }
 
     /**
@@ -219,6 +217,8 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
 
         List<E> savedEntities = crudRepository.saveAll(entities);
 
+        savedEntities = savedEntities.stream().map(E::getId).map(crudRepository::getById).collect(Collectors.toList());
+
         return MappingUtils.convertToType(savedEntities, domainClass);
     }
 
@@ -233,8 +233,9 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
         return deleteEntities(Collections.singletonList(domainObject));
     }
 
-    protected void preDelete(List<D> domainObjects) {
-        resourcesDontExistCheck(domainObjects);
+    @VisibleForTesting
+    void preDelete(List<D> domainObjects) {
+        runPrePersistChecks(preDeleteChecks, domainObjects);
     }
 
     /**
@@ -255,39 +256,15 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     }
 
     /**
-     * Validates the given resource data list.
-     * <p>First validates at the domain level, throwing an exception if any {@see ValidationIssue} found.  If not, persistence level
-     * validations are executed, again throwing an exception if any {@see ValidationIssue} are found.</p>
-     *
-     * @param domainObjects The resource data list to validate
-     * @throws ValidationException if any {@see ValidationIssue}s are found
-     * @link ValidationIssue
-     */
-    @VisibleForTesting
-    void validationCheck(List<D> domainObjects) {
-        List<ValidationIssue> validationIssues = new ArrayList<>();
-
-        if (validation != null) {
-            for (D domainObject : domainObjects) {
-                validationIssues.addAll(validation.validate(domainObject));
-            }
-        }
-
-        if (!validationIssues.isEmpty()) {
-            throw new ValidationException(validationIssues);
-        }
-    }
-
-    /**
      * Checks if any resource data in the provided list doesn't exist.
      *
      * @param domainObjects The resource data list to check.
      * @throws ResourceNotFoundException if any resource data doesn't exist.
      */
     @VisibleForTesting
-    void resourcesDontExistCheck(List<D> domainObjects) {
+    void resourcesDoNotExistCheck(Collection<D> domainObjects) {
         for (D domainObject : domainObjects) {
-            resourceDoesntExistCheck(domainObject);
+            resourceDoesNotExistCheck(domainObject);
         }
     }
 
@@ -298,7 +275,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      * @throws ResourceNotFoundException if the resource data doesn't exist.
      */
     @VisibleForTesting
-    void resourceDoesntExistCheck(D domainObject) {
+    void resourceDoesNotExistCheck(D domainObject) {
         if (domainObject.getId() == null || !crudRepository.existsById(domainObject.getId())) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
         }
@@ -329,4 +306,12 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
             throw new ServiceLayerException(ServiceLayerException.Reason.RESOURCE_ALREADY_EXISTS);
         }
     }
+
+    @FunctionalInterface
+    protected interface PrePersistCheck<D extends IdentifiableDomain<I>, I> {
+
+        void check(Collection<D> domain);
+
+    }
+
 }

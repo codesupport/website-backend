@@ -32,6 +32,7 @@ public class ApplicationConfiguration {
     @Autowired
     ApplicationConfiguration(
             ApplicationContext context,
+            FileUploadProperties fileUploadProperties,
             DiscordAppProperties discordAppProperties
     ) {
         // Set ApplicationContext for all CrudOperation instances
@@ -39,6 +40,8 @@ public class ApplicationConfiguration {
 
         // Configure discord requests with developer app values.
         configureDiscordClient(discordAppProperties);
+
+        fileUploadProperties.validate();
     }
 
     @VisibleForTesting

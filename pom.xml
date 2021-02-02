@@ -27,6 +27,7 @@
         <apache-commons-lang3.version>3.9</apache-commons-lang3.version>
         <apache-commons-collections4.version>4.1</apache-commons-collections4.version>
         <apache-commons-io.version>2.8.0</apache-commons-io.version>
+        <apache-commons-validator.version>1.7</apache-commons-validator.version>
         <lombok.version>1.18.8</lombok.version>
         <hibernate-jpamodelgen.version>6.0.0.Alpha2</hibernate-jpamodelgen.version>
         <swagger2.version>2.9.2</swagger2.version>
@@ -83,6 +84,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${apache-commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>${apache-commons-validator.version}</version>
         </dependency>
         <!-- Compile Time Libs -->
         <dependency>

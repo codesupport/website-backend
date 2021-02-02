@@ -25,6 +25,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class ApplicationConfigurationTest {
 
@@ -51,12 +53,13 @@ public class ApplicationConfigurationTest {
     public void shouldHaveContextSetForCrudOperations() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         Object actualContext = ReflectionTestUtils.getField(CrudOperations.class, "context");
 
@@ -82,12 +85,13 @@ public class ApplicationConfigurationTest {
     public void shouldThrowConfigurationExceptionIfDiscordAppPropertiesNotSet() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(false)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
     }
 
     @Test
@@ -99,6 +103,7 @@ public class ApplicationConfigurationTest {
 
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
@@ -122,7 +127,7 @@ public class ApplicationConfigurationTest {
                 .when(mockDiscordAppProperties)
                 .getRedirectUri();
 
-        new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         DiscordOAuthTokenRequest request = DiscordOAuthTokenRequest.create(code);
         Object clientId = ReflectionTestUtils.getField(request, "client_id");
@@ -136,15 +141,32 @@ public class ApplicationConfigurationTest {
     }
 
     @Test
-    public void shouldReturnCorrectPasswordEncoderType() {
+    public void shouldValidateFileUploadProperties() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
+
+        verify(mockFileUploadProperties, times(1))
+                .validate();
+    }
+
+    @Test
+    public void shouldReturnCorrectPasswordEncoderType() {
+        ApplicationContext mockContext = mock(ApplicationContext.class);
+        DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
+
+        doReturn(true)
+                .when(mockDiscordAppProperties)
+                .isValid();
+
+        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         PasswordEncoder actual = configuration.passwordEncoder();
 
@@ -155,12 +177,13 @@ public class ApplicationConfigurationTest {
     public void shouldReturnCorrectWrapperFactoryType() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         ClientHttpRequestFactory requestFactory = configuration.clientHttpRequestFactory();
 
@@ -171,12 +194,13 @@ public class ApplicationConfigurationTest {
     public void shouldReturnCorrectInteriorFactoryType() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         ClientHttpRequestFactory requestFactory = configuration.clientHttpRequestFactory();
 
@@ -189,12 +213,13 @@ public class ApplicationConfigurationTest {
     public void shouldCorrectlySetInteriorFactoryTimeoutProperty() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         ClientHttpRequestFactory requestFactory = configuration.clientHttpRequestFactory();
 
@@ -211,12 +236,13 @@ public class ApplicationConfigurationTest {
     public void shouldReturnRestTemplateWithUrlEncodedConverter() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         ClientHttpRequestFactory mockFactory = mock(ClientHttpRequestFactory.class);
 
@@ -240,12 +266,13 @@ public class ApplicationConfigurationTest {
     public void shouldReturnRestTemplateWithCorrectErrorHandler() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
         DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
+        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
 
         doReturn(true)
                 .when(mockDiscordAppProperties)
                 .isValid();
 
-        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockDiscordAppProperties);
+        ApplicationConfiguration configuration = new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
 
         ClientHttpRequestFactory mockFactory = mock(ClientHttpRequestFactory.class);
 

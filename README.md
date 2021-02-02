@@ -12,7 +12,7 @@ Please see [pom.xml](https://github.com/codesupport/website-backend/blob/develop
 
 ## Setup
 1. Navigate into the repository on your computer
-2. On Unix systems run `./mnvw clean package` and on Windows run `./mvnw.cmd clean package`
+2. On Unix systems run `./mvnw clean package` and on Windows run `./mvnw.cmd clean package`
 3. Run `java -jar target/api-service-0.0.1-SNAPSHOT.jar`
 
 ## Tests
@@ -27,7 +27,7 @@ Integration tests are written with postman and can be excuted through the postma
 - To delete the `target/` build folder use `./mvnw clean`
 - To compile `.class` files, run tests and package into `.jar` use `./mvnw package`
 - To compile, package and install to a local m2 repo use `./mvnw install`
-- To run unit tests use `./mnvw test`
+- To run unit tests use `./mvnw test`
 - To delete the `target/` build folder and repackage use `./mvnw clean package` (this is the prefered way to build)
 - To run the application use `java -jar target/api-service-0.0.1-SNAPSHOT.jar`
 

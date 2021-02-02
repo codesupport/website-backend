@@ -1,8 +1,12 @@
 package dev.codesupport.web.common.configuration;
 
+import dev.codesupport.web.common.exception.ConfigurationException;
+import dev.codesupport.web.common.util.ValidationUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,6 +21,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "upload")
 public class FileUploadProperties {
 
+    @Getter
+    private String hostName;
+
     /**
      * Properties for image files
      */
@@ -24,6 +31,26 @@ public class FileUploadProperties {
 
     public Image imageProperties() {
         return image;
+    }
+
+    public void setHostName(String hostName) {
+        if (hostName != null) {
+            if (!hostName.startsWith("http")) {
+                throw new ConfigurationException("Host name must include protocol");
+            }
+
+            if (!ValidationUtils.isValidUrl(hostName)) {
+                throw new ConfigurationException("Host name must be a valid url");
+            }
+
+            this.hostName = hostName;
+        }
+    }
+
+    public void validate() {
+        if (StringUtils.isBlank(hostName)) {
+            throw new ConfigurationException("Host name configuration not set");
+        }
     }
 
     @Data

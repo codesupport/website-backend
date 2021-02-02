@@ -59,12 +59,15 @@
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    const response = jsonData.response[0];",
+									"    const currentTime = new Date().getTime();",
 									"    pm.expect(response.id).to.greaterThan(0);",
 									"    pm.expect(response.articleCode).to.not.eql('acbdefgh');",
-									"    pm.expect(response.article.createdBy.id).to.not.eql('acbdefgh');",
-									"    pm.expect(response.article.createdOn).to.not.eql(2);",
-									"    pm.expect(response.article.updatedBy.id).to.not.eql('acbdefgh');",
-									"    pm.expect(response.article.updatedOn).to.not.eql(2);",
+									"    pm.expect(response.article.createdBy.id).to.eql(4);",
+									"    pm.expect(response.article.createdOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.article.createdOn).to.lessThan(currentTime);",
+									"    pm.expect(response.article.updatedBy.id).to.eql(4);",
+									"    pm.expect(response.article.updatedOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.article.updatedOn).to.lessThan(currentTime);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -85,7 +88,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol.\",\n  \"description\": \"Description of the HTTP Protocol\",\n  \"tags\": [\n\t\t  \"HTTP\",\n\t    \"Protocol\",\n\t    \"Website\"\n  ],\n  \"title\": \"HTTP Protocol\",\n  \"articleCode\": \"abcdefgh\",\n  \"createdBy\": {\n      \"id\": 2\n  },\n  \"createdOn\": 1,\n  \"updatedBy\": {\n      \"id\": 2\n  },\n  \"updatedOn\": 1\n}",
+							"raw": "{\n    \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol.\",\n    \"description\": \"Description of the HTTP Protocol\",\n    \"tags\": [\n        \"HTTP\",\n        \"Protocol\",\n        \"Website\"\n    ],\n    \"title\": \"HTTP Protocol\",\n    \"articleCode\": \"abcdefgh\",\n    \"createdBy\": {\n        \"id\": 2\n    },\n    \"createdOn\": 1,\n    \"updatedBy\": {\n        \"id\": 2\n    },\n    \"updatedOn\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -157,7 +160,14 @@
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    const response = jsonData.response[0];",
+									"    const currentTime = new Date().getTime();",
 									"    pm.expect(response.id).to.greaterThan(0);",
+									"    pm.expect(response.article.createdBy.id).to.eql(4);",
+									"    pm.expect(response.article.createdOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.article.createdOn).to.lessThan(currentTime);",
+									"    pm.expect(response.article.updatedBy.id).to.eql(4);",
+									"    pm.expect(response.article.updatedOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.article.updatedOn).to.lessThan(currentTime);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -252,12 +262,14 @@
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    const response = jsonData.response[0];",
+									"    const currentTime = new Date().getTime();",
 									"    pm.expect(response.id).to.greaterThan(0);",
-									"    pm.expect(response.articleCode).to.not.eql('acbdefgh');",
-									"    pm.expect(response.article.createdBy.id).to.not.eql('acbdefgh');",
-									"    pm.expect(response.article.createdOn).to.not.eql(2);",
-									"    pm.expect(response.article.updatedBy.id).to.not.eql('acbdefgh');",
-									"    pm.expect(response.article.updatedOn).to.not.eql(2);",
+									"    pm.expect(response.article.createdBy.id).to.eql(4);",
+									"    pm.expect(response.article.createdOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.article.createdOn).to.lessThan(currentTime);",
+									"    pm.expect(response.article.updatedBy.id).to.eql(4);",
+									"    pm.expect(response.article.updatedOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.article.updatedOn).to.lessThan(currentTime);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -278,7 +290,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of the AMQP protocol.\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\"\n}",
+							"raw": "{\n  \"content\": \"Lots of text to talk about the [someimage](http://localhost:8082/file/v1/images/SomeImageReference.jpg) different aspects of the AMQP protocol. [someimage2](http://localhost:8082/file/v1/images/SomeOtherImageReference.jpg)\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -315,7 +327,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"Status code is 400\", function () {",
 									"    pm.response.to.have.status(400)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",
@@ -385,7 +397,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"Status code is 400\", function () {",
 									"    pm.response.to.have.status(400)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",
@@ -420,6 +432,201 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{ }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateArticle3_Stale",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"Resource contains stale data, please re-fetch data and try again.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"content\": \"Lots of text to talk about the [someimage](http://localhost:8082/file/v1/images/SomeNewImageReference.jpg) different aspects of the AMQP protocol. [someimage2](http://localhost:8082/file/v1/images/SomeOtherImageReference.jpg)\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateArticle3_Valid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('PREVIOUS_ARTICLE_ID', pm.response.json().response[0].id);",
+									"const oldUpdateDate = pm.environment.get('LAST_ARTICLE_UPDATE_DATE');",
+									"pm.environment.set('LAST_ARTICLE_UPDATE_DATE', pm.response.json().response[0].updatedOn);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const response = jsonData.response[0];",
+									"    const currentTime = new Date().getTime();",
+									"    pm.expect(response.updatedBy.id).to.eql(4);",
+									"    pm.expect(response.updatedOn).to.not.eql(oldUpdateDate);",
+									"    pm.expect(response.updatedOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.updatedOn).to.lessThan(currentTime);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"content\": \"Lots of text to talk about the [someimage](http://localhost:8082/file/v1/images/SomeNewImageReference.jpg) different aspects of the AMQP protocol. [someimage2](http://localhost:8082/file/v1/images/SomeOtherImageReference.jpg)\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\",\n  \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -620,8 +827,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(400)",
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",
 									"    const jsonData = pm.response.json();",
@@ -630,7 +837,7 @@
 									"pm.test(\"Message is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    const expectedErrors = [",
-									"        \"Article data is stale, try again.\"",
+									"        \"Resource contains stale data, please re-fetch data and try again.\"",
 									"    ].sort();",
 									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
 									"});",
@@ -788,7 +995,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"Status code is 400\", function () {",
 									"    pm.response.to.have.status(400)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",
@@ -857,7 +1064,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"Status code is 400\", function () {",
 									"    pm.response.to.have.status(400)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",

@@ -12,6 +12,8 @@ spring:
   h2:
     console:
       enabled: true
+upload:
+  host-name: http://localhost:8082
 security:
   discord:
     client-id: 1234

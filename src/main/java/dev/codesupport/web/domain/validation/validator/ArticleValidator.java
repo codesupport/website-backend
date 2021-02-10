@@ -1,6 +1,8 @@
 package dev.codesupport.web.domain.validation.validator;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.domain.Article;
+import dev.codesupport.web.domain.ArticleRevision;
 import dev.codesupport.web.domain.validation.MultiViolationConstraintValidator;
 import dev.codesupport.web.domain.validation.Violation;
 import dev.codesupport.web.domain.validation.annotation.ArticleConstraint;
@@ -11,11 +13,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ArticleValidator implements MultiViolationConstraintValidator<ArticleConstraint, Article> {
 
-    private boolean idRequired;
+    private boolean isCreate;
 
     @Override
     public void initialize(ArticleConstraint constraintAnnotation) {
-        idRequired = constraintAnnotation.requireId();
+        isCreate = constraintAnnotation.isCreate();
     }
 
     /**
@@ -26,24 +28,45 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
      */
     @Override
     public void validate(Article article, Violation violation) {
-        if (idRequired) {
-            if (article.getId() == null) {
-                violation.nullValue(Article.Fields.id);
-            } else if (article.getId() == 0) {
-                violation.invalid(Article.Fields.id);
-            }
+        if (isCreate) {
+            createValidations(article, violation);
+        } else {
+            updateValidations(article, violation);
+        }
+    }
+
+    @VisibleForTesting
+    void createValidations(Article article, Violation violation) {
+        article.setId(null);
+        article.setRevision(null);
+
+        if (StringUtils.isBlank(article.getTitle())) {
+            violation.missing(Article.Fields.title);
+        }
+    }
+
+    @VisibleForTesting
+    void updateValidations(Article article, Violation violation) {
+        if (article.getId() == null) {
+            violation.nullValue(Article.Fields.id);
+        } else if (article.getId() == 0) {
+            violation.invalid(Article.Fields.id);
         }
 
         if (StringUtils.isBlank(article.getTitle())) {
             violation.missing(Article.Fields.title);
         }
 
-        if (StringUtils.isBlank(article.getDescription())) {
-            violation.missing(Article.Fields.description);
+        if (article.getRevision() != null) {
+            if (article.getRevision().getId() == null) {
+                violation.nullValue(Article.Fields.revision + "." + ArticleRevision.Fields.id);
+            } else if (article.getRevision().getId() < 0) {
+                violation.invalid(Article.Fields.revision + "." + ArticleRevision.Fields.id);
+            }
         }
 
-        if (StringUtils.isBlank(article.getContent())) {
-            violation.missing(Article.Fields.content);
+        if (article.getUpdatedOn() == null) {
+            violation.nullValue(Article.Fields.updatedOn);
         }
     }
 

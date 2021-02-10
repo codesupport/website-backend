@@ -1,7 +1,7 @@
 package dev.codesupport.web.api.service;
 
+import dev.codesupport.web.domain.ArticleRevision;
 import dev.codesupport.web.domain.Article;
-import dev.codesupport.web.domain.PublishedArticle;
 import dev.codesupport.web.domain.VoidMethodResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -9,14 +9,12 @@ import java.util.List;
 
 public interface ArticleService {
 
-    List<PublishedArticle> findAllArticles(boolean publishedOnly);
+    List<Article> findAllArticles(boolean publishedOnly);
 
-    List<Article> findAllArticleRevisionsById(Long id);
-
-    PublishedArticle getArticleById(Long id);
+    Article getArticleById(Long id);
 
     @PreAuthorize("hasPermission(#article, 'create')")
-    PublishedArticle createArticle(Article article);
+    Article createArticle(Article article);
 
     @PreAuthorize("hasPermission(#article, 'update')")
     Article updateArticle(Article article);
@@ -25,7 +23,15 @@ public interface ArticleService {
 //    @PreAuthorize("hasPermission(#article, 'delete')")
     VoidMethodResponse deleteArticle(Article article);
 
-    @PreAuthorize("hasPermission(#article, 'publish')")
-    VoidMethodResponse publishArticle(PublishedArticle publishedArticle);
+    List<ArticleRevision> findAllArticleRevisionsByArticleId(Long id);
+
+    ArticleRevision getArticleRevisionById(Long id);
+
+    @PreAuthorize("hasPermission(#articleRevision, 'create')")
+    ArticleRevision createArticleRevision(ArticleRevision articleRevision);
+
+    //TODO: Finish implementing
+//    @PreAuthorize("hasPermission(#articleRevision, 'delete')")
+    VoidMethodResponse deleteArticleRevision(ArticleRevision articleRevision);
 
 }

@@ -5,7 +5,6 @@ import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.client.ObjectToUrlEncodedConverter;
 import dev.codesupport.web.common.service.http.client.RestTemplateResponseErrorHandler;
-import dev.codesupport.web.common.service.service.CrudOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -35,9 +34,6 @@ public class ApplicationConfiguration {
             FileUploadProperties fileUploadProperties,
             DiscordAppProperties discordAppProperties
     ) {
-        // Set ApplicationContext for all CrudOperation instances
-        CrudOperations.setContext(context);
-
         // Configure discord requests with developer app values.
         configureDiscordClient(discordAppProperties);
 

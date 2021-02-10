@@ -1,57 +1,32 @@
 package dev.codesupport.web.api.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import dev.codesupport.web.common.data.entity.AuditEntity;
 import dev.codesupport.web.common.data.entity.AuditableEntity;
+import dev.codesupport.web.common.data.entity.AuditableListener;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Transient;
 
-@Data
 @Entity
+@Data
+@EntityListeners(AuditableListener.class)
 public class ArticleEntity implements AuditableEntity<Long, Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(updatable = false, length = 20, nullable = false)
-    private String articleCode;
-    @Column(length = 50, nullable = false)
+    private Long revisionId;
+    @Column(length = 50, updatable = false, nullable = false)
     private String title;
-    @Column(nullable = false)
-    private String description;
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
-    @Transient
-    private TagSetEntity tagSet;
-    @Column(nullable = false)
-    private Long tagSetId;
-    @ManyToOne(optional = false)
-    @JoinColumn(updatable = false)
-    private UserEntity createdBy;
-    @Column(updatable = false, nullable = false)
-    private Long createdOn;
-    @ManyToOne(optional = false)
-    private UserEntity updatedBy;
-    @Column(nullable = false)
-    private Long updatedOn;
-
-    @PrePersist
-    public void create() {
-        setCreatedOn(System.currentTimeMillis());
-        update();
-    }
-
-    @PreUpdate
-    public void update() {
-        setUpdatedOn(System.currentTimeMillis());
-    }
+    @JsonUnwrapped
+    @Embedded
+    private AuditEntity<Long> auditEntity = new AuditEntity<>();
 
 }

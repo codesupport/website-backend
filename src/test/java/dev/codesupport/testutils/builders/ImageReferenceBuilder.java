@@ -19,7 +19,7 @@ public class ImageReferenceBuilder {
     public ImageReferenceEntity buildEntity() {
         ImageReferenceEntity entity = new ImageReferenceEntity();
         entity.setId(id);
-        entity.setArticleId(articleId);
+        entity.setRevisionId(articleId);
         entity.setImageName(imageName);
         return entity;
     }

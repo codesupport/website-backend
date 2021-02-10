@@ -1,11 +1,12 @@
 package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.domain.Article;
-import dev.codesupport.web.domain.PublishedArticle;
+import dev.codesupport.web.domain.ArticleRevision;
 import dev.codesupport.web.domain.VoidMethodResponse;
-import dev.codesupport.web.domain.validation.annotation.ArticleConstraint;
+import dev.codesupport.web.domain.validation.annotation.ArticleRevisionConstraint;
 import dev.codesupport.web.domain.validation.annotation.AuditableDomainConstraint;
-import dev.codesupport.web.domain.validation.annotation.PublishedArticleConstraint;
+import dev.codesupport.web.domain.validation.annotation.ArticleConstraint;
+import dev.codesupport.web.domain.validation.annotation.IdentifiableDomainConstraint;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -29,30 +30,38 @@ public interface ArticleController {
 
     @ApiOperation("Get all Articles")
     @GetMapping("/articles")
-    List<PublishedArticle> findAllArticles(@RequestParam(required = false) boolean publishedonly);
+    List<Article> findAllArticles(@RequestParam(required = false) boolean publishedonly);
 
     @ApiOperation("Get an Article by id")
     @GetMapping("/articles/{id}")
-    PublishedArticle getArticleById(@PathVariable Long id);
-
-    @ApiOperation("Get all Article revisions")
-    @GetMapping("/revisions/{id}")
-    List<Article> findAllArticleRevisionsById(@PathVariable Long id);
+    Article getArticleById(@PathVariable Long id);
 
     @ApiOperation("Create an Article")
     @PostMapping("/articles")
-    PublishedArticle createArticle(@RequestBody @ArticleConstraint Article article);
+    Article createArticle(@RequestBody @ArticleConstraint(isCreate = true) Article article);
 
     @ApiOperation("Create an Article")
     @PutMapping("/articles")
-    Article updateArticle(@RequestBody @ArticleConstraint(requireId = true) Article article);
+    Article updateArticle(@RequestBody @ArticleConstraint Article article);
 
     @ApiOperation("Create an Article")
     @DeleteMapping("/articles")
     VoidMethodResponse deleteArticle(@RequestBody @AuditableDomainConstraint Article article);
 
-    @ApiOperation("Publish an Article")
-    @PostMapping("/publish")
-    VoidMethodResponse publishArticle(@RequestBody @PublishedArticleConstraint PublishedArticle publishedArticle);
+    @ApiOperation("Get all Article revisions")
+    @GetMapping("/articles/{id}/revisions")
+    List<ArticleRevision> findAllArticleRevisionsByArticleId(@PathVariable Long id);
+
+    @ApiOperation("Get Article Revision by ID")
+    @GetMapping("/revisions/{id}")
+    ArticleRevision getArticleRevisionById(@PathVariable Long id);
+
+    @ApiOperation("Create Article Revision")
+    @PostMapping("/revisions")
+    ArticleRevision createArticleRevision(@RequestBody @ArticleRevisionConstraint ArticleRevision articleRevision);
+
+    @ApiOperation("Delete Article Revision")
+    @DeleteMapping("/revisions")
+    VoidMethodResponse deleteArticleRevision(@RequestBody @IdentifiableDomainConstraint ArticleRevision articleRevision);
 
 }

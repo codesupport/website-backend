@@ -37,7 +37,7 @@ public class ArticleUpdateEvaluator extends AbstractAccessEvaluator<Article> {
      */
     @Override
     protected boolean hasPermissionCheck(Authentication auth, Article article) {
-        boolean hasPermission = isValidAuth(auth);
+        boolean hasPermission = hasPrivilege(auth, "UPDATE_ARTICLE");
 
         if (hasPermission) {
             // Set creator of showcase to the authenticated user.

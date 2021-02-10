@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -18,6 +19,6 @@ public class RoleEntity implements IdentifiableEntity<Long> {
     private String code;
     private String label;
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<PermissionEntity> permission;
+    private Set<PermissionEntity> permission = new HashSet<>();
 
 }

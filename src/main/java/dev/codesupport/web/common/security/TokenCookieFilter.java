@@ -2,6 +2,7 @@ package dev.codesupport.web.common.security;
 
 import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.api.data.entity.PermissionEntity;
+import dev.codesupport.web.api.data.entity.RoleEntity;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.common.configuration.HttpSessionProperties;
 import dev.codesupport.web.common.security.models.UserDetails;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -115,12 +117,19 @@ public class TokenCookieFilter extends OncePerRequestFilter {
      */
     @VisibleForTesting
     UserDetails createUserDetails(UserEntity userEntity) {
+        Set<String> permissions = userEntity.getPermission()
+                .stream().map(PermissionEntity::getCode).collect(Collectors.toSet());
+        permissions.addAll(
+                ObjectUtils.defaultIfNull(userEntity.getRole(), new RoleEntity()).getPermission()
+                        .stream().map(PermissionEntity::getCode).collect(Collectors.toSet())
+        );
+
         return new UserDetails(
                 userEntity.getId(),
                 userEntity.getAlias(),
                 userEntity.getHashPassword(),
                 userEntity.getEmail(),
-                userEntity.getPermission().stream().map(PermissionEntity::getCode).collect(Collectors.toSet()),
+                permissions,
                 userEntity.isDisabled(),
                 StringUtils.isBlank(userEntity.getVerifyToken())
         );

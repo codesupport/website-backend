@@ -9,6 +9,74 @@
 			"name": "Article",
 			"item": [
 				{
+					"name": "CreateArticle_Unauthenticated",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"My Title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "CreateArticle_Valid_ExtraInfo",
 					"event": [
 						{
@@ -23,7 +91,7 @@
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
 									"    mode: 'raw',",
-									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"    raw: JSON.stringify({ email: 'iffy@cs.dev', password: 'supersecretpassword' })",
 									"  }",
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
@@ -45,547 +113,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"OK\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.be.null;",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const response = jsonData.response[0];",
-									"    const currentTime = new Date().getTime();",
-									"    pm.expect(response.id).to.greaterThan(0);",
-									"    pm.expect(response.articleCode).to.not.eql('acbdefgh');",
-									"    pm.expect(response.article.createdBy.id).to.eql(4);",
-									"    pm.expect(response.article.createdOn).to.greaterThan(currentTime - 10000);",
-									"    pm.expect(response.article.createdOn).to.lessThan(currentTime);",
-									"    pm.expect(response.article.updatedBy.id).to.eql(4);",
-									"    pm.expect(response.article.updatedOn).to.greaterThan(currentTime - 10000);",
-									"    pm.expect(response.article.updatedOn).to.lessThan(currentTime);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "{{ACCESS_TOKEN_COOKIE}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol.\",\n    \"description\": \"Description of the HTTP Protocol\",\n    \"tags\": [\n        \"HTTP\",\n        \"Protocol\",\n        \"Website\"\n    ],\n    \"title\": \"HTTP Protocol\",\n    \"articleCode\": \"abcdefgh\",\n    \"createdBy\": {\n        \"id\": 2\n    },\n    \"createdOn\": 1,\n    \"updatedBy\": {\n        \"id\": 2\n    },\n    \"updatedOn\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CreateArticle2_Valid",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
-									"",
-									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
-									"  method: 'POST',",
-									"  header: 'Content-Type: application/json',",
-									"  body: {",
-									"    mode: 'raw',",
-									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
-									"  }",
-									"};",
-									"pm.sendRequest(echoPostRequest, function (err, res) {",
-									"  if (!err) {",
-									"      const cookie = res.headers.get('Set-Cookie');",
-									"      if (cookie != null) {",
-									"          const cookieValue = cookie.split(';')[0];",
-									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
-									"      }",
-									"  } else {",
-									"      console.log(err);",
-									"  }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"OK\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.be.null;",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const response = jsonData.response[0];",
-									"    const currentTime = new Date().getTime();",
-									"    pm.expect(response.id).to.greaterThan(0);",
-									"    pm.expect(response.article.createdBy.id).to.eql(4);",
-									"    pm.expect(response.article.createdOn).to.greaterThan(currentTime - 10000);",
-									"    pm.expect(response.article.createdOn).to.lessThan(currentTime);",
-									"    pm.expect(response.article.updatedBy.id).to.eql(4);",
-									"    pm.expect(response.article.updatedOn).to.greaterThan(currentTime - 10000);",
-									"    pm.expect(response.article.updatedOn).to.lessThan(currentTime);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "{{ACCESS_TOKEN_COOKIE}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"content\": \"Lots of text to talk about the different aspects of making websites.\",\n  \"description\": \"Description for making websitesl\",\n  \"tags\": [\n    \t\"HTTP\",\n\t    \"Website\"\n  ],\n  \"title\": \"Website Development\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CreateArticle3_Valid",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
-									"",
-									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
-									"  method: 'POST',",
-									"  header: 'Content-Type: application/json',",
-									"  body: {",
-									"    mode: 'raw',",
-									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
-									"  }",
-									"};",
-									"pm.sendRequest(echoPostRequest, function (err, res) {",
-									"  if (!err) {",
-									"      const cookie = res.headers.get('Set-Cookie');",
-									"      if (cookie != null) {",
-									"          const cookieValue = cookie.split(';')[0];",
-									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
-									"      }",
-									"  } else {",
-									"      console.log(err);",
-									"  }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set('PREVIOUS_ARTICLE_ID', pm.response.json().response[0].id);",
-									"pm.environment.set('LAST_ARTICLE_UPDATE_DATE', pm.response.json().response[0].article.updatedOn);",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"OK\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.be.null;",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const response = jsonData.response[0];",
-									"    const currentTime = new Date().getTime();",
-									"    pm.expect(response.id).to.greaterThan(0);",
-									"    pm.expect(response.article.createdBy.id).to.eql(4);",
-									"    pm.expect(response.article.createdOn).to.greaterThan(currentTime - 10000);",
-									"    pm.expect(response.article.createdOn).to.lessThan(currentTime);",
-									"    pm.expect(response.article.updatedBy.id).to.eql(4);",
-									"    pm.expect(response.article.updatedOn).to.greaterThan(currentTime - 10000);",
-									"    pm.expect(response.article.updatedOn).to.lessThan(currentTime);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Cookie",
-								"value": "{{ACCESS_TOKEN_COOKIE}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"content\": \"Lots of text to talk about the [someimage](http://localhost:8082/file/v1/images/SomeImageReference.jpg) different aspects of the AMQP protocol. [someimage2](http://localhost:8082/file/v1/images/SomeOtherImageReference.jpg)\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CreateArticle_Invalid",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const expectedErrors = [",
-									"        \"title: can not be null/empty\",",
-									"        \"content: can not be null/empty\",",
-									"        \"description: can not be null/empty\"",
-									"    ].sort();",
-									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response).to.be.null;",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{ }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateArticle_Invalid",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const expectedErrors = [",
-									"        \"content: can not be null/empty\",",
-									"        \"title: can not be null/empty\",",
-									"        \"id: can not be null\",",
-									"        \"description: can not be null/empty\"",
-									"    ].sort();",
-									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response).to.be.null;",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{ }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateArticle3_Stale",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 422\", function () {",
-									"    pm.response.to.have.status(422)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const expectedErrors = [",
-									"        \"Resource contains stale data, please re-fetch data and try again.\"",
-									"    ].sort();",
-									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response).to.be.null;",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
-									"",
-									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
-									"  method: 'POST',",
-									"  header: 'Content-Type: application/json',",
-									"  body: {",
-									"    mode: 'raw',",
-									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
-									"  }",
-									"};",
-									"pm.sendRequest(echoPostRequest, function (err, res) {",
-									"  if (!err) {",
-									"      const cookie = res.headers.get('Set-Cookie');",
-									"      if (cookie != null) {",
-									"          const cookieValue = cookie.split(';')[0];",
-									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
-									"      }",
-									"  } else {",
-									"      console.log(err);",
-									"  }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Cookie",
-								"type": "text",
-								"value": "{{ACCESS_TOKEN_COOKIE}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"content\": \"Lots of text to talk about the [someimage](http://localhost:8082/file/v1/images/SomeNewImageReference.jpg) different aspects of the AMQP protocol. [someimage2](http://localhost:8082/file/v1/images/SomeOtherImageReference.jpg)\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateArticle3_Valid",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
-									"",
-									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
-									"  method: 'POST',",
-									"  header: 'Content-Type: application/json',",
-									"  body: {",
-									"    mode: 'raw',",
-									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
-									"  }",
-									"};",
-									"pm.sendRequest(echoPostRequest, function (err, res) {",
-									"  if (!err) {",
-									"      const cookie = res.headers.get('Set-Cookie');",
-									"      if (cookie != null) {",
-									"          const cookieValue = cookie.split(';')[0];",
-									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
-									"      }",
-									"  } else {",
-									"      console.log(err);",
-									"  }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set('PREVIOUS_ARTICLE_ID', pm.response.json().response[0].id);",
-									"const oldUpdateDate = pm.environment.get('LAST_ARTICLE_UPDATE_DATE');",
+									"pm.environment.set('LAST_ARTICLE_ID', pm.response.json().response[0].id);",
 									"pm.environment.set('LAST_ARTICLE_UPDATE_DATE', pm.response.json().response[0].updatedOn);",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
@@ -602,8 +130,14 @@
 									"    const jsonData = pm.response.json();",
 									"    const response = jsonData.response[0];",
 									"    const currentTime = new Date().getTime();",
-									"    pm.expect(response.updatedBy.id).to.eql(4);",
-									"    pm.expect(response.updatedOn).to.not.eql(oldUpdateDate);",
+									"    pm.expect(response.id).to.greaterThan(0);",
+									"    pm.expect(response.id).to.not.eql(577);",
+									"    pm.expect(response.title).to.eql(\"HTTP Protocol\");",
+									"    pm.expect(response.revision).to.be.null;",
+									"    pm.expect(response.createdBy.id).to.eql(3);",
+									"    pm.expect(response.createdOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.createdOn).to.lessThan(currentTime);",
+									"    pm.expect(response.updatedBy.id).to.eql(3);",
 									"    pm.expect(response.updatedOn).to.greaterThan(currentTime - 10000);",
 									"    pm.expect(response.updatedOn).to.lessThan(currentTime);",
 									"});"
@@ -616,17 +150,17 @@
 						"auth": {
 							"type": "noauth"
 						},
-						"method": "PUT",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Cookie",
-								"type": "text",
-								"value": "{{ACCESS_TOKEN_COOKIE}}"
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"content\": \"Lots of text to talk about the [someimage](http://localhost:8082/file/v1/images/SomeNewImageReference.jpg) different aspects of the AMQP protocol. [someimage2](http://localhost:8082/file/v1/images/SomeOtherImageReference.jpg)\",\n  \"description\": \"Description of the AMQP Protocol\",\n  \"tags\": [\n\t\t\"AMQP\",\n    \"Protocol\",\n    \"Website\",\n    \"Messaging\"\n  ],\n  \"title\": \"AMQP Protocol\",\n  \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n}",
+							"raw": "{\n    \"id\": 577,\n    \"title\": \"HTTP Protocol\",\n    \"revision\": {\n        \"id\": 10\n    },\n    \"createdBy\": {\n        \"id\": 2\n    },\n    \"createdOn\": 1,\n    \"updatedBy\": {\n        \"id\": 2\n    },\n    \"updatedOn\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -648,14 +182,44 @@
 					"response": []
 				},
 				{
-					"name": "GetArticle_NotPublished",
+					"name": "CreateArticleRevision_Valid_ExtraInfo",
 					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'iffy@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const articleId = pm.environment.get(\"PREVIOUS_ARTICLE_ID\");",
-									"",
+									"pm.environment.set('LAST_ARTICLE_REVISION_ID', pm.response.json().response[0].id);",
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
 									"});",
@@ -670,8 +234,15 @@
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    const response = jsonData.response[0];",
-									"    pm.expect(response.id).to.eql(articleId);",
-									"    pm.expect(response.published).to.be.false;",
+									"    const currentTime = new Date().getTime();",
+									"    pm.expect(response.id).to.greaterThan(0);",
+									"    pm.expect(response.id).to.not.eql(515);",
+									"    pm.expect(response.articleId).to.eql(LAST_ARTICLE_ID)",
+									"    pm.expect(response.description).to.not.be.null;",
+									"    pm.expect(response.content).to.not.be.null;",
+									"    pm.expect(response.createdBy.id).to.eql(3);",
+									"    pm.expect(response.createdOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.createdOn).to.lessThan(currentTime);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -679,25 +250,42 @@
 						}
 					],
 					"request": {
-						"method": "GET",
-						"header": [],
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 515,\n    \"articleId\": {{LAST_ARTICLE_ID}},\n    \"description\": \"Description for Http Protocol\",\n    \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol. [someimage](http://localhost:8082/file/v1/images/SomeImageReference.jpg)\",\n    \"tags\": [\n        \"HTTP\",\n\t    \"Website\"\n    ],\n    \"createdBy\": {\n        \"id\": 21\n    },\n    \"createdOn\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles/{{PREVIOUS_ARTICLE_ID}}",
+							"raw": "{{codesupportBackend}}/article/v1/revisions",
 							"host": [
 								"{{codesupportBackend}}"
 							],
 							"path": [
 								"article",
 								"v1",
-								"articles",
-								"{{PREVIOUS_ARTICLE_ID}}"
+								"revisions"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PublishArticle_Valid",
+					"name": "CreateArticleRevision_Invalid",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -733,22 +321,24 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200)",
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",
 									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"    pm.expect(jsonData.status).to.eql(\"NOT_FOUND\");",
 									"});",
 									"pm.test(\"Message is correct\", function () {",
 									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.be.null;",
+									"    const expectedErrors = [",
+									"        \"Resource with the given ID was not found\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
 									"});",
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
-									"    const response = jsonData.response[0];",
-									"    pm.expect(response.action).to.eql(\"Publish article\");",
-									"    pm.expect(response.affectedEntities).to.eql(1);",
+									"    pm.expect(jsonData.response).to.be.null;",
 									"});"
 								],
 								"type": "text/javascript"
@@ -763,13 +353,13 @@
 						"header": [
 							{
 								"key": "Cookie",
-								"value": "{{ACCESS_TOKEN_COOKIE}}",
-								"type": "text"
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n  },\n  \"published\": true\n}",
+							"raw": "{\n    \"articleId\": 756,\n    \"description\": \"Description for Http Protocol\",\n    \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol.\",\n    \"tags\": [\n        \"HTTP\",\n\t    \"Website\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -777,21 +367,89 @@
 							}
 						},
 						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/publish",
+							"raw": "{{codesupportBackend}}/article/v1/revisions",
 							"host": [
 								"{{codesupportBackend}}"
 							],
 							"path": [
 								"article",
 								"v1",
-								"publish"
+								"revisions"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PublishArticle_InvalidStale",
+					"name": "CreateArticleRevision_Unauthenticated",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"articleId\": {{LAST_ARTICLE_ID}},\n    \"description\": \"Another revision for unpublished article\",\n    \"content\": \"Created by someone who is not the original author of the article, but is an admin.\",\n    \"tags\": [\n        \"HTTP\",\n\t    \"Website\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/revisions",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateArticleRevision_Unauthorized",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -806,6 +464,497 @@
 									"  body: {",
 									"    mode: 'raw',",
 									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not allowed to edit this article\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"articleId\": {{LAST_ARTICLE_ID}},\n    \"description\": \"Another revision for HTTP article\",\n    \"content\": \"Lots of text to talk about the different aspects of the HTTP protocol.\",\n    \"tags\": [\n        \"HTTP\",\n\t    \"Website\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/revisions",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateArticleRevision_Authorized",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'lambo@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('LAST_ARTICLE_REVISION_ID', pm.response.json().response[0].id);",
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const response = jsonData.response[0];",
+									"    const currentTime = new Date().getTime();",
+									"    pm.expect(response.id).to.greaterThan(0);",
+									"    pm.expect(response.articleId).to.eql(LAST_ARTICLE_ID);",
+									"    pm.expect(response.description).to.not.be.null;",
+									"    pm.expect(response.content).to.not.be.null;",
+									"    pm.expect(response.createdBy.id).to.eql(2);",
+									"    pm.expect(response.createdOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.createdOn).to.lessThan(currentTime);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"articleId\": {{LAST_ARTICLE_ID}},\n    \"description\": \"Another revision for HTTP article\",\n    \"content\": \"Created by someone who is not the original author of the article, but is an admin.\",\n    \"tags\": [\n        \"HTTP\",\n\t    \"Website\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/revisions",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevision_ById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const response = jsonData.response[0];",
+									"    pm.expect(response.id).to.eql(LAST_ARTICLE_REVISION_ID);",
+									"    pm.expect(response.articleId).to.eql(LAST_ARTICLE_ID);",
+									"    pm.expect(response.description).to.not.be.null;",
+									"    pm.expect(response.content).to.not.be.null;",
+									"    pm.expect(response.createdBy.id).to.eql(2);",
+									"    pm.expect(response.createdOn).to.greaterThan(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/revisions/{{LAST_ARTICLE_REVISION_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"revisions",
+								"{{LAST_ARTICLE_REVISION_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevisions_ByArticleId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const article = jsonData.response.filter(a => a.id === LAST_ARTICLE_REVISION_ID)[0];",
+									"    ",
+									"    pm.expect(jsonData.response.length).to.eql(2);",
+									"    pm.expect(article.id).to.eql(LAST_ARTICLE_REVISION_ID);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}/revisions",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateArticle_Invalid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"id: can not be null\",",
+									"        \"updatedOn: can not be null\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Some new title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateArticle_Unauthorized",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": {{LAST_ARTICLE_ID}},\n    \"title\": \"Some new title\",\n    \"revision\": {\n        \"id\": {{LAST_ARTICLE_REVISION_ID}}\n    },\n    \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateArticle_Stale",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'lambo@cs.dev', password: 'supersecretpassword' })",
 									"  }",
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
@@ -854,17 +1003,17 @@
 						"auth": {
 							"type": "noauth"
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Cookie",
-								"value": "{{ACCESS_TOKEN_COOKIE}}",
-								"type": "text"
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": 1\n  },\n  \"published\": false\n}",
+							"raw": "{\n    \"id\": {{LAST_ARTICLE_ID}},\n    \"title\": \"Some new title\",\n    \"revision\": {\n        \"id\": {{LAST_ARTICLE_REVISION_ID}}\n    },\n    \"updatedOn\": 917\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -872,21 +1021,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/publish",
+							"raw": "{{codesupportBackend}}/article/v1/articles",
 							"host": [
 								"{{codesupportBackend}}"
 							],
 							"path": [
 								"article",
 								"v1",
-								"publish"
+								"articles"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PublishArticle_Duplicate",
+					"name": "UpdateArticle_Valid",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -900,7 +1049,7 @@
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
 									"    mode: 'raw',",
-									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"    raw: JSON.stringify({ email: 'lambo@cs.dev', password: 'supersecretpassword' })",
 									"  }",
 									"};",
 									"pm.sendRequest(echoPostRequest, function (err, res) {",
@@ -922,6 +1071,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
 									"});",
@@ -936,8 +1087,15 @@
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    const response = jsonData.response[0];",
-									"    pm.expect(response.action).to.eql(\"Publish article\");",
-									"    pm.expect(response.affectedEntities).to.eql(0);",
+									"    const currentTime = new Date().getTime();",
+									"    pm.expect(response.id).to.eql(LAST_ARTICLE_ID);",
+									"    pm.expect(response.title).to.eql(\"HTTP Protocol\");",
+									"    pm.expect(response.revision.id).to.eql(LAST_ARTICLE_REVISION_ID);",
+									"    pm.expect(response.createdBy.id).to.eql(3);",
+									"    pm.expect(response.createdOn).to.greaterThan(0);",
+									"    pm.expect(response.updatedBy.id).to.eql(2);",
+									"    pm.expect(response.updatedOn).to.greaterThan(currentTime - 10000);",
+									"    pm.expect(response.updatedOn).to.lessThan(currentTime);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -948,7 +1106,7 @@
 						"auth": {
 							"type": "noauth"
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Cookie",
@@ -958,7 +1116,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": {{PREVIOUS_ARTICLE_ID}},\n  \"article\": {\n      \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n  },\n  \"published\": true\n}",
+							"raw": "{\n    \"id\": {{LAST_ARTICLE_ID}},\n    \"title\": \"Some new title\",\n    \"revision\": {\n        \"id\": {{LAST_ARTICLE_REVISION_ID}}\n    },\n    \"updatedOn\": {{LAST_ARTICLE_UPDATE_DATE}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -966,165 +1124,28 @@
 							}
 						},
 						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/publish",
+							"raw": "{{codesupportBackend}}/article/v1/articles",
 							"host": [
 								"{{codesupportBackend}}"
 							],
 							"path": [
 								"article",
 								"v1",
-								"publish"
+								"articles"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PublishArticle_Invalid",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const expectedErrors = [",
-									"        \"article: can not be null\",",
-									"        \"id: can not be null\"",
-									"    ].sort();",
-									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response).to.be.null;",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{ }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/publish",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"publish"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "PublishArticle_InvalidAritcle",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400)",
-									"});",
-									"pm.test(\"Status is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-									"});",
-									"pm.test(\"Message is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    const expectedErrors = [",
-									"        \"article.updatedOn: can not be null\"",
-									"    ].sort();",
-									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
-									"});",
-									"pm.test(\"Payload is correct\", function () {",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.response).to.be.null;",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": 1,\n  \"article\": {},\n  \"published\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/publish",
-							"host": [
-								"{{codesupportBackend}}"
-							],
-							"path": [
-								"article",
-								"v1",
-								"publish"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetArticle_Published",
+					"name": "GetArticle_ById_TitleNotChanged",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const articleId = pm.environment.get(\"PREVIOUS_ARTICLE_ID\");",
-									"",
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200)",
 									"});",
@@ -1139,8 +1160,14 @@
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    const response = jsonData.response[0];",
-									"    pm.expect(response.id).to.eql(articleId);",
-									"    pm.expect(response.published).to.be.true;",
+									"    const currentTime = new Date().getTime();",
+									"    pm.expect(response.id).to.eql(LAST_ARTICLE_ID);",
+									"    pm.expect(response.title).to.eql(\"HTTP Protocol\");",
+									"    pm.expect(response.revision.id).to.eql(LAST_ARTICLE_REVISION_ID);",
+									"    pm.expect(response.createdBy.id).to.eql(3);",
+									"    pm.expect(response.createdOn).to.greaterThan(0);",
+									"    pm.expect(response.updatedBy.id).to.eql(2);",
+									"    pm.expect(response.updatedOn).to.greaterThan(0);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1151,7 +1178,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{codesupportBackend}}/article/v1/articles/{{PREVIOUS_ARTICLE_ID}}",
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}",
 							"host": [
 								"{{codesupportBackend}}"
 							],
@@ -1159,24 +1186,15 @@
 								"article",
 								"v1",
 								"articles",
-								"{{PREVIOUS_ARTICLE_ID}}"
+								"{{LAST_ARTICLE_ID}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "GetAllArticles_All",
+					"name": "GetAllArticles",
 					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
 						{
 							"listen": "test",
 							"script": {
@@ -1194,21 +1212,12 @@
 									"});",
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
-									"    const response = jsonData.response;",
-									"    pm.expect(response.length).to.greaterThan(2);",
-									"    pm.expect(hasUnpublishedArticle(response)).to.be.true;",
-									"});",
-									"",
-									"function hasUnpublishedArticle(articleArray) {",
-									"    let hasUnpublished = false;",
+									"    const publishedArticles = jsonData.response.filter(a => a.revision != null);",
+									"    const unpublishedArticles = jsonData.response.filter(a => a.revision == null);",
 									"    ",
-									"    for (let i = 0; !hasUnpublished && i < articleArray.length; i++) {",
-									"        console.log(articleArray[i].article.title + \", published: \" + articleArray[i].published);",
-									"        hasUnpublished = !articleArray[i].published;",
-									"    }",
-									"",
-									"    return hasUnpublished;",
-									"}"
+									"    pm.expect(publishedArticles.length).to.eql(2);",
+									"    pm.expect(unpublishedArticles.length).to.eql(1);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1251,21 +1260,10 @@
 									"});",
 									"pm.test(\"Payload is correct\", function () {",
 									"    const jsonData = pm.response.json();",
-									"    const response = jsonData.response;",
-									"    pm.expect(response.length).to.greaterThan(0);",
-									"    pm.expect(hasUnpublishedArticle(response)).to.be.false;",
-									"});",
-									"",
-									"function hasUnpublishedArticle(articleArray) {",
-									"    let hasUnpublished = false;",
+									"    const publishedArticles = jsonData.response.filter(a => a.revision != null);",
 									"    ",
-									"    for (let i = 0; !hasUnpublished && i < articleArray.length; i++) {",
-									"        console.log(articleArray[i].article.title + \", published: \" + articleArray[i].published);",
-									"        hasUnpublished = !articleArray[i].published;",
-									"    }",
-									"",
-									"    return hasUnpublished;",
-									"}"
+									"    pm.expect(publishedArticles.length).to.eql(jsonData.response.length);",
+									"});"
 								],
 								"type": "text/javascript"
 							}

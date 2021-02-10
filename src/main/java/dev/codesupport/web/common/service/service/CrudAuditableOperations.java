@@ -55,7 +55,7 @@ public class CrudAuditableOperations<T, E extends AuditableEntity<I, T>, D exten
     void staleDataCheck(D object) {
         AuditableEntity<I, T> entity = crudRepository.getById(object.getId());
 
-        if (!entity.getUpdatedOn().equals(object.getUpdatedOn())) {
+        if (!entity.getAuditEntity().getUpdatedOn().equals(object.getUpdatedOn())) {
             throw new StaleDataException();
         }
     }

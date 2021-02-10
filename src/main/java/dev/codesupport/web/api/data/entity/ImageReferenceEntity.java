@@ -16,7 +16,7 @@ public class ImageReferenceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private Long articleId;
+    private Long revisionId;
     @Column(length = 30, nullable = false)
     private String imageName;
 

@@ -1,6 +1,6 @@
 package dev.codesupport.web.domain.validation.annotation;
 
-import dev.codesupport.web.domain.validation.validator.PublishedArticleValidator;
+import dev.codesupport.web.domain.validation.validator.ArticleRevisionValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,11 +11,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = PublishedArticleValidator.class)
+@Constraint(validatedBy = ArticleRevisionValidator.class)
 @Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PublishedArticleConstraint {
-    String message() default "Invalid public article";
+public @interface ArticleRevisionConstraint {
+    String message() default "Invalid article revision";
 
     Class<?>[] groups() default {};
 

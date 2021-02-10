@@ -165,7 +165,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         @Override
         public void preGetLogic(ArticleEntity articleEntity, Article article) {
-
+            // Nothing to do for pre-get logic
         }
 
         @Override

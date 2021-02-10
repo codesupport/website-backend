@@ -2,7 +2,7 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.ArticleService;
 import dev.codesupport.web.domain.Article;
-import dev.codesupport.web.domain.PublishedArticle;
+import dev.codesupport.web.domain.ArticleRevision;
 import dev.codesupport.web.domain.VoidMethodResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,22 +20,17 @@ public class ArticleControllerImpl implements ArticleController {
     }
 
     @Override
-    public List<PublishedArticle> findAllArticles(boolean publishedonly) {
+    public List<Article> findAllArticles(boolean publishedonly) {
         return service.findAllArticles(publishedonly);
     }
 
     @Override
-    public List<Article> findAllArticleRevisionsById(Long id) {
-        return service.findAllArticleRevisionsById(id);
-    }
-
-    @Override
-    public PublishedArticle getArticleById(Long id) {
+    public Article getArticleById(Long id) {
         return service.getArticleById(id);
     }
 
     @Override
-    public PublishedArticle createArticle(Article article) {
+    public Article createArticle(Article article) {
         return service.createArticle(article);
     }
 
@@ -50,7 +45,23 @@ public class ArticleControllerImpl implements ArticleController {
     }
 
     @Override
-    public VoidMethodResponse publishArticle(PublishedArticle publishedArticle) {
-        return service.publishArticle(publishedArticle);
+    public List<ArticleRevision> findAllArticleRevisionsByArticleId(Long id) {
+        return service.findAllArticleRevisionsByArticleId(id);
     }
+
+    @Override
+    public ArticleRevision getArticleRevisionById(Long id) {
+        return service.getArticleRevisionById(id);
+    }
+
+    @Override
+    public ArticleRevision createArticleRevision(ArticleRevision articleRevision) {
+        return service.createArticleRevision(articleRevision);
+    }
+
+    @Override
+    public VoidMethodResponse deleteArticleRevision(ArticleRevision articleRevision) {
+        return service.deleteArticleRevision(articleRevision);
+    }
+
 }

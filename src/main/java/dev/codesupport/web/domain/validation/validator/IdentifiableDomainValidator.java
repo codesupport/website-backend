@@ -21,6 +21,8 @@ public class IdentifiableDomainValidator implements MultiViolationConstraintVali
     public void validate(IdentifiableDomain<Long> domainObject, Violation violation) {
         if (domainObject.getId() == null) {
             violation.nullValue("id");
+        } else if (domainObject.getId() < 1) {
+            violation.invalid("id");
         }
     }
 

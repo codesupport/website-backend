@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ArticleConstraint {
-    String message() default "Invalid article";
+    String message() default "Invalid public article";
 
-    boolean requireId() default false;
+    boolean isCreate() default false;
 
     Class<?>[] groups() default {};
 

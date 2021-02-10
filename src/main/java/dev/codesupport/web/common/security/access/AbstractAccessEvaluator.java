@@ -133,4 +133,21 @@ public abstract class AbstractAccessEvaluator<T> {
         }
     }
 
+    /**
+     * This is a temp solution until permissions design is realized
+     *
+     * @param auth The authentication to check
+     * @return True if your are a valid admin, False otherwise
+     */
+    protected boolean hasPrivilege(Authentication auth, String permission) {
+        boolean hasPrivilege = false;
+
+        if (isValidAuth(auth)) {
+            UserDetails userDetails = getUserDetails(auth);
+            hasPrivilege = userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(permission));
+        }
+
+        return hasPrivilege;
+    }
+
 }

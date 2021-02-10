@@ -3,16 +3,14 @@ package dev.codesupport.testutils.builders;
 import dev.codesupport.web.api.data.entity.ArticleEntity;
 import dev.codesupport.web.domain.Article;
 
-import java.util.List;
-
+/**
+ * This is a test utility used to create objects for unit tests
+ */
 public class ArticleBuilder {
 
     private Long id;
-    private String articleCode;
     private String title;
-    private String description;
-    private String content;
-    private List<String> tags;
+    private ArticleRevisionBuilder revision;
     private UserBuilder createdBy;
     private Long createdOn;
     private UserBuilder updatedBy;
@@ -29,16 +27,17 @@ public class ArticleBuilder {
     public Article buildDomain() {
         Article domain = new Article();
         domain.setId(id);
-        domain.setArticleCode(articleCode);
         domain.setTitle(title);
-        domain.setDescription(description);
-        domain.setContent(content);
-        domain.setTags(tags);
-        if (createdBy != null)
+        if (revision != null) {
+            domain.setRevision(revision.buildDomain());
+        }
+        if (createdBy != null) {
             domain.setCreatedBy(createdBy.buildDomain());
+        }
         domain.setCreatedOn(createdOn);
-        if (updatedBy != null)
+        if (updatedBy != null) {
             domain.setUpdatedBy(updatedBy.buildDomain());
+        }
         domain.setUpdatedOn(updatedOn);
         return domain;
     }
@@ -46,16 +45,18 @@ public class ArticleBuilder {
     public ArticleEntity buildEntity() {
         ArticleEntity entity = new ArticleEntity();
         entity.setId(id);
-        entity.setArticleCode(articleCode);
+        if (revision != null) {
+            entity.setRevisionId(revision.buildEntity().getId());
+        }
         entity.setTitle(title);
-        entity.setDescription(description);
-        entity.setContent(content);
-        if (createdBy != null)
-            entity.setCreatedBy(createdBy.buildEntity());
-        entity.setCreatedOn(createdOn);
-        if (updatedBy != null)
-            entity.setUpdatedBy(updatedBy.buildEntity());
-        entity.setUpdatedOn(updatedOn);
+        if (createdBy != null) {
+            entity.getAuditEntity().setCreatedBy(createdBy.buildEntity());
+        }
+        entity.getAuditEntity().setCreatedOn(createdOn);
+        if (updatedBy != null) {
+            entity.getAuditEntity().setUpdatedBy(updatedBy.buildEntity());
+        }
+        entity.getAuditEntity().setUpdatedOn(updatedOn);
         return entity;
     }
 
@@ -64,28 +65,13 @@ public class ArticleBuilder {
         return this;
     }
 
-    public ArticleBuilder articleCode(String articleCode) {
-        this.articleCode = articleCode;
+    public ArticleBuilder revision(ArticleRevisionBuilder revision) {
+        this.revision = revision;
         return this;
     }
 
     public ArticleBuilder title(String title) {
         this.title = title;
-        return this;
-    }
-
-    public ArticleBuilder description(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public ArticleBuilder content(String content) {
-        this.content = content;
-        return this;
-    }
-
-    public ArticleBuilder tags(List<String> tags) {
-        this.tags = tags;
         return this;
     }
 
@@ -108,4 +94,5 @@ public class ArticleBuilder {
         this.updatedOn = updatedOn;
         return this;
     }
+
 }

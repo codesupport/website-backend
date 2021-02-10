@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
@@ -58,11 +57,6 @@ public class UserServiceImplTest {
         mockUserProfileCrudOperations = mock(CrudOperations.class);
 
         mockUserRepository = mock(UserRepository.class);
-
-        ApplicationContext mockContext = mock(ApplicationContext.class);
-
-        ReflectionTestUtils.setField(mockUserCrudOperations, "context", mockContext);
-        ReflectionTestUtils.setField(mockUserProfileCrudOperations, "context", mockContext);
 
         mockHashingUtility = mock(HashingUtility.class);
 

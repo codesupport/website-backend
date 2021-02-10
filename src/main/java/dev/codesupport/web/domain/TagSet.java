@@ -3,13 +3,13 @@ package dev.codesupport.web.domain;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @FieldNameConstants
 public class TagSet {
 
     private Long id;
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
 }

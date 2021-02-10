@@ -9,13 +9,11 @@ import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.util.MappingUtils;
 import lombok.Setter;
-import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -37,11 +35,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     protected final Class<D> domainClass;
 
     @Setter
-    private static ApplicationContext context;
-    @Setter
-    private Consumer<E> preSaveEntities;
-    @Setter
-    private Consumer<E> preGetEntities;
+    private CrudLogic<E, D> crudLogic;
 
     /**
      * Creates a new crudOperations object for a given resource.
@@ -77,15 +71,15 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
         addPreDeleteCheck(this::resourcesDoNotExistCheck);
     }
 
-    protected void addPreCreateCheck(PrePersistCheck<D, I> check) {
+    public void addPreCreateCheck(PrePersistCheck<D, I> check) {
         preCreateChecks.add(check);
     }
 
-    protected void addPreUpdateCheck(PrePersistCheck<D, I> check) {
+    public void addPreUpdateCheck(PrePersistCheck<D, I> check) {
         preUpdateChecks.add(check);
     }
 
-    protected void addPreDeleteCheck(PrePersistCheck<D, I> check) {
+    public void addPreDeleteCheck(PrePersistCheck<D, I> check) {
         preDeleteChecks.add(check);
     }
 
@@ -97,9 +91,11 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     }
 
     @VisibleForTesting
-    void preGetEntities(List<E> entities) {
-        if (preGetEntities != null) {
-            entities.forEach(preGetEntities);
+    void preGetEntities(List<E> entityObjects, List<D> domainObjects) {
+        if (crudLogic != null) {
+            for (int i = 0; i < entityObjects.size(); i++){
+                crudLogic.preGetLogic(entityObjects.get(i), domainObjects.get(i));
+            }
         }
     }
 
@@ -110,9 +106,10 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      * @return The resource data list for the given id
      */
     public D getById(I id) {
-        E entity = crudRepository.getById(id);
-        preGetEntities(Collections.singletonList(entity));
-        return MappingUtils.convertToType(entity, domainClass);
+        E entityObject = crudRepository.getById(id);
+        D domainObject = MappingUtils.convertToType(entityObject, domainClass);
+        preGetEntities(Collections.singletonList(entityObject), Collections.singletonList(domainObject));
+        return domainObject;
     }
 
     /**
@@ -121,9 +118,10 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      * @return List of data for the given resource
      */
     public List<D> getAll() {
-        List<E> entities = crudRepository.findAll();
-        preGetEntities(entities);
-        return MappingUtils.convertToType(entities, domainClass);
+        List<E> entityObjects = crudRepository.findAll();
+        List<D> domainObjects = MappingUtils.convertToType(entityObjects, domainClass);
+        preGetEntities(entityObjects, domainObjects);
+        return domainObjects;
     }
 
     /**
@@ -197,9 +195,11 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      *
      * @param entityObjects The entities pending persistence to the db
      */
-    protected void preSaveEntities(List<E> entityObjects) {
-        if (preSaveEntities != null) {
-            entityObjects.forEach(preSaveEntities);
+    protected void preSaveEntities(List<E> entityObjects, List<D> domainObjects) {
+        if (crudLogic != null) {
+            for (int i = 0; i < entityObjects.size(); i++){
+                crudLogic.preSaveLogic(entityObjects.get(i), domainObjects.get(i));
+            }
         }
     }
 
@@ -211,11 +211,11 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
      */
     @VisibleForTesting
     List<D> saveEntities(List<D> domainObjects) {
-        List<E> entities = MappingUtils.convertToType(domainObjects, entityClass);
+        List<E> entityObjects = MappingUtils.convertToType(domainObjects, entityClass);
 
-        preSaveEntities(entities);
+        preSaveEntities(entityObjects, domainObjects);
 
-        List<E> savedEntities = crudRepository.saveAll(entities);
+        List<E> savedEntities = crudRepository.saveAll(entityObjects);
 
         savedEntities = savedEntities.stream().map(E::getId).map(crudRepository::getById).collect(Collectors.toList());
 
@@ -308,7 +308,7 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
     }
 
     @FunctionalInterface
-    protected interface PrePersistCheck<D extends IdentifiableDomain<I>, I> {
+    public interface PrePersistCheck<D extends IdentifiableDomain<I>, I> {
 
         void check(Collection<D> domain);
 

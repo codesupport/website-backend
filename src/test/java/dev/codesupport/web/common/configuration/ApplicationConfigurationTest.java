@@ -4,8 +4,6 @@ import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.client.ObjectToUrlEncodedConverter;
 import dev.codesupport.web.common.service.http.client.RestTemplateResponseErrorHandler;
-import dev.codesupport.web.common.service.service.CrudOperations;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -35,35 +32,6 @@ public class ApplicationConfigurationTest {
         DiscordOAuthTokenRequest.setClient_id(null);
         DiscordOAuthTokenRequest.setSecret(null);
         DiscordOAuthTokenRequest.setRedirect_uri(null);
-    }
-
-    @After
-    public void tearDown() {
-        CrudOperations.setContext(null);
-    }
-
-    @Test
-    public void shouldNotHaveContextSetForCrudOperations() {
-        Object context = ReflectionTestUtils.getField(CrudOperations.class, "context");
-
-        assertNull(context);
-    }
-
-    @Test
-    public void shouldHaveContextSetForCrudOperations() {
-        ApplicationContext mockContext = mock(ApplicationContext.class);
-        DiscordAppProperties mockDiscordAppProperties = mock(DiscordAppProperties.class);
-        FileUploadProperties mockFileUploadProperties = mock(FileUploadProperties.class);
-
-        doReturn(true)
-                .when(mockDiscordAppProperties)
-                .isValid();
-
-        new ApplicationConfiguration(mockContext, mockFileUploadProperties, mockDiscordAppProperties);
-
-        Object actualContext = ReflectionTestUtils.getField(CrudOperations.class, "context");
-
-        assertEquals(mockContext, actualContext);
     }
 
     @Test

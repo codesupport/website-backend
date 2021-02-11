@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.security.access;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.InvalidArgumentException;
 import dev.codesupport.web.common.exception.InvalidUserException;
 import dev.codesupport.web.common.security.models.UserDetails;
@@ -68,6 +69,7 @@ public abstract class AbstractAccessEvaluator<T> {
                 );
     }
 
+    @VisibleForTesting
     String generateEvaluatorName(Accessor accessor) {
         return accessor.toString().toLowerCase().replace("_", "");
     }

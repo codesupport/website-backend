@@ -24,7 +24,7 @@ public class UserEntity implements IdentifiableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(updatable = false, length = 50, nullable = false)
+    @Column(unique = true, updatable = false, length = 50, nullable = false)
     private String alias;
     @Column(length = 100, nullable = false)
     private String hashPassword;
@@ -43,7 +43,7 @@ public class UserEntity implements IdentifiableEntity<Long> {
     @Column(length = 50)
     private String accessToken;
     private Long accessTokenExpireOn;
-    @Column(length = 100, nullable = false)
+    @Column(unique = true, length = 100, nullable = false)
     private String email;
     @Column(length = 100)
     private String avatarLink;
@@ -59,7 +59,7 @@ public class UserEntity implements IdentifiableEntity<Long> {
     private CountryEntity country;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<UserAwardEntity> userAward;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false, nullable = false)
     private Long joinDate;
 
     //unused - Called by hibernate under the covers

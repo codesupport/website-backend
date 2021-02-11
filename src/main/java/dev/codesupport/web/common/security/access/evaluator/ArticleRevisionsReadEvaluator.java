@@ -4,11 +4,9 @@ import dev.codesupport.web.api.data.entity.ArticleEntity;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.ArticleRepository;
 import dev.codesupport.web.api.data.repository.UserRepository;
-import dev.codesupport.web.common.exception.UnauthorizedAccessException;
 import dev.codesupport.web.common.security.access.AbstractAccessEvaluator;
+import dev.codesupport.web.common.security.access.Accessor;
 import dev.codesupport.web.common.security.access.Permission;
-import dev.codesupport.web.domain.ArticleRevision;
-import dev.codesupport.web.domain.User;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -16,36 +14,35 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * Determines access for creating Article Revisions
+ * Determines access for viewing Article revisions
  */
 @Component
 @EqualsAndHashCode(callSuper = true)
-public class ArticleRevisionCreateEvaluator extends AbstractAccessEvaluator<ArticleRevision> {
+public class ArticleRevisionsReadEvaluator extends AbstractAccessEvaluator<Long> {
 
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
 
-    public ArticleRevisionCreateEvaluator(UserRepository userRepository, ArticleRepository articleRepository) {
-        super(Permission.CREATE);
+    public ArticleRevisionsReadEvaluator(UserRepository userRepository, ArticleRepository articleRepository) {
+        super(Permission.READ);
         this.userRepository = userRepository;
         this.articleRepository = articleRepository;
     }
 
     /**
-     * Checks if user has right to create an articleRevision
-     * <p>Only authenticated users (with valid token) are allowed to create an articleRevision, as this is needed
-     * to know who the user is.</p>
+     * Checks if user has right to see article revisions for the given article
+     * <p>Stubbed permission logic, only admins and the article author can see the article's revisions.</p>
      *
-     * @param auth            The Authentication associated with the access evaluation
-     * @param articleRevision The object associated with the access evaluation
-     * @return True if user is authenticated, False otherwise.
+     * @param auth      The Authentication associated with the access evaluation
+     * @param articleId The articleId of the requested revisions
+     * @return True if user is allowed to see the revisions, False otherwise.
      */
     @Override
-    protected boolean hasPermissionCheck(Authentication auth, ArticleRevision articleRevision) {
+    protected boolean hasPermissionCheck(Authentication auth, Long articleId) {
         boolean hasPermission = isValidAuth(auth);
 
         if (hasPermission) {
-            ArticleEntity articleEntity = articleRepository.getById(articleRevision.getArticleId());
+            ArticleEntity articleEntity = articleRepository.getById(articleId);
 
             // Set creator of showcase to the authenticated user.
             Optional<UserEntity> optional = userRepository.findByEmailIgnoreCase(auth.getName());
@@ -55,14 +52,6 @@ public class ArticleRevisionCreateEvaluator extends AbstractAccessEvaluator<Arti
                 // If user is author or is admin
                 hasPermission = userEntity.getId().equals(articleEntity.getCreatedBy().getId())
                         || hasPrivilege(auth, "UPDATE_ARTICLE");
-
-                if (hasPermission) {
-                    User user = new User();
-                    user.setId(userEntity.getId());
-                    articleRevision.setCreatedBy(user);
-                } else {
-                    throw new UnauthorizedAccessException("You are not allowed to edit this article");
-                }
             } else {
                 throw new IllegalStateException("Could not access user's information");
             }
@@ -71,4 +60,8 @@ public class ArticleRevisionCreateEvaluator extends AbstractAccessEvaluator<Arti
         return hasPermission;
     }
 
+    @Override
+    public Accessor getAccessor() {
+        return Accessor.ARTICLE_REVISIONS;
+    }
 }

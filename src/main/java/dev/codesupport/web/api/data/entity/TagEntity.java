@@ -15,7 +15,7 @@ public class TagEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50, nullable = false)
+    @Column(unique = true, updatable = false, length = 50, nullable = false)
     private String label;
 
 }

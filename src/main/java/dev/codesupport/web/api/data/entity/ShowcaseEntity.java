@@ -21,10 +21,12 @@ public class ShowcaseEntity implements IdentifiableEntity<Long> {
     @ManyToOne(optional = false)
     @JoinColumn(updatable = false)
     private UserEntity user;
-    @Column(length = 40)
+    @Column(length = 50, nullable = false)
     private String title;
+    @Column(nullable = false)
     private String description;
     private boolean approved;
+    @Column(nullable = false)
     private String link;
     @ManyToOne(optional = false)
     @JoinColumn(updatable = false)

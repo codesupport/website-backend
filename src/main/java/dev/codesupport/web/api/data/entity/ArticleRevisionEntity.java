@@ -19,13 +19,13 @@ public class ArticleRevisionEntity implements IdentifiableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private Long articleId;
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private String description;
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", updatable = false, nullable = false)
     private String content;
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private Long tagSetId;
     @ManyToOne(optional = false)
     @JoinColumn(name = "createdBy", updatable = false)

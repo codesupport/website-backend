@@ -64,8 +64,12 @@ public abstract class AbstractAccessEvaluator<T> {
                 (
                         getAccessor() == Accessor.NONE ?
                                 classType.getCanonicalName() :
-                                getAccessor().toString().toLowerCase()
+                                generateEvaluatorName(getAccessor())
                 );
+    }
+
+    String generateEvaluatorName(Accessor accessor) {
+        return accessor.toString().toLowerCase().replace("_", "");
     }
 
     /**

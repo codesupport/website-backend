@@ -646,7 +646,139 @@
 					"response": []
 				},
 				{
-					"name": "GetArticleRevision_ById",
+					"name": "GetArticleRevision_ById_Unauthenticated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/revisions/{{LAST_ARTICLE_REVISION_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"revisions",
+								"{{LAST_ARTICLE_REVISION_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevision_ById_Unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/revisions/{{LAST_ARTICLE_REVISION_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"revisions",
+								"{{LAST_ARTICLE_REVISION_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevision_ById_IsAuthor",
 					"event": [
 						{
 							"listen": "test",
@@ -678,11 +810,47 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'iffy@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{codesupportBackend}}/article/v1/revisions/{{LAST_ARTICLE_REVISION_ID}}",
 							"host": [
@@ -699,7 +867,230 @@
 					"response": []
 				},
 				{
-					"name": "GetArticleRevisions_ByArticleId",
+					"name": "GetArticleRevision_ById_IsAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const response = jsonData.response[0];",
+									"    pm.expect(response.id).to.eql(LAST_ARTICLE_REVISION_ID);",
+									"    pm.expect(response.articleId).to.eql(LAST_ARTICLE_ID);",
+									"    pm.expect(response.description).to.not.be.null;",
+									"    pm.expect(response.content).to.not.be.null;",
+									"    pm.expect(response.createdBy.id).to.eql(2);",
+									"    pm.expect(response.createdOn).to.greaterThan(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'lambo@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/revisions/{{LAST_ARTICLE_REVISION_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"revisions",
+								"{{LAST_ARTICLE_REVISION_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevisions_ByArticleId_Unauthenticated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}/revisions",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevisions_ByArticleId_Unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}/revisions?Cookie={{ACCESS_TOKEN_COOKIE}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}",
+								"revisions"
+							],
+							"query": [
+								{
+									"key": "Cookie",
+									"value": "{{ACCESS_TOKEN_COOKIE}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevisions_ByArticleId_IsAuthor",
 					"event": [
 						{
 							"listen": "test",
@@ -727,11 +1118,47 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'iffy@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}/revisions",
 							"host": [
@@ -743,6 +1170,390 @@
 								"articles",
 								"{{LAST_ARTICLE_ID}}",
 								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticleRevisions_ByArticleId_IsAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const article = jsonData.response.filter(a => a.id === LAST_ARTICLE_REVISION_ID)[0];",
+									"    ",
+									"    pm.expect(jsonData.response.length).to.eql(2);",
+									"    pm.expect(article.id).to.eql(LAST_ARTICLE_REVISION_ID);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'lambo@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}/revisions",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}",
+								"revisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUnpublishedArticle_ById_Unauthenticated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUnpublishedArticle_ById_Unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUnpublishedArticle_ById_IsAuthor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.not.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'iffy@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUnpublishedArticle_ById_IsAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const LAST_ARTICLE_ID = pm.environment.get('LAST_ARTICLE_ID');",
+									"const LAST_ARTICLE_REVISION_ID = pm.environment.get('LAST_ARTICLE_REVISION_ID');",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.not.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'lambo@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles",
+								"{{LAST_ARTICLE_ID}}"
 							]
 						}
 					},
@@ -1172,11 +1983,47 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{ACCESS_TOKEN_COOKIE}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{codesupportBackend}}/article/v1/articles/{{LAST_ARTICLE_ID}}",
 							"host": [
@@ -1193,7 +2040,137 @@
 					"response": []
 				},
 				{
-					"name": "GetAllArticles",
+					"name": "GetAllArticles_Unauthenticated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllArticles_notAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UNAUTHORIZED\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllArticles_IsAdmin",
 					"event": [
 						{
 							"listen": "test",
@@ -1221,11 +2198,47 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'lambo@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
 						"url": {
 							"raw": "{{codesupportBackend}}/article/v1/articles",
 							"host": [

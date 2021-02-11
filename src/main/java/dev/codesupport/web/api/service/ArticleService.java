@@ -9,8 +9,10 @@ import java.util.List;
 
 public interface ArticleService {
 
+    @PreAuthorize("hasPermission(#publishedOnly, 'articles', 'read')")
     List<Article> findAllArticles(boolean publishedOnly);
 
+    @PreAuthorize("hasPermission(#id, 'article', 'read')")
     Article getArticleById(Long id);
 
     @PreAuthorize("hasPermission(#article, 'create')")
@@ -23,8 +25,10 @@ public interface ArticleService {
 //    @PreAuthorize("hasPermission(#article, 'delete')")
     VoidMethodResponse deleteArticle(Article article);
 
+    @PreAuthorize("hasPermission(#id, 'articlerevisions', 'read')")
     List<ArticleRevision> findAllArticleRevisionsByArticleId(Long id);
 
+    @PreAuthorize("hasPermission(#id, 'articlerevision', 'read')")
     ArticleRevision getArticleRevisionById(Long id);
 
     @PreAuthorize("hasPermission(#articleRevision, 'create')")

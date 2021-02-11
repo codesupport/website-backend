@@ -5,6 +5,10 @@ package dev.codesupport.web.common.security.access;
  */
 public enum Accessor {
     NONE,
+    ARTICLE,
+    ARTICLES,
+    ARTICLE_REVISION,
+    ARTICLE_REVISIONS,
     CURRENT,
     DISCORD,
     IMAGE,

@@ -23,7 +23,7 @@ public class ArticleEntity implements AuditableEntity<Long, Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long revisionId;
-    @Column(length = 50, updatable = false, nullable = false)
+    @Column(unique = true, updatable = false, length = 50, nullable = false)
     private String title;
     @JsonUnwrapped
     @Embedded

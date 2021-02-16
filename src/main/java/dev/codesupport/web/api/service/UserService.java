@@ -1,5 +1,6 @@
 package dev.codesupport.web.api.service;
 
+import dev.codesupport.web.domain.Country;
 import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
@@ -38,5 +39,7 @@ public interface UserService {
 
     @PreAuthorize("hasPermission('user', 'create')")
     UserProfile registerUser(UserRegistration userRegistration);
+
+    Set<Country> findAllCountries();
 
 }

@@ -13,9 +13,9 @@ public class CountryEntity implements IdentifiableEntity<Long> {
 
     @Id
     private Long id;
-    @Column(updatable = false, length = 2, nullable = false)
+    @Column(unique = true, updatable = false, length = 2, nullable = false)
     private String code;
-    @Column(length = 50, nullable = false)
+    @Column(unique = true, updatable = false, length = 150, nullable = false)
     private String label;
 
 }

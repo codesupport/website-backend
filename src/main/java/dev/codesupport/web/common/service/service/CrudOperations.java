@@ -139,7 +139,17 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
 
     @VisibleForTesting
     void preCreate(List<D> domainObjects) {
+        runCrudLogicPreCreateCheck(domainObjects);
         runPrePersistChecks(preCreateChecks, domainObjects);
+    }
+
+    @VisibleForTesting
+    void runCrudLogicPreCreateCheck(List<D> domainObjects) {
+        if (crudLogic != null) {
+            for (D domainObject : domainObjects) {
+                crudLogic.preCreateLogic(domainObject);
+            }
+        }
     }
 
     /**
@@ -172,7 +182,17 @@ public class CrudOperations<E extends IdentifiableEntity<I>, D extends Identifia
 
     @VisibleForTesting
     void preUpdate(List<D> domainObjects) {
+        runCrudLogicPreUpdateCheck(domainObjects);
         runPrePersistChecks(preUpdateChecks, domainObjects);
+    }
+
+    @VisibleForTesting
+    void runCrudLogicPreUpdateCheck(List<D> domainObjects) {
+        if (crudLogic != null) {
+            for (D domainObject : domainObjects) {
+                crudLogic.preUpdateLogic(domainObject);
+            }
+        }
     }
 
     /**

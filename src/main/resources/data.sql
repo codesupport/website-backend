@@ -1,5 +1,5 @@
-INSERT INTO COUNTRY (ID,CODE,LABEL) VALUES (1,'us','United States of America');
-INSERT INTO COUNTRY (ID,CODE,LABEL) VALUES (2,'uk','United Kingdom');
+INSERT INTO COUNTRY (ID,CODE,LABEL) VALUES (1,'US','United States of America');
+INSERT INTO COUNTRY (ID,CODE,LABEL) VALUES (2,'GB','United Kingdom');
 
 INSERT INTO USER_AWARD (ID,CODE,LABEL,DESCRIPTION) VALUES (1,'adv_cd_2019','Advent of Code 2019','A wonderful description');
 
@@ -30,7 +30,7 @@ INSERT INTO SHOWCASE (ID,APPROVED,DESCRIPTION,LINK,TITLE,CONTRIBUTOR_LIST_ID,USE
 INSERT INTO TAG (ID,LABEL) VALUES (1,'101'), (2,'programming');
 INSERT INTO TAG_SET (ID) VALUES (1), (2);
 INSERT INTO TAG_SET_TO_TAG (ID,TAG_ID,TAG_SET_ID) VALUES (1,1,1), (2,2,1);
-INSERT INTO ARTICLE (ID,REVISION_ID,TITLE,CREATED_BY,CREATED_ON,UPDATED_BY,UPDATED_ON) VALUES (1,1,'Introduction To Programming',4,0,3,50), (2,null,'Unpublished Article',3,0,3,0);
+INSERT INTO ARTICLE (ID,REVISION_ID,TITLE,TITLE_ID,CREATED_BY,CREATED_ON,UPDATED_BY,UPDATED_ON) VALUES (1,1,'Introduction To Programming','introduction-to-programming',4,0,3,50), (2,null,'Unpublished Article','unpublished-article',3,0,3,0);
 INSERT INTO ARTICLE_REVISION (ID,ARTICLE_ID,DESCRIPTION,CONTENT,TAG_SET_ID,CREATED_BY,CREATED_ON) VALUES (1,1,'A basic overview of programming','Some long text talking about the introduction to programming',1,4,50);
 INSERT INTO ARTICLE_REVISION (ID,ARTICLE_ID,DESCRIPTION,CONTENT,TAG_SET_ID,CREATED_BY,CREATED_ON) VALUES (2,1,'Older overview of programming','Older version of the long text talking about the introduction to programming',1,4,0);
 INSERT INTO ARTICLE_REVISION (ID,ARTICLE_ID,DESCRIPTION,CONTENT,TAG_SET_ID,CREATED_BY,CREATED_ON) VALUES (3,2,'A revision for the unpublished article','This revision will not be seen, as the parent article is unpublished',2,3,0);

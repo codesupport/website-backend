@@ -68,6 +68,8 @@ public class ArticleServiceImplTest {
         //unchecked - This is fine for a mock
         //noinspection unchecked
         mockArticleCrudOperations = mock(CrudAuditableOperations.class);
+        //unchecked - This is fine for a mock
+        //noinspection unchecked
         mockArticleRevisionCrudOperations = mock(CrudOperations.class);
 
         serviceSpy = spy(
@@ -231,10 +233,6 @@ public class ArticleServiceImplTest {
                 .title(title)
                 .revision(null);
 
-        doReturn(false)
-                .when(mockArticleRepository)
-                .existsByTitle(title);
-
         doReturn(articleBuilder.buildDomain())
                 .when(mockArticleCrudOperations)
                 .createEntity(articleBuilder.buildDomain());
@@ -243,21 +241,6 @@ public class ArticleServiceImplTest {
         Article actual = serviceSpy.createArticle(articleBuilder.buildDomain());
 
         assertEquals(expected, actual);
-    }
-
-    @Test(expected = DuplicateEntryException.class)
-    public void shouldThrowDuplicateEntryExceptionOnCreateArticle() {
-        String title = "Some title";
-        ArticleBuilder articleBuilder = ArticleBuilder.builder()
-                .id(5L)
-                .title(title)
-                .revision(null);
-
-        doReturn(true)
-                .when(mockArticleRepository)
-                .existsByTitle(title);
-
-        serviceSpy.createArticle(articleBuilder.buildDomain());
     }
 
     @Test

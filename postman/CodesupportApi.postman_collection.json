@@ -182,6 +182,101 @@
 					"response": []
 				},
 				{
+					"name": "CreateArticle_DuplicateTitle",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'iffy@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {",
+									"    pm.response.to.have.status(409)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expectedErrors = [",
+									"        \"Article with similar name already exists.\"",
+									"    ].sort();",
+									"    pm.expect(jsonData.message.sort()).to.eql(expectedErrors);",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.response).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"HTTP: \\\"Protocol\\\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{codesupportBackend}}/article/v1/articles",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"article",
+								"v1",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "CreateArticleRevision_Valid_ExtraInfo",
 					"event": [
 						{
@@ -3234,6 +3329,95 @@
 		{
 			"name": "User",
 			"item": [
+				{
+					"name": "GetAllCountries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Status is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"pm.test(\"Message is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.null;",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const expected = [",
+									"        {id:1,code:\"US\",label:\"United States of America\"},",
+									"        {id:2,code:\"GB\",label:\"United Kingdom\"}",
+									"    ];",
+									"",
+									"    const actual = jsonData.response.sort((a,b) => a.id - b.id);",
+									"    pm.expect(actual).to.deep.equal(expected);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"",
+									"const echoPostRequest = {",
+									"  url: codesupportBackendUrl + '/authenticate',",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',",
+									"  body: {",
+									"    mode: 'raw',",
+									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
+									"  }",
+									"};",
+									"pm.sendRequest(echoPostRequest, function (err, res) {",
+									"  if (!err) {",
+									"      const cookie = res.headers.get('Set-Cookie');",
+									"      if (cookie != null) {",
+									"          const cookieValue = cookie.split(';')[0];",
+									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
+									"      }",
+									"  } else {",
+									"      console.log(err);",
+									"  }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "{{ACCESS_TOKEN_COOKIE}}"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/user/v1/countries",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"user",
+								"v1",
+								"countries"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "FindAllUsers",
 					"event": [

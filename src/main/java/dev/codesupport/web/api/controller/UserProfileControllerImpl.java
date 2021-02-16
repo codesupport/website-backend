@@ -1,6 +1,7 @@
 package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.api.service.UserService;
+import dev.codesupport.web.domain.Country;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * API Contract implementation for the {@link User} resource.
@@ -36,6 +38,11 @@ public class UserProfileControllerImpl implements UserProfileController {
     @Override
     public UserProfile getUserProfileById(Long id) {
         return service.getUserProfileById(id);
+    }
+
+    @Override
+    public Set<Country> findAllCountries() {
+        return service.findAllCountries();
     }
 
 }

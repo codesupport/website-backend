@@ -10,6 +10,7 @@ public class ArticleBuilder {
 
     private Long id;
     private String title;
+    private String titleId;
     private ArticleRevisionBuilder revision;
     private UserBuilder createdBy;
     private Long createdOn;
@@ -28,6 +29,7 @@ public class ArticleBuilder {
         Article domain = new Article();
         domain.setId(id);
         domain.setTitle(title);
+        domain.setTitleId(titleId);
         if (revision != null) {
             domain.setRevision(revision.buildDomain());
         }
@@ -49,6 +51,7 @@ public class ArticleBuilder {
             entity.setRevisionId(revision.buildEntity().getId());
         }
         entity.setTitle(title);
+        entity.setTitleId(titleId);
         if (createdBy != null) {
             entity.getAuditEntity().setCreatedBy(createdBy.buildEntity());
         }
@@ -72,6 +75,11 @@ public class ArticleBuilder {
 
     public ArticleBuilder title(String title) {
         this.title = title;
+        return this;
+    }
+
+    public ArticleBuilder titleId(String titleId) {
+        this.titleId = titleId;
         return this;
     }
 

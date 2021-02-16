@@ -38,6 +38,7 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
     @VisibleForTesting
     void createValidations(Article article, Violation violation) {
         article.setId(null);
+        article.setTitleId(null);
         article.setRevision(null);
 
         if (StringUtils.isBlank(article.getTitle())) {
@@ -51,10 +52,6 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
             violation.nullValue(Article.Fields.id);
         } else if (article.getId() == 0) {
             violation.invalid(Article.Fields.id);
-        }
-
-        if (StringUtils.isBlank(article.getTitle())) {
-            violation.missing(Article.Fields.title);
         }
 
         if (article.getRevision() != null) {

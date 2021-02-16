@@ -1,5 +1,6 @@
 package dev.codesupport.web.api.controller;
 
+import dev.codesupport.web.domain.Country;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.validation.annotation.AliasConstraint;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Defines endpoints and validations for the associated API Contract for the {@link User} resource.
@@ -34,5 +36,9 @@ public interface UserProfileController {
     @ApiOperation("Get User Profile by id")
     @GetMapping("/profiles/{id}")
     UserProfile getUserProfileById(@PathVariable Long id);
+
+    @ApiOperation("Get country codes")
+    @GetMapping("/countries")
+    Set<Country> findAllCountries();
 
 }

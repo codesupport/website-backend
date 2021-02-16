@@ -1,12 +1,15 @@
 package dev.codesupport.web.api.service;
 
+import dev.codesupport.web.api.data.entity.CountryEntity;
 import dev.codesupport.web.api.data.entity.UserEntity;
+import dev.codesupport.web.api.data.repository.CountryRepository;
 import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.MappingUtils;
+import dev.codesupport.web.domain.Country;
 import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.User;
@@ -15,6 +18,7 @@ import dev.codesupport.web.domain.UserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,18 +33,20 @@ public class UserServiceImpl implements UserService {
     private final CrudOperations<UserEntity, UserProfile, Long> userProfileCrudOperations;
 
     private final UserRepository userRepository;
+    private final CountryRepository countryRepository;
 
     private final HashingUtility hashingUtility;
 
     @Autowired
     UserServiceImpl(
             UserRepository userRepository,
+            CountryRepository countryRepository,
             HashingUtility hashingUtility
     ) {
         userCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, NewUser.class);
         userProfileCrudOperations = new CrudOperations<>(userRepository, UserEntity.class, UserProfile.class);
         this.userRepository = userRepository;
-
+        this.countryRepository = countryRepository;
         this.hashingUtility = hashingUtility;
     }
 
@@ -110,6 +116,13 @@ public class UserServiceImpl implements UserService {
         }
 
         return MappingUtils.convertToType(createdUser, UserProfile.class);
+    }
+
+    @Override
+    public Set<Country> findAllCountries() {
+        Set<CountryEntity> entities = new HashSet<>(countryRepository.findAll());
+
+        return MappingUtils.convertToType(entities, Country.class);
     }
 
 }

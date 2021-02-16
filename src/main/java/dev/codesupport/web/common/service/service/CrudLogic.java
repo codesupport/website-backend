@@ -1,9 +1,23 @@
 package dev.codesupport.web.common.service.service;
 
-public interface CrudLogic<E, D> {
+//S1610 - Default implementations are an abstract class concept
+@SuppressWarnings("java:S1610")
+public abstract class CrudLogic<E, D> {
 
-    void preGetLogic(E e, D d);
+    public void preCreateLogic(D d) {
+        // Only used if overridden
+    }
 
-    void preSaveLogic(E e, D d);
+    public void preUpdateLogic(D d) {
+        // Only used if overridden
+    }
+
+    public void preGetLogic(E e, D d) {
+        // Only used if overridden
+    }
+
+    public void preSaveLogic(E e, D d) {
+        // Only used if overridden
+    }
 
 }

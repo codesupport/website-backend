@@ -10,6 +10,6 @@ import java.util.List;
 public interface ArticleRepository extends CrudRepository<ArticleEntity, Long> {
 
     List<ArticleEntity> findAllByRevisionIdNotNull();
-    boolean existsByTitle(String title);
+    boolean existsByTitleId(String title);
 
 }

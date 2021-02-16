@@ -3,17 +3,21 @@ package dev.codesupport.web.api.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.codesupport.testutils.builders.CountryBuilder;
 import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.data.entity.UserEntity;
+import dev.codesupport.web.api.data.repository.CountryRepository;
 import dev.codesupport.web.api.data.repository.UserRepository;
 import dev.codesupport.web.common.exception.ResourceNotFoundException;
 import dev.codesupport.web.common.exception.ServiceLayerException;
 import dev.codesupport.web.common.security.hashing.HashingUtility;
 import dev.codesupport.web.common.service.service.CrudOperations;
+import dev.codesupport.web.domain.Country;
 import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
+import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +27,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -41,6 +47,7 @@ public class UserServiceImplTest {
     private static CrudOperations<UserEntity, UserProfile, Long> mockUserProfileCrudOperations;
 
     private static UserRepository mockUserRepository;
+    private static CountryRepository mockCountryRepository;
 
     private static List<NewUser> expectedUserList;
 
@@ -57,20 +64,21 @@ public class UserServiceImplTest {
         mockUserProfileCrudOperations = mock(CrudOperations.class);
 
         mockUserRepository = mock(UserRepository.class);
+        mockCountryRepository = mock(CountryRepository.class);
 
         mockHashingUtility = mock(HashingUtility.class);
 
-        serviceSpy = spy(new UserServiceImpl(mockUserRepository, mockHashingUtility));
+        serviceSpy = spy(new UserServiceImpl(mockUserRepository, mockCountryRepository, mockHashingUtility));
         ReflectionTestUtils.setField(serviceSpy, "userCrudOperations", mockUserCrudOperations);
         ReflectionTestUtils.setField(serviceSpy, "userProfileCrudOperations", mockUserProfileCrudOperations);
 
         UserBuilder userBuilder = UserBuilder.builder()
-            .id(5L)
-            .alias("timmy")
-            .hashPassword("1234567890abcdef")
-            .email("valid@email.com")
-            .avatarLink("timmeh.jpg")
-            .joinDate(1L);
+                .id(5L)
+                .alias("timmy")
+                .hashPassword("1234567890abcdef")
+                .email("valid@email.com")
+                .avatarLink("timmeh.jpg")
+                .joinDate(1L);
 
         expectedUserList = Collections.singletonList(userBuilder.buildNewUserDomain());
     }
@@ -81,6 +89,7 @@ public class UserServiceImplTest {
                 mockUserCrudOperations,
                 mockUserProfileCrudOperations,
                 mockUserRepository,
+                mockCountryRepository,
                 mockHashingUtility,
                 serviceSpy
         );
@@ -292,6 +301,29 @@ public class UserServiceImplTest {
 
         UserProfile expected = builder.buildUserProfileDomain();
         UserProfile actual = serviceSpy.registerUser(userRegistration);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldReturnAllCountries() {
+        Set<CountryBuilder> builderSet = Sets.newLinkedHashSet(
+                CountryBuilder.builder()
+                        .id(1L)
+                        .code("US")
+                        .label("United States of America"),
+                CountryBuilder.builder()
+                        .id(2L)
+                        .code("GB")
+                        .label("United Kingdom")
+        );
+
+        doReturn(builderSet.stream().map(CountryBuilder::buildEntity).collect(Collectors.toList()))
+                .when(mockCountryRepository)
+                .findAll();
+
+        Set<Country> expected = builderSet.stream().map(CountryBuilder::buildDomain).collect(Collectors.toSet());
+        Set<Country> actual = serviceSpy.findAllCountries();
 
         assertEquals(expected, actual);
     }

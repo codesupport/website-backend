@@ -128,12 +128,13 @@ public class ArticleValidatorTest {
     }
 
     @Test
-    public void shouldSetArticleIdAndRevisionToNullOnCreate() {
+    public void shouldSetUndefinableAttributesToNullOnCreate() {
         ArticleValidator validator = new ArticleValidator();
 
         ArticleBuilder builder = ArticleBuilder.builder()
                 .id(15L)
                 .title("Some title")
+                .titleId("some-title")
                 .revision(
                         ArticleRevisionBuilder.builder()
                         .id(10L)
@@ -142,6 +143,7 @@ public class ArticleValidatorTest {
         Article actual = builder.buildDomain();
         Article expected = builder.buildDomain();
         expected.setId(null);
+        expected.setTitleId(null);
         expected.setRevision(null);
 
         TestViolation violation = new TestViolation();
@@ -164,7 +166,6 @@ public class ArticleValidatorTest {
         validator.updateValidations(article, violation);
 
         Set<String> expected = Sets.newHashSet(
-                Article.Fields.title + " missing",
                 Article.Fields.updatedOn + " nullValue",
                 Article.Fields.revision + "." + ArticleRevision.Fields.id + " nullValue",
                 Article.Fields.id + " nullValue"

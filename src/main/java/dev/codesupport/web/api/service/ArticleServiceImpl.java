@@ -24,6 +24,8 @@ import dev.codesupport.web.domain.ArticleRevision;
 import dev.codesupport.web.domain.Tag;
 import dev.codesupport.web.domain.TagSet;
 import dev.codesupport.web.domain.VoidMethodResponse;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +60,7 @@ public class ArticleServiceImpl implements ArticleService {
             ImageReferenceScanner imageReferenceScanner
     ) {
         articleCrudOperations = new CrudAuditableOperations<>(articleRepository, ArticleEntity.class, Article.class);
-        articleCrudOperations.setCrudLogic(new ArticleCrudLogic());
+        articleCrudOperations.setCrudLogic(new ArticleCrudLogic(articleRepository));
         revisionCrudOperations = new CrudOperations<>(articleRevisionRepository, ArticleRevisionEntity.class, ArticleRevision.class);
         revisionCrudOperations.setCrudLogic(new ArticleRevisionCrudLogic(tagRepository, tagSetRepository, tagSetToTagsRepository));
         this.articleRepository = articleRepository;
@@ -99,11 +101,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article createArticle(Article article) {
-        if (!articleRepository.existsByTitle(article.getTitle())) {
-            return articleCrudOperations.createEntity(article);
-        } else {
-            throw new DuplicateEntryException("Article already exists with the given title");
-        }
+        return articleCrudOperations.createEntity(article);
     }
 
     @Override
@@ -161,11 +159,20 @@ public class ArticleServiceImpl implements ArticleService {
         }).collect(Collectors.toSet());
     }
 
-    static class ArticleCrudLogic implements CrudLogic<ArticleEntity, Article> {
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    static class ArticleCrudLogic extends CrudLogic<ArticleEntity, Article> {
+
+        private final ArticleRepository articleRepository;
 
         @Override
-        public void preGetLogic(ArticleEntity articleEntity, Article article) {
-            // Nothing to do for pre-get logic
+        public void preCreateLogic(Article article) {
+            String titleId = getTitleIdFromTitle(article.getTitle());
+            if (articleRepository.existsByTitleId(titleId)) {
+                throw new DuplicateEntryException("Article with similar name already exists.");
+            } else {
+                article.setTitleId(titleId);
+            }
         }
 
         @Override
@@ -175,9 +182,17 @@ public class ArticleServiceImpl implements ArticleService {
             }
         }
 
+        @VisibleForTesting
+        String getTitleIdFromTitle(String title) {
+            return title.trim()
+                    .toLowerCase()
+                    .replaceAll("[^\\w ]", "")
+                    .replaceAll("\\s", "-");
+        }
+
     }
 
-    static class ArticleRevisionCrudLogic implements CrudLogic<ArticleRevisionEntity, ArticleRevision> {
+    static class ArticleRevisionCrudLogic extends CrudLogic<ArticleRevisionEntity, ArticleRevision> {
 
         private final TagRepository tagRepository;
         private final TagSetRepository tagSetRepository;

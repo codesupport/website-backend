@@ -21,7 +21,7 @@ public @interface PasswordConstraint {
     /**
      * @return Message to display if property is invalid
      */
-    String message() default "Invalid password: must be alphanumeric and length > 10";
+    String message() default "Your password must be alphanumeric and at least 10 characters long.";
 
     Class<?>[] groups() default {};
 

@@ -23,6 +23,7 @@ public class HttpSessionProperties {
     public static class CookieConfiguration {
 
         private String name;
+        private boolean secure;
         private int maxAge;
 
     }
@@ -32,6 +33,8 @@ public class HttpSessionProperties {
 
         private Set<String> origins;
         private Set<String> methods;
+        private Set<String> headers;
+        private boolean credentialsAllowed;
 
     }
 

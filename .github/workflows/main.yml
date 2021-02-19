@@ -32,7 +32,7 @@ jobs:
         with:
           java-version: '1.8.0'
       - name: Build Code (Development)
-        run: ./mvnw clean package -Dmaven.test.skip=true
+        run: ./mvnw clean package -P it -Dmaven.test.skip=true
       - name: Start Application
         run: java -jar -Dmax.image.size=1000 target/api-service-0.0.1-SNAPSHOT.jar &
       - name: Wait Service to Start

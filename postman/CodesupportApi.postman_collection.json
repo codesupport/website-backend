@@ -52,7 +52,13 @@
 							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"title\": \"My Title\"\n}",
@@ -83,10 +89,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -133,6 +139,7 @@
 									"    pm.expect(response.id).to.greaterThan(0);",
 									"    pm.expect(response.id).to.not.eql(577);",
 									"    pm.expect(response.title).to.eql(\"HTTP Protocol\");",
+									"    pm.expect(response.titleId).to.eql(\"http-protocol\");",
 									"    pm.expect(response.revision).to.be.null;",
 									"    pm.expect(response.createdBy.id).to.eql(3);",
 									"    pm.expect(response.createdOn).to.greaterThan(currentTime - 10000);",
@@ -160,7 +167,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": 577,\n    \"title\": \"HTTP Protocol\",\n    \"revision\": {\n        \"id\": 10\n    },\n    \"createdBy\": {\n        \"id\": 2\n    },\n    \"createdOn\": 1,\n    \"updatedBy\": {\n        \"id\": 2\n    },\n    \"updatedOn\": 1\n}",
+							"raw": "{\n    \"id\": 577,\n    \"title\": \"HTTP Protocol\",\n    \"titleId\": \"wont-use-this-title-id\",\n    \"revision\": {\n        \"id\": 10\n    },\n    \"createdBy\": {\n        \"id\": 2\n    },\n    \"createdOn\": 1,\n    \"updatedBy\": {\n        \"id\": 2\n    },\n    \"updatedOn\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -188,10 +195,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -283,10 +290,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -386,10 +393,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -550,10 +557,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -645,10 +652,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -768,6 +775,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -821,10 +837,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -910,10 +926,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -999,10 +1015,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1078,6 +1094,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -1132,10 +1157,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1218,10 +1243,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1304,10 +1329,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1384,6 +1409,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -1437,10 +1471,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1520,10 +1554,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1603,10 +1637,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1661,10 +1695,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1757,10 +1791,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1852,10 +1886,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -1947,10 +1981,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -2083,10 +2117,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -2162,6 +2196,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -2214,10 +2257,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -2298,10 +2341,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -2375,6 +2418,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -2434,6 +2486,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -2480,6 +2541,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -2520,6 +2590,15 @@
 									"pm.test(\"Payload is correct\", function () {",
 									"    pm.expect(pm.response.headers.has('Set-Cookie')).to.be.false;",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -2569,10 +2648,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -2696,10 +2775,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -2796,10 +2875,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -2896,10 +2975,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -3001,10 +3080,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -3086,6 +3165,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -3130,6 +3218,15 @@
 									"    const jsonData = pm.response.json();",
 									"    pm.expect(jsonData.response).to.be.null;",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3180,6 +3277,15 @@
 									"    const jsonData = pm.response.json();",
 									"    pm.expect(jsonData.response.length).to.greaterThan(0);",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3235,6 +3341,15 @@
 									"",
 									"    return allByUser;",
 									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3296,6 +3411,15 @@
 									"",
 									"    return allByUser;",
 									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3365,28 +3489,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
-									"",
-									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
-									"  method: 'POST',",
-									"  header: 'Content-Type: application/json',",
-									"  body: {",
-									"    mode: 'raw',",
-									"    raw: JSON.stringify({ email: 'atrum@cs.dev', password: 'supersecretpassword' })",
-									"  }",
-									"};",
-									"pm.sendRequest(echoPostRequest, function (err, res) {",
-									"  if (!err) {",
-									"      const cookie = res.headers.get('Set-Cookie');",
-									"      if (cookie != null) {",
-									"          const cookieValue = cookie.split(';')[0];",
-									"          pm.environment.set('ACCESS_TOKEN_COOKIE', cookieValue);",
-									"      }",
-									"  } else {",
-									"      console.log(err);",
-									"  }",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3397,13 +3500,7 @@
 							"type": "noauth"
 						},
 						"method": "GET",
-						"header": [
-							{
-								"key": "Cookie",
-								"type": "text",
-								"value": "{{ACCESS_TOKEN_COOKIE}}"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "{{codesupportBackend}}/user/v1/countries",
 							"host": [
@@ -3442,6 +3539,15 @@
 									"    const expectedProperties = [\"id\", \"alias\", \"discordId\", \"discordUsername\", \"avatarLink\", \"disabled\", \"role\", \"joinDate\"].sort();",
 									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3489,6 +3595,15 @@
 									"    const expectedProperties = [\"id\", \"alias\", \"discordId\", \"discordUsername\", \"avatarLink\", \"disabled\", \"role\", \"joinDate\"].sort();",
 									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3541,6 +3656,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -3589,6 +3713,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -3634,6 +3767,15 @@
 									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
 									"    pm.expect(jsonData.response[0].email).to.be.null;",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3691,10 +3833,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -3771,6 +3913,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -3817,6 +3968,15 @@
 									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
 									"    pm.expect(jsonData.response[0].email).to.be.null;",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -3879,10 +4039,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -3964,6 +4124,15 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -4021,10 +4190,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -4107,10 +4276,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -4195,10 +4364,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -4340,10 +4509,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -4508,10 +4677,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -4603,10 +4772,10 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const codesupportBackendUrl = pm.environment.get(\"codesupportBackend\");",
+									"const CODESUPPORT_BACKEND = pm.environment.get('codesupportBackend');",
 									"",
 									"const echoPostRequest = {",
-									"  url: codesupportBackendUrl + '/authenticate',",
+									"  url: CODESUPPORT_BACKEND + '/authenticate',",
 									"  method: 'POST',",
 									"  header: 'Content-Type: application/json',",
 									"  body: {",
@@ -4694,6 +4863,15 @@
 									"    const expectedProperties = [\"name\", \"version\", \"method\", \"uri\", \"returns\", \"expectsBody\", \"urlParameters\"].sort();",
 									"    pm.expect(Object.getOwnPropertyNames(jsonData.response[0]).sort()).to.eql(expectedProperties);",
 									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript"
 							}

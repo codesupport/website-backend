@@ -27,6 +27,7 @@ security:
     cors:
       origins:
         - ${cors.origin:}
+      credentialsAllowed: true
       methods:
         - "*"
       headers:

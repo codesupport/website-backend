@@ -31,8 +31,15 @@ public class CorsFilter extends OncePerRequestFilter {
             .ifPresent(origin -> {
                 response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
                 response.setHeader(
+                        HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                        accessControlAllowFor(httpSessionProperties.getCors().getHeaders())
+                );
+                if (httpSessionProperties.getCors().isCredentialsAllowed()) {
+                    response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+                }
+                response.setHeader(
                         HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
-                        accessControlAllowMethods(httpSessionProperties.getCors().getMethods())
+                        accessControlAllowFor(httpSessionProperties.getCors().getMethods())
                 );
             });
 
@@ -45,23 +52,21 @@ public class CorsFilter extends OncePerRequestFilter {
 
         if (origins.stream().anyMatch(o -> o.equals("*"))) {
             origin = Optional.of("*");
-        } else if (origins.contains(request.getRemoteHost())) {
-            origin = Optional.of(request.getRemoteHost());
         } else {
-            origin = Optional.empty();
+            origin = Optional.of(origins.iterator().next());
         }
 
         return origin;
     }
 
     @VisibleForTesting
-    String accessControlAllowMethods(Set<String> methods) {
+    String accessControlAllowFor(Set<String> allowed) {
         String method;
 
-        if (methods.stream().anyMatch(m -> m.equals("*"))) {
+        if (allowed.stream().anyMatch(m -> m.equals("*"))) {
             method = "*";
         } else {
-            method = StringUtils.join(methods, ", ");
+            method = StringUtils.join(allowed, ", ");
         }
 
         return method;

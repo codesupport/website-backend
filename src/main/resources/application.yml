@@ -23,10 +23,15 @@ security:
     cookie:
       name: ${cookie.name:}
       max-age: ${cookie.max.age:}
+      secure: true
     cors:
       origins:
         - ${cors.origin:}
       methods:
         - "*"
+      headers:
+        - "Content-Type"
+        - "Access-Control-Allow-Headers"
+        - "Authorization"
 server:
   port: 8082

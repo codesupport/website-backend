@@ -269,6 +269,12 @@ public class AuthenticationServiceImplTest {
                 .when(mockHttpSessionProperties)
                 .getCookie();
 
+        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(true)
+                .when(mockCookieConfig)
+                .isSecure();
+
         doReturn(null)
                 .when(mockUserRepository)
                 .save(any());

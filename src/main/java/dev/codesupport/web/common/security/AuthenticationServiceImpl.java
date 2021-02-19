@@ -97,8 +97,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(userEntity);
 
         String headerValue = httpSessionProperties.getCookie().getName()
-                + "=" + userEntity.getAccessToken()
-                + "; Secure; HttpOnly; Path=/";
+                + "=" + userEntity.getAccessToken();
+
+        if (httpSessionProperties.getCookie().isSecure()) {
+            headerValue += "; Secure";
+        }
+
+        headerValue += "; HttpOnly; Path=/";
 
         if (httpSessionProperties.getCookie().getMaxAge() > 0) {
             headerValue += "; MaxAge=" + httpSessionProperties.getCookie().getMaxAge();

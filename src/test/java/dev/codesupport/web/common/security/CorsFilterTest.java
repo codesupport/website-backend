@@ -29,6 +29,10 @@ public class CorsFilterTest {
     public void shouldAddHeadersToResponse() throws ServletException, IOException {
         String origin = "*";
         String method = "*";
+        Set<String> headers = Sets.newLinkedHashSet(
+                "headerA",
+                "headerB"
+        );
 
         HttpSessionProperties mockHttpSessionProperties = mock(HttpSessionProperties.class);
         HttpSessionProperties.CorsConfiguration mockCorsConfig = mock(HttpSessionProperties.CorsConfiguration.class);
@@ -53,6 +57,18 @@ public class CorsFilterTest {
 
         //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
         //noinspection ResultOfMethodCallIgnored
+        doReturn(headers)
+                .when(mockCorsConfig)
+                .getHeaders();
+
+        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(true)
+                .when(mockCorsConfig)
+                .isCredentialsAllowed();
+
+        //ResultOfMethodCallIgnored - Not invoking a method, creating a mock
+        //noinspection ResultOfMethodCallIgnored
         doReturn(mockCorsConfig)
                 .when(mockHttpSessionProperties)
                 .getCors();
@@ -63,7 +79,7 @@ public class CorsFilterTest {
 
         doReturn(method)
                 .when(filterSpy)
-                .accessControlAllowMethods(Collections.singleton(method));
+                .accessControlAllowFor(Collections.singleton(method));
 
         doNothing()
                 .when(mockResponse)
@@ -81,7 +97,13 @@ public class CorsFilterTest {
         verify(mockResponse, times(1))
                 .setHeader("Access-Control-Allow-Methods", "*");
 
-        verify(mockResponse, times(2))
+        verify(mockResponse, times(1))
+                .setHeader("Access-Control-Allow-Headers", "headerA, headerB");
+
+        verify(mockResponse, times(1))
+                .setHeader("Access-Control-Allow-Credentials", "true");
+
+        verify(mockResponse, times(4))
                 .setHeader(any(), any());
     }
 
@@ -123,7 +145,7 @@ public class CorsFilterTest {
 
         doReturn(method)
                 .when(filterSpy)
-                .accessControlAllowMethods(Collections.singleton(method));
+                .accessControlAllowFor(Collections.singleton(method));
 
         doNothing()
                 .when(mockResponse)
@@ -177,7 +199,7 @@ public class CorsFilterTest {
 
         doReturn(method)
                 .when(filterSpy)
-                .accessControlAllowMethods(Collections.singleton(method));
+                .accessControlAllowFor(Collections.singleton(method));
 
         doNothing()
                 .when(mockResponse)
@@ -220,33 +242,6 @@ public class CorsFilterTest {
     }
 
     @Test
-    public void shouldGetEmptyOptionalFromSet() {
-        String origin = "origin3";
-
-        HttpSessionProperties mockHttpSessionProperties = mock(HttpSessionProperties.class);
-
-        Set<String> origins = Sets.newHashSet(
-                Arrays.asList(
-                        "origin1",
-                        "origin2"
-                )
-        );
-
-        CorsFilter corsFilter = new CorsFilter(mockHttpSessionProperties);
-
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-
-        doReturn(origin)
-                .when(mockRequest)
-                .getRemoteAddr();
-
-        Optional<String> expected = Optional.empty();
-        Optional<String> actual = corsFilter.accessControlAllowOrigins(mockRequest, origins);
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void shouldReturnStarIfStarInSet() {
         String origin = "origin3";
 
@@ -283,7 +278,7 @@ public class CorsFilterTest {
         CorsFilter corsFilter = new CorsFilter(mockHttpSessionProperties);
 
         String expected = "a, b, c";
-        String actual = corsFilter.accessControlAllowMethods(methods);
+        String actual = corsFilter.accessControlAllowFor(methods);
 
         assertEquals(expected, actual);
     }
@@ -297,7 +292,7 @@ public class CorsFilterTest {
         CorsFilter corsFilter = new CorsFilter(mockHttpSessionProperties);
 
         String expected = "*";
-        String actual = corsFilter.accessControlAllowMethods(methods);
+        String actual = corsFilter.accessControlAllowFor(methods);
 
         assertEquals(expected, actual);
     }

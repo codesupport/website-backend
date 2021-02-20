@@ -77,17 +77,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @VisibleForTesting
-    public UserEntity getUserByToken(String token) {
-        UserEntity userEntity;
-        Optional<UserEntity> optional = userRepository.findByAccessTokenIgnoreCase(token);
-
-        if (optional.isPresent()) {
-            userEntity = optional.get();
-        } else {
-            throw new InvalidUserException(InvalidUserException.Reason.INVALID_USER);
-        }
-
-        return userEntity;
+    public Optional<UserEntity> getUserByToken(String token) {
+        return userRepository.findByAccessTokenIgnoreCase(token);
     }
 
     @VisibleForTesting

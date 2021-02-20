@@ -81,11 +81,15 @@ public class TokenCookieFilter extends OncePerRequestFilter {
      */
     @VisibleForTesting
     void setContextForToken(HttpServletRequest request, HttpServletResponse response, String token) {
-        UserEntity userEntity = authenticationService.getUserByToken(token);
-        if (userEntity.getAccessTokenExpireOn() > System.currentTimeMillis()) {
-            configureSpringSecurityContext(request, createUserDetails(userEntity));
-            String value = authenticationService.createTokenCookieForUser(userEntity);
-            response.setHeader(HttpHeaders.SET_COOKIE, value);
+        Optional<UserEntity> optional = authenticationService.getUserByToken(token);
+        if (optional.isPresent()) {
+            UserEntity userEntity = optional.get();
+
+            if (userEntity.getAccessTokenExpireOn() > System.currentTimeMillis()) {
+                configureSpringSecurityContext(request, createUserDetails(userEntity));
+                String value = authenticationService.createTokenCookieForUser(userEntity);
+                response.setHeader(HttpHeaders.SET_COOKIE, value);
+            }
         }
     }
 

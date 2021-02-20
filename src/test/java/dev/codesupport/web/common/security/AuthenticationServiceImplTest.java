@@ -181,28 +181,17 @@ public class AuthenticationServiceImplTest {
         serviceSpy.getUserByEmail(email);
     }
 
-    @Test(expected = InvalidUserException.class)
-    public void shouldThrowInvalidUserExceptionIfNoUserWithToken() {
-        String token = "tokentoken";
-
-        doReturn(Optional.empty())
-                .when(mockUserRepository)
-                .findByAccessTokenIgnoreCase(token);
-
-        serviceSpy.getUserByToken(token);
-    }
-
     @Test
     public void shouldGetUserByToken() {
         String token = "tokentoken";
 
-        UserEntity expected = mock(UserEntity.class);
+        Optional<UserEntity> expected = Optional.of(mock(UserEntity.class));
 
-        doReturn(Optional.of(expected))
+        doReturn(expected)
                 .when(mockUserRepository)
                 .findByAccessTokenIgnoreCase(token);
 
-        UserEntity actual = serviceSpy.getUserByToken(token);
+        Optional<UserEntity> actual = serviceSpy.getUserByToken(token);
 
         assertSame(expected, actual);
     }

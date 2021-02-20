@@ -355,7 +355,7 @@ public class TokenCookieFilterTest {
                 .when(mockAuthenticationService)
                 .getUserByToken(any());
 
-        doReturn(mockUserEntity)
+        doReturn(Optional.of(mockUserEntity))
                 .when(mockAuthenticationService)
                 .getUserByToken(token);
 
@@ -420,7 +420,7 @@ public class TokenCookieFilterTest {
                 .when(mockAuthenticationService)
                 .getUserByToken(any());
 
-        doReturn(mockUserEntity)
+        doReturn(Optional.of(mockUserEntity))
                 .when(mockAuthenticationService)
                 .getUserByToken(token);
 
@@ -455,6 +455,52 @@ public class TokenCookieFilterTest {
 
         verify(mockResponse, times(1))
                 .setHeader("Set-Cookie", newToken);
+    }
+
+    @Test
+    public void shouldIgnoreInvalidTokens() {
+        String token = "token";
+
+        AuthenticationService mockAuthenticationService = mock(AuthenticationService.class);
+
+        TokenCookieFilter filterSpy = spy(new TokenCookieFilter(null, null));
+
+        ReflectionTestUtils.setField(filterSpy, "authenticationService", mockAuthenticationService);
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+
+        doReturn(null)
+                .when(mockAuthenticationService)
+                .getUserByToken(any());
+
+        doReturn(Optional.empty())
+                .when(mockAuthenticationService)
+                .getUserByToken(token);
+
+        doReturn(null)
+                .when(mockAuthenticationService)
+                .createTokenCookieForUser(any());
+
+        doReturn(null)
+                .when(filterSpy)
+                .createUserDetails(any());
+
+        doNothing()
+                .when(mockResponse)
+                .setHeader(any(), any());
+
+        doNothing()
+                .when(filterSpy)
+                .configureSpringSecurityContext(any(), any());
+
+        filterSpy.setContextForToken(mockRequest, mockResponse, token);
+
+        verify(filterSpy, times(0))
+                .configureSpringSecurityContext(any(), any());
+
+        verify(mockResponse, times(0))
+                .setHeader(any(), any());
     }
 
     @Test

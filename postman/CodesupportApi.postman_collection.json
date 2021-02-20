@@ -4578,8 +4578,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 401\", function () {",
-									"    pm.response.to.have.status(401)",
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
 									"});",
 									"pm.test(\"Status is correct\", function () {",
 									"    const jsonData = pm.response.json();",
@@ -4588,7 +4588,7 @@
 									"pm.test(\"Message is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    pm.expect(jsonData.message).to.eql([",
-									"        \"Invalid user credentials\"",
+									"        \"You are not permitted to perform the requested action on the requested resource.\"",
 									"    ]);",
 									"});",
 									"pm.test(\"Payload is correct\", function () {",
@@ -4889,6 +4889,56 @@
 								"service",
 								"v1",
 								"endpoints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BadToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"});",
+									"pm.test(\"Payload is correct\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.deep.eq({status:\"UP\"});",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "AccessToken=blahblahblahblah",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{codesupportBackend}}/actuator/health",
+							"host": [
+								"{{codesupportBackend}}"
+							],
+							"path": [
+								"actuator",
+								"health"
 							]
 						}
 					},

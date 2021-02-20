@@ -21,7 +21,7 @@ public @interface AliasConstraint {
     /**
      * @return Message to display if property is invalid
      */
-    String message() default "Invalid alias: must be 4 - 15 alphanumeric characters, beginning with a letter";
+    String message() default "Your alias must be 4 - 15 alphanumeric characters, beginning with a letter.";
 
     Class<?>[] groups() default {};
 

@@ -2994,7 +2994,7 @@
 									"pm.test(\"Message is correct\", function () {",
 									"    const jsonData = pm.response.json();",
 									"    let expected = [",
-									"        \"Invalid password: must be alphanumeric and length > 10\"",
+									"        \"Your password must be alphanumeric and at least 10 characters long.\"",
 									"    ];",
 									"",
 									"    pm.expect(jsonData.message).to.deep.eql(expected);",

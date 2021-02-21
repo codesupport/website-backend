@@ -82,6 +82,7 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
         }
     }
 
+    @VisibleForTesting
     boolean fileDoesNotExists(String filePath) {
         return !(new File(filePath).exists());
     }

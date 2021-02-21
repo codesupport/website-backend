@@ -3,6 +3,7 @@ package dev.codesupport.web.api.service;
 import dev.codesupport.web.domain.Country;
 import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.User;
+import dev.codesupport.web.domain.UserPasswordChange;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -39,6 +40,9 @@ public interface UserService {
 
     @PreAuthorize("hasPermission('user', 'create')")
     UserProfile registerUser(UserRegistration userRegistration);
+
+    @PreAuthorize("hasPermission(#userPasswordChange, 'password', 'update')")
+    UserProfile updatePassword(UserPasswordChange userPasswordChange);
 
     Set<Country> findAllCountries();
 

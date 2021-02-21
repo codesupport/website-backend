@@ -23,16 +23,29 @@ public class FileControllerImpl implements FileController {
 
     //TODO: It would be great to just return a file resource object if this can be figured out.
     @Override
-    public ResponseEntity<?> getImage(@PathVariable String fileName) {
-        FileResource fileResource = service.getImage(fileName);
+    public ResponseEntity<?> getArticleImage(@PathVariable String fileName) {
+        FileResource fileResource = service.getArticleImage(fileName);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, fileResource.getContentType().getType());
         return new ResponseEntity<>(fileResource.getData(), headers, HttpStatus.OK);
     }
 
     @Override
-    public FileReference storeImage(MultipartFile file) {
-        return service.storeImage(file);
+    public ResponseEntity<?> getArticleCoverImage(@PathVariable String fileName) {
+        FileResource fileResource = service.getArticleCoverImage(fileName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, fileResource.getContentType().getType());
+        return new ResponseEntity<>(fileResource.getData(), headers, HttpStatus.OK);
+    }
+
+    @Override
+    public FileReference storeArticleImage(MultipartFile file) {
+        return service.storeArticleImage(file);
+    }
+
+    @Override
+    public FileReference storeArticleCoverImage(MultipartFile file) {
+        return service.storeArticleCoverImage(file);
     }
 
 }

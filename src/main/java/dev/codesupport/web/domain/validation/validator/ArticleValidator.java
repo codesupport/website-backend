@@ -1,12 +1,15 @@
 package dev.codesupport.web.domain.validation.validator;
 
 import com.google.common.annotations.VisibleForTesting;
+import dev.codesupport.web.api.service.FileServiceImpl;
 import dev.codesupport.web.domain.Article;
 import dev.codesupport.web.domain.ArticleRevision;
 import dev.codesupport.web.domain.validation.MultiViolationConstraintValidator;
 import dev.codesupport.web.domain.validation.Violation;
 import dev.codesupport.web.domain.validation.annotation.ArticleConstraint;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
 
 /**
  * Validation logic to be performed on properties annotated with {@link ArticleConstraint}
@@ -44,6 +47,12 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
         if (StringUtils.isBlank(article.getTitle())) {
             violation.missing(Article.Fields.title);
         }
+
+        if (StringUtils.isBlank(article.getImageName())) {
+            article.setImageName(null);
+        } else if (fileDoesNotExists(FileServiceImpl.ARTICLE_COVER_IMAGE_STORAGE_DIR + article.getImageName())) {
+            violation.invalid(Article.Fields.imageName);
+        }
     }
 
     @VisibleForTesting
@@ -65,6 +74,16 @@ public class ArticleValidator implements MultiViolationConstraintValidator<Artic
         if (article.getUpdatedOn() == null) {
             violation.nullValue(Article.Fields.updatedOn);
         }
+
+        if (StringUtils.isBlank(article.getImageName())) {
+            article.setImageName(null);
+        } else if (fileDoesNotExists(FileServiceImpl.ARTICLE_COVER_IMAGE_STORAGE_DIR + article.getImageName())) {
+            violation.invalid(Article.Fields.imageName);
+        }
+    }
+
+    boolean fileDoesNotExists(String filePath) {
+        return !(new File(filePath).exists());
     }
 
 }

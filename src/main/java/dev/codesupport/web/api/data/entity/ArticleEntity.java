@@ -27,6 +27,8 @@ public class ArticleEntity implements AuditableEntity<Long, Long> {
     private String title;
     @Column(unique = true, updatable = false, length = 100, nullable = false)
     private String titleId;
+    @Column(length = 30)
+    private String imageName;
     @JsonUnwrapped
     @Embedded
     private AuditEntity<Long> auditEntity = new AuditEntity<>();

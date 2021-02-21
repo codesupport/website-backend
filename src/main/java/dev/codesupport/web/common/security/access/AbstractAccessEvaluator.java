@@ -25,7 +25,7 @@ public abstract class AbstractAccessEvaluator<T> {
     private final Class<T> classType;
     private final Permission permission;
 
-    public AbstractAccessEvaluator(Permission permission) {
+    protected AbstractAccessEvaluator(Permission permission) {
         this.permission = permission;
 
         // Finds the type of the class parameter and stores it for later mappings.
@@ -125,11 +125,11 @@ public abstract class AbstractAccessEvaluator<T> {
      * @param authentication The Authentication to validate
      * @return True if the Authentication is not null & not Anonymous, False otherwise
      */
-    protected boolean isValidAuth(Authentication authentication) {
+    public boolean isValidAuth(Authentication authentication) {
         return authentication != null && !(authentication instanceof AnonymousAuthenticationToken);
     }
 
-    protected UserDetails getUserDetails(Authentication authentication) {
+    public UserDetails getUserDetails(Authentication authentication) {
         Object principal = authentication.getPrincipal();
 
         if (principal instanceof UserDetails) {

@@ -3,6 +3,7 @@ package dev.codesupport.web.api.controller;
 import dev.codesupport.web.api.service.UserService;
 import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.User;
+import dev.codesupport.web.domain.UserPasswordChange;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,4 +58,8 @@ public class UserControllerImpl implements UserController {
         return service.registerUser(userRegistration);
     }
 
+    @Override
+    public UserProfile updatePassword(UserPasswordChange userPasswordChange) {
+        return service.updatePassword(userPasswordChange);
+    }
 }

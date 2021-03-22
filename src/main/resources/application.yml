@@ -16,6 +16,7 @@ upload:
     max-size: ${max.image.size:512000} #default is 500kB
 security:
   discord:
+    api-host: ${discord.app.host:https://discordapp.com}
     client-id: ${discord.app.id:}
     secret: ${discord.app.secret:}
     redirect-uri: ${discord.app.redirect:}

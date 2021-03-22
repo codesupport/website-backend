@@ -46,6 +46,7 @@ Name | Default | Description
 `DATABASE_POOL_SIZE` | `4` | The maximum number of database connections
 `DATABASE_POOL_IDLE` | `2` | The minimum number of database connections to keep open
 `DISCORD_APP_ID` | | The Discord app's ID
+`DISCORD_APP_HOST` | https://discordapp.com | Discord API host url 
 `DISCORD_APP_SECRET` | | The Discord app's secret
 `DISCORD_APP_REDIRECT` | | The Discord app's redirect for OAuth
 `DISCORD_LOG_WEBHOOK_URL` | | Webhook url for posting logs to discord

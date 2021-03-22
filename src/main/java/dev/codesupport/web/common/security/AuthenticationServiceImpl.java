@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.net.HttpHeaders;
 import dev.codesupport.web.api.data.entity.UserEntity;
 import dev.codesupport.web.api.data.repository.UserRepository;
+import dev.codesupport.web.common.configuration.DiscordAppProperties;
 import dev.codesupport.web.common.configuration.HttpSessionProperties;
 import dev.codesupport.web.common.exception.DisabledUserException;
 import dev.codesupport.web.common.exception.InvalidUserException;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,9 +35,19 @@ import java.util.Optional;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final HttpSessionProperties httpSessionProperties;
+    private final DiscordAppProperties discordAppProperties;
     private final UserRepository userRepository;
     private final HashingUtility hashingUtility;
     private final HttpClient httpClient;
+
+    private String discordAuthApiUrl;
+    private String discordUserApiUrl;
+
+    @PostConstruct
+    public void init() {
+        discordAuthApiUrl = discordAppProperties.getApiHost() + "/api/oauth2/token";
+        discordUserApiUrl = discordAppProperties.getApiHost() + "/api/users/@me";
+    }
 
     /**
      * Creates a token if the given credentials are valid.
@@ -146,14 +158,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @VisibleForTesting
     DiscordUser getDiscordUserDetailsFromDiscordApi(String accessToken) {
-        String discordOAuthTokenUri = "https://discordapp.com/api/users/@me";
-
         Map<String, String> httpHeaders = new HashMap<>();
         httpHeaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
         return httpClient
                 .rest(String.class, DiscordUser.class)
-                .withUrl(discordOAuthTokenUri)
+                .withUrl(discordUserApiUrl)
                 .withHeaders(httpHeaders)
                 .sync(HttpMethod.GET);
     }
@@ -166,16 +176,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @VisibleForTesting
     DiscordOAuthTokenResponse getTokenFromDiscordApi(String code) {
-        String discordOAuthTokenUri = "https://discordapp.com/api/oauth2/token";
-
-        DiscordOAuthTokenRequest tokenRequest = DiscordOAuthTokenRequest.create(code);
+        DiscordOAuthTokenRequest tokenRequest = new DiscordOAuthTokenRequest(
+                discordAppProperties.getClientId(),
+                discordAppProperties.getSecret(),
+                code,
+                discordAppProperties.getRedirectUri()
+        );
 
         Map<String, String> httpHeaders = new HashMap<>();
         httpHeaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         return httpClient
                 .rest(DiscordOAuthTokenRequest.class, DiscordOAuthTokenResponse.class)
-                .withUrl(discordOAuthTokenUri)
+                .withUrl(discordAuthApiUrl)
                 .withHeaders(httpHeaders)
                 .withPayload(tokenRequest)
                 .sync(HttpMethod.POST);

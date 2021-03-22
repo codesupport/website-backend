@@ -11,6 +11,7 @@ public class Article implements AuditableDomain<Long, Long> {
     private Long id;
     private String title;
     private String titleId;
+    private String imageName;
     private ArticleRevision revision;
     private User createdBy;
     private Long createdOn;

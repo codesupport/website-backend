@@ -43,6 +43,8 @@ public class UserEntity implements IdentifiableEntity<Long> {
     @Column(length = 50)
     private String accessToken;
     private Long accessTokenExpireOn;
+    @Column(length = 50)
+    private String passwordResetToken;
     @Column(unique = true, length = 100, nullable = false)
     private String email;
     @Column(length = 100)

@@ -16,14 +16,24 @@ import java.io.IOException;
 @Service
 public class FileServiceImpl implements FileService {
 
-    public static final String IMAGE_STORAGE_DIR = "/tmp/codesupport/upload/images/";
+    public static final String IMAGE_STORAGE_DIR = "/tmp/codesupport/upload/images/articles/";
+    public static final String ARTICLE_COVER_IMAGE_STORAGE_DIR = "/tmp/codesupport/upload/images/articles/cover/";
 
     @Override
-    public FileResource getImage(String fileName) {
+    public FileResource getArticleImage(String fileName) {
+        return getFile(IMAGE_STORAGE_DIR, fileName);
+    }
+
+    @Override
+    public FileResource getArticleCoverImage(String fileName) {
+        return getFile(ARTICLE_COVER_IMAGE_STORAGE_DIR, fileName);
+    }
+
+    public FileResource getFile(String storageDirectory, String fileName) {
         FileResource fileResource;
 
         try {
-            fileResource = FileResource.of(new File(IMAGE_STORAGE_DIR + fileName));
+            fileResource = FileResource.of(new File(storageDirectory + fileName));
         } catch (IOException e) {
             throw new ResourceNotFoundException(ResourceNotFoundException.Reason.NOT_FOUND);
         }
@@ -32,7 +42,16 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileReference storeImage(MultipartFile file) {
+    public FileReference storeArticleImage(MultipartFile file) {
+        return storeFile(IMAGE_STORAGE_DIR, file);
+    }
+
+    @Override
+    public FileReference storeArticleCoverImage(MultipartFile file) {
+        return storeFile(ARTICLE_COVER_IMAGE_STORAGE_DIR, file);
+    }
+
+    public FileReference storeFile(String storageDirectory, MultipartFile file) {
         ContentType contentType = ContentType.valueFrom(file.getContentType());
 
         FileReference fileReference = new FileReference();
@@ -42,7 +61,7 @@ public class FileServiceImpl implements FileService {
         fileReference.setFileSizeB(file.getSize());
 
         try {
-            File imageFile = new File(IMAGE_STORAGE_DIR + fileReference.getName());
+            File imageFile = new File(storageDirectory + fileReference.getName());
             FileUtils.writeByteArrayToFile(imageFile, file.getBytes());
         } catch (IOException e) {
             throw new ServiceLayerException("Unable to create file.", e);

@@ -2,6 +2,7 @@ package dev.codesupport.web.api.controller;
 
 import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.User;
+import dev.codesupport.web.domain.UserPasswordChange;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
 import io.swagger.annotations.Api;
@@ -10,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,5 +48,9 @@ public interface UserController {
     @ApiOperation("Register User")
     @PostMapping("/users")
     UserProfile registerUser(@RequestBody @Valid UserRegistration userRegistration);
+
+    @ApiOperation("Reset Password")
+    @PutMapping("/password")
+    UserProfile updatePassword(@RequestBody @Valid UserPasswordChange userPasswordChange);
 
 }

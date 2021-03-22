@@ -56,11 +56,4 @@ public class ShowcaseCreateEvaluator extends AbstractAccessEvaluator<Showcase> {
         return hasPermission;
     }
 
-    //S1185 - Doing this just so it can be mocked for tests, really need powermock.
-    @SuppressWarnings("squid:S1185")
-    @Override
-    protected boolean isValidAuth(Authentication auth) {
-        return super.isValidAuth(auth);
-    }
-
 }

@@ -13,6 +13,7 @@ import dev.codesupport.web.domain.Country;
 import dev.codesupport.web.domain.NewUser;
 import dev.codesupport.web.domain.Permission;
 import dev.codesupport.web.domain.User;
+import dev.codesupport.web.domain.UserPasswordChange;
 import dev.codesupport.web.domain.UserProfile;
 import dev.codesupport.web.domain.UserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +117,17 @@ public class UserServiceImpl implements UserService {
         }
 
         return MappingUtils.convertToType(createdUser, UserProfile.class);
+    }
+
+    @Override
+    public UserProfile updatePassword(UserPasswordChange userPasswordChange) {
+        UserEntity userEntity = userRepository.getById(userPasswordChange.getId());
+        userEntity.setHashPassword(
+                hashingUtility.hashPassword(userPasswordChange.getPassword())
+        );
+        UserEntity savedUser = userRepository.save(userEntity);
+
+        return MappingUtils.convertToType(savedUser, UserProfile.class);
     }
 
     @Override

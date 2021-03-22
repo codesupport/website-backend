@@ -12,6 +12,7 @@ public enum Accessor {
     CURRENT,
     DISCORD,
     IMAGE,
+    PASSWORD,
     PERMISSION,
     USER,
     TOKEN

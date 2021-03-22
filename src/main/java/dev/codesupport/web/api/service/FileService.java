@@ -8,9 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
 
-    FileResource getImage(@PathVariable String fileName);
+    FileResource getArticleImage(@PathVariable String fileName);
+
+    FileResource getArticleCoverImage(@PathVariable String fileName);
 
     @PreAuthorize("hasPermission('Image', 'create')")
-    FileReference storeImage(MultipartFile file);
+    FileReference storeArticleImage(MultipartFile file);
+
+    @PreAuthorize("hasPermission('Image', 'create')")
+    FileReference storeArticleCoverImage(MultipartFile file);
 
 }

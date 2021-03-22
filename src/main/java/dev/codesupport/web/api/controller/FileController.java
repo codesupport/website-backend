@@ -4,6 +4,7 @@ import dev.codesupport.web.common.service.http.DontWrapResponse;
 import dev.codesupport.web.domain.FileReference;
 import dev.codesupport.web.domain.validation.annotation.ImageUploadConstraint;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +21,26 @@ import org.springframework.web.multipart.MultipartFile;
 @Validated
 public interface FileController {
 
+    //S1452 - Spring requires returning byte, which can't be used as a parameterized type.
+    @SuppressWarnings("java:S1452")
     @DontWrapResponse
-    @GetMapping("/images/{fileName}")
-    ResponseEntity<?> getImage(@PathVariable String fileName);
+    @ApiOperation("Get article image")
+    @GetMapping("/images/articles/{fileName}")
+    ResponseEntity<?> getArticleImage(@PathVariable String fileName);
 
-    @PostMapping("/images")
-    FileReference storeImage(@RequestParam("file") @ImageUploadConstraint MultipartFile file);
+    //S1452 - Spring requires returning byte, which can't be used as a parameterized type.
+    @SuppressWarnings("java:S1452")
+    @DontWrapResponse
+    @ApiOperation("Get all cover image")
+    @GetMapping("/images/articles/cover/{fileName}")
+    ResponseEntity<?> getArticleCoverImage(@PathVariable String fileName);
+
+    @ApiOperation("Store article image")
+    @PostMapping("/images/articles")
+    FileReference storeArticleImage(@RequestParam("file") @ImageUploadConstraint MultipartFile file);
+
+    @ApiOperation("Store article cover image")
+    @PostMapping("/images/articles/cover")
+    FileReference storeArticleCoverImage(@RequestParam("file") @ImageUploadConstraint MultipartFile file);
 
 }

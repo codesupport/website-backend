@@ -1,5 +1,6 @@
 security:
   discord:
+    api-host: https://example.com
     client-id: 1234
     secret: 4321
     redirect-uri: example.com

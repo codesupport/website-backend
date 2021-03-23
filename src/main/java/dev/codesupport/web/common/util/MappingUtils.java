@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
@@ -41,9 +42,9 @@ public class MappingUtils {
      * <p></p>
      *
      * @param object The object to convert
-     * @param clazz The destination type to convert to
-     * @param <D> The destination type
-     * @param <S> The source object type
+     * @param clazz  The destination type to convert to
+     * @param <D>    The destination type
+     * @param <S>    The source object type
      * @return a new instance of the object, converted to the specified type
      */
     public static <D, S> D convertToType(S object, Class<D> clazz) {
@@ -56,9 +57,9 @@ public class MappingUtils {
      * <p></p>
      *
      * @param objectList The list of objects to convert
-     * @param clazz The destination type to convert to
-     * @param <D> The destination type
-     * @param <S> The source object type
+     * @param clazz      The destination type to convert to
+     * @param <D>        The destination type
+     * @param <S>        The source object type
      * @return a new instance of the object list, with every element converted to the specified type
      */
     public static <D, S> List<D> convertToType(List<S> objectList, Class<D> clazz) {
@@ -71,9 +72,9 @@ public class MappingUtils {
      * <p></p>
      *
      * @param objectList The set of objects to convert
-     * @param clazz The destination type to convert to
-     * @param <D> The destination type
-     * @param <S> The source object type
+     * @param clazz      The destination type to convert to
+     * @param <D>        The destination type
+     * @param <S>        The source object type
      * @return a new instance of the object set, with every element converted to the specified type
      */
     public static <D, S> Set<D> convertToType(Set<S> objectList, Class<D> clazz) {
@@ -86,8 +87,8 @@ public class MappingUtils {
      * <p></p>
      *
      * @param jsonString The json string to convert
-     * @param clazz The destination type to convert to
-     * @param <D> The destination type
+     * @param clazz      The destination type to convert to
+     * @param <D>        The destination type
      * @return a new instance of the deserialized object as the provided type
      * @throws IOException when the json object can not be deserialized
      */
@@ -103,8 +104,8 @@ public class MappingUtils {
      * <p></p>
      *
      * @param jsonString The json string to convert
-     * @param clazz The destination type to convert to
-     * @param <D> The destination type
+     * @param clazz      The destination type to convert to
+     * @param <D>        The destination type
      * @return a new instance of the deserialized object list as the provided type
      * @throws IOException when the json object can not be deserialized
      */
@@ -113,5 +114,17 @@ public class MappingUtils {
     public static <D extends Serializable> List<D> convertFromJsonList(String jsonString, Class<D> clazz) throws IOException {
         return mapper()
                 .readValue(jsonString, mapper().getTypeFactory().constructCollectionLikeType(List.class, clazz));
+    }
+
+    /**
+     * Writes out the object as a json string
+     *
+     * @param object The object to write as a json String
+     * @return The json string
+     * @throws JsonProcessingException when the object couldn't be serialized
+     */
+    public static String convertToJson(Object object) throws JsonProcessingException {
+        return mapper()
+                .writeValueAsString(object);
     }
 }

@@ -1,5 +1,6 @@
 package dev.codesupport.web.common.configuration;
 
+import com.google.common.annotations.VisibleForTesting;
 import dev.codesupport.web.common.exception.ConfigurationException;
 import dev.codesupport.web.common.util.ValidationUtils;
 import lombok.Data;
@@ -9,6 +10,8 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Configurations for file uploads
@@ -29,6 +32,11 @@ public class FileUploadProperties {
      */
     private Image image;
 
+    @PostConstruct
+    public void init() {
+        validate();
+    }
+
     public Image imageProperties() {
         return image;
     }
@@ -47,7 +55,8 @@ public class FileUploadProperties {
         }
     }
 
-    public void validate() {
+    @VisibleForTesting
+    void validate() {
         if (StringUtils.isBlank(hostName)) {
             throw new ConfigurationException("Host name configuration not set");
         }

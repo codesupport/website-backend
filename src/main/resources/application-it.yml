@@ -18,6 +18,7 @@ upload:
     max-size: 1000
 security:
   discord:
+    api-host: http://localhost:8085
     client-id: 1234
     secret: 4321
     redirect-uri: http://localhost:8082/actuator/health

@@ -68,12 +68,14 @@ public class DiscordAppPropertiesTest {
 
     @Test
     public void shouldReturnTrueForIsValidIfAllPropertiesAreSet() {
+        String apiUrl = "http://www.example.com";
         String clientId = "client";
         String secret = "secret";
         String redirectUri = "redirect";
 
         DiscordAppProperties configuration = new DiscordAppProperties();
 
+        configuration.setApiHost(apiUrl);
         configuration.setClientId(clientId);
         configuration.setSecret(secret);
         configuration.setRedirectUri(redirectUri);

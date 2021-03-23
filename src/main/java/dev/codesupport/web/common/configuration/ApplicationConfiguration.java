@@ -1,12 +1,8 @@
 package dev.codesupport.web.common.configuration;
 
-import com.google.common.annotations.VisibleForTesting;
-import dev.codesupport.web.common.exception.ConfigurationException;
-import dev.codesupport.web.common.security.models.DiscordOAuthTokenRequest;
 import dev.codesupport.web.common.service.http.client.ObjectToUrlEncodedConverter;
 import dev.codesupport.web.common.service.http.client.RestTemplateResponseErrorHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
@@ -20,38 +16,8 @@ import org.springframework.web.client.RestTemplate;
  * Configures the application.
  */
 @Configuration
+@RequiredArgsConstructor
 public class ApplicationConfiguration {
-
-    /**
-     * Performs configurations requires for the application to function.
-     * <p>This is automatically found and executed by Spring.</p>
-     *
-     * @param context Spring's ApplicationContext
-     */
-    @Autowired
-    ApplicationConfiguration(
-            ApplicationContext context,
-            FileUploadProperties fileUploadProperties,
-            DiscordAppProperties discordAppProperties
-    ) {
-        // Configure discord requests with developer app values.
-        configureDiscordClient(discordAppProperties);
-
-        fileUploadProperties.validate();
-    }
-
-    @VisibleForTesting
-    void configureDiscordClient(DiscordAppProperties discordAppProperties) {
-        // If properties are not valid, fail startup.
-        if (!discordAppProperties.isValid()) {
-            throw new ConfigurationException("Discord app properties not set.");
-        }
-
-        // Set discord app properties as static (default) values of DiscordOAuthTokenRequest
-        DiscordOAuthTokenRequest.setClient_id(discordAppProperties.getClientId());
-        DiscordOAuthTokenRequest.setSecret(discordAppProperties.getSecret());
-        DiscordOAuthTokenRequest.setRedirect_uri(discordAppProperties.getRedirectUri());
-    }
 
     /**
      * @return The type of password encryption to use

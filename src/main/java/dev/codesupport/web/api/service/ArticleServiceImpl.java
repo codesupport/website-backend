@@ -62,7 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> findAllArticles(boolean publishedOnly, Long creatorId) {
         // List<ArticleEntity> entities;
 
-        if (publishedOnly && creatorId != null) {
+        if (publishedOnly && creatorId != -1) {
             return articleRepository
                     .findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(creatorId)
                     .stream()
@@ -78,7 +78,7 @@ public class ArticleServiceImpl implements ArticleService {
                     .collect(Collectors.toList());
         }
 
-        if (creatorId != null) {
+        if (creatorId != -1) {
             return articleRepository
                     .findAllByAuditEntity_CreatedBy_Id(creatorId)
                     .stream()

@@ -30,7 +30,7 @@ public interface ArticleController {
 
     @ApiOperation("Get all Articles")
     @GetMapping("/articles")
-    List<Article> findAllArticles(@RequestParam(required = false) boolean publishedonly, @RequestParam(required = false) Long creatorId);
+    List<Article> findAllArticles(@RequestParam(required = false) boolean publishedonly, @RequestParam(required = false, defaultValue = "-1") Long creatorId);
 
     @ApiOperation("Get an Article by id")
     @GetMapping("/articles/{id}")

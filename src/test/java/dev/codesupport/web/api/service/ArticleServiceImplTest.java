@@ -125,7 +125,7 @@ public class ArticleServiceImplTest {
                 .getArticleWithRevision(articleBuilder.buildEntity());
 
         List<Article> expected = Collections.singletonList(articleBuilder.buildDomain());
-        List<Article> actual = serviceSpy.findAllArticles(false, null);
+        List<Article> actual = serviceSpy.findAllArticles(false, -1L);
 
         assertEquals(expected, actual);
     }
@@ -155,7 +155,7 @@ public class ArticleServiceImplTest {
                 .getArticleWithRevision(articleBuilder.buildEntity());
 
         List<Article> expected = Collections.singletonList(articleBuilder.buildDomain());
-        List<Article> actual = serviceSpy.findAllArticles(true, null);
+        List<Article> actual = serviceSpy.findAllArticles(true, -1L);
 
         assertEquals(expected, actual);
     }

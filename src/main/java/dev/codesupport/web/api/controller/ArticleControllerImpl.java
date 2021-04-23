@@ -20,8 +20,8 @@ public class ArticleControllerImpl implements ArticleController {
     }
 
     @Override
-    public List<Article> findAllArticles(boolean publishedonly) {
-        return service.findAllArticles(publishedonly);
+    public List<Article> findAllArticles(boolean publishedonly, Long creatorId) {
+        return service.findAllArticles(publishedonly, creatorId);
     }
 
     @Override

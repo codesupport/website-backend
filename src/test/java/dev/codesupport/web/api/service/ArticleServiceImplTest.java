@@ -7,12 +7,7 @@ import dev.codesupport.testutils.builders.ImageReferenceBuilder;
 import dev.codesupport.web.api.data.entity.ArticleEntity;
 import dev.codesupport.web.api.data.entity.ArticleRevisionEntity;
 import dev.codesupport.web.api.data.entity.ImageReferenceEntity;
-import dev.codesupport.web.api.data.repository.ArticleRepository;
-import dev.codesupport.web.api.data.repository.ArticleRevisionRepository;
-import dev.codesupport.web.api.data.repository.ImageReferenceRepository;
-import dev.codesupport.web.api.data.repository.TagRepository;
-import dev.codesupport.web.api.data.repository.TagSetRepository;
-import dev.codesupport.web.api.data.repository.TagSetToTagsRepository;
+import dev.codesupport.web.api.data.repository.*;
 import dev.codesupport.web.common.exception.DuplicateEntryException;
 import dev.codesupport.web.common.service.service.CrudAuditableOperations;
 import dev.codesupport.web.common.service.service.CrudOperations;
@@ -45,6 +40,7 @@ import static org.mockito.Mockito.verify;
 public class ArticleServiceImplTest {
 
     private static ArticleRepository mockArticleRepository;
+    private static UserRepository mockUserRepository;
     private static ArticleRevisionRepository mockArticleRevisionRepository;
     private static ImageReferenceRepository mockImageReferenceRepository;
     private static TagSetToTagsRepository mockTagSetToTagsRepository;
@@ -59,6 +55,7 @@ public class ArticleServiceImplTest {
     @BeforeClass
     public static void init() {
         mockArticleRepository = mock(ArticleRepository.class);
+        mockUserRepository = mock(UserRepository.class);
         mockArticleRevisionRepository = mock(ArticleRevisionRepository.class);
         mockImageReferenceRepository = mock(ImageReferenceRepository.class);
         mockTagSetToTagsRepository = mock(TagSetToTagsRepository.class);
@@ -75,6 +72,7 @@ public class ArticleServiceImplTest {
         serviceSpy = spy(
                 new ArticleServiceImpl(
                         mockArticleRepository,
+                        mockUserRepository,
                         mockArticleRevisionRepository,
                         mockImageReferenceRepository,
                         mockTagSetToTagsRepository,
@@ -127,7 +125,7 @@ public class ArticleServiceImplTest {
                 .getArticleWithRevision(articleBuilder.buildEntity());
 
         List<Article> expected = Collections.singletonList(articleBuilder.buildDomain());
-        List<Article> actual = serviceSpy.findAllArticles(false);
+        List<Article> actual = serviceSpy.findAllArticles(false, null);
 
         assertEquals(expected, actual);
     }
@@ -157,7 +155,7 @@ public class ArticleServiceImplTest {
                 .getArticleWithRevision(articleBuilder.buildEntity());
 
         List<Article> expected = Collections.singletonList(articleBuilder.buildDomain());
-        List<Article> actual = serviceSpy.findAllArticles(true);
+        List<Article> actual = serviceSpy.findAllArticles(true, null);
 
         assertEquals(expected, actual);
     }

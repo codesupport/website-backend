@@ -1,29 +1,15 @@
 package dev.codesupport.web.api.service;
 
 import com.google.common.annotations.VisibleForTesting;
-import dev.codesupport.web.api.data.entity.ArticleEntity;
-import dev.codesupport.web.api.data.entity.ArticleRevisionEntity;
-import dev.codesupport.web.api.data.entity.ImageReferenceEntity;
-import dev.codesupport.web.api.data.entity.TagEntity;
-import dev.codesupport.web.api.data.entity.TagSetEntity;
-import dev.codesupport.web.api.data.entity.TagSetToTagEntity;
-import dev.codesupport.web.api.data.repository.ArticleRepository;
-import dev.codesupport.web.api.data.repository.ArticleRevisionRepository;
-import dev.codesupport.web.api.data.repository.ImageReferenceRepository;
-import dev.codesupport.web.api.data.repository.TagRepository;
-import dev.codesupport.web.api.data.repository.TagSetRepository;
-import dev.codesupport.web.api.data.repository.TagSetToTagsRepository;
+import dev.codesupport.web.api.data.entity.*;
+import dev.codesupport.web.api.data.repository.*;
 import dev.codesupport.web.common.exception.DuplicateEntryException;
 import dev.codesupport.web.common.service.service.CrudAuditableOperations;
 import dev.codesupport.web.common.service.service.CrudLogic;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.ImageReferenceScanner;
 import dev.codesupport.web.common.util.MappingUtils;
-import dev.codesupport.web.domain.Article;
-import dev.codesupport.web.domain.ArticleRevision;
-import dev.codesupport.web.domain.Tag;
-import dev.codesupport.web.domain.TagSet;
-import dev.codesupport.web.domain.VoidMethodResponse;
+import dev.codesupport.web.domain.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +31,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final CrudAuditableOperations<Long, ArticleEntity, Article, Long> articleCrudOperations;
     private final CrudOperations<ArticleRevisionEntity, ArticleRevision, Long> revisionCrudOperations;
     private final ArticleRepository articleRepository;
+    private final UserRepository userRepository;
     private final ImageReferenceRepository imageReferenceRepository;
     private final ArticleRevisionRepository articleRevisionRepository;
     private final ImageReferenceScanner imageReferenceScanner;
@@ -52,6 +39,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     public ArticleServiceImpl(
             ArticleRepository articleRepository,
+            UserRepository userRepository,
             ArticleRevisionRepository articleRevisionRepository,
             ImageReferenceRepository imageReferenceRepository,
             TagSetToTagsRepository tagSetToTagsRepository,
@@ -64,23 +52,60 @@ public class ArticleServiceImpl implements ArticleService {
         revisionCrudOperations = new CrudOperations<>(articleRevisionRepository, ArticleRevisionEntity.class, ArticleRevision.class);
         revisionCrudOperations.setCrudLogic(new ArticleRevisionCrudLogic(tagRepository, tagSetRepository, tagSetToTagsRepository));
         this.articleRepository = articleRepository;
+        this.userRepository = userRepository;
         this.articleRevisionRepository = articleRevisionRepository;
         this.imageReferenceRepository = imageReferenceRepository;
         this.imageReferenceScanner = imageReferenceScanner;
     }
 
     @Override
-    public List<Article> findAllArticles(boolean publishedOnly) {
-        List<ArticleEntity> entities;
+    public List<Article> findAllArticles(boolean publishedOnly, Long creatorId) {
+        // List<ArticleEntity> entities;
 
-        if (publishedOnly) {
-            entities = articleRepository.findAllByRevisionIdNotNull();
-        } else {
-            entities = articleRepository.findAll();
+        if (publishedOnly && creatorId != null) {
+            return articleRepository
+                    .findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(creatorId)
+                    .stream()
+                    .map(this::getArticleWithRevision)
+                    .collect(Collectors.toList());
         }
 
+        if (publishedOnly) {
+            return articleRepository
+                    .findAllByRevisionIdNotNull()
+                    .stream()
+                    .map(this::getArticleWithRevision)
+                    .collect(Collectors.toList());
+        }
+
+        if (creatorId != null) {
+            return articleRepository
+                    .findAllByAuditEntity_CreatedBy_Id(creatorId)
+                    .stream()
+                    .map(this::getArticleWithRevision)
+                    .collect(Collectors.toList());
+        }
+
+        return articleRepository.findAll().stream().map(this::getArticleWithRevision).collect(Collectors.toList());
+
+//        if (publishedOnly && creatorId != null) {
+//            System.out.println("Here!");
+//            entities = articleRepository.findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(creatorId);
+//        } else {
+//            if (publishedOnly) {
+//                System.out.println("Here1!");
+//                entities = articleRepository.findAllByRevisionIdNotNull();
+//            } else if (creatorId == null) {
+//                System.out.println("Here2!");
+//                entities = articleRepository.findAllByAuditEntity_CreatedBy_Id(creatorId);
+//            } else {
+//                System.out.println("Here3!");
+//                entities = articleRepository.findAll();
+//            }
+//        }
+
         // For each article entity, get an article DTO with the current revision nested inside
-        return entities.stream().map(this::getArticleWithRevision).collect(Collectors.toList());
+        // return entities.stream().map(this::getArticleWithRevision).collect(Collectors.toList());
     }
 
     @Override

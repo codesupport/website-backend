@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @EqualsAndHashCode(callSuper = true)
-public class ArticlesCurrentReadEvaluator extends AbstractAccessEvaluator<Long> {
+public class ArticlesCreatorReadEvaluator extends AbstractAccessEvaluator<Long> {
 
-    public ArticlesCurrentReadEvaluator() {
+    public ArticlesCreatorReadEvaluator() {
         super(Permission.READ);
     }
 
@@ -33,6 +33,6 @@ public class ArticlesCurrentReadEvaluator extends AbstractAccessEvaluator<Long> 
 
     @Override
     public Accessor getAccessor() {
-        return Accessor.ARTICLES_CURRENT;
+        return Accessor.ARTICLES_CREATOR;
     }
 }

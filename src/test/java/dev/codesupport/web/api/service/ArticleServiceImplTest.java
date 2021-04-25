@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import dev.codesupport.testutils.builders.ArticleBuilder;
 import dev.codesupport.testutils.builders.ArticleRevisionBuilder;
 import dev.codesupport.testutils.builders.ImageReferenceBuilder;
+import dev.codesupport.testutils.builders.UserBuilder;
 import dev.codesupport.web.api.data.entity.ArticleEntity;
 import dev.codesupport.web.api.data.entity.ArticleRevisionEntity;
 import dev.codesupport.web.api.data.entity.ImageReferenceEntity;
@@ -14,6 +15,7 @@ import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.ImageReferenceScanner;
 import dev.codesupport.web.domain.Article;
 import dev.codesupport.web.domain.ArticleRevision;
+import dev.codesupport.web.domain.User;
 import dev.codesupport.web.domain.VoidMethodResponse;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,7 +42,6 @@ import static org.mockito.Mockito.verify;
 public class ArticleServiceImplTest {
 
     private static ArticleRepository mockArticleRepository;
-    private static UserRepository mockUserRepository;
     private static ArticleRevisionRepository mockArticleRevisionRepository;
     private static ImageReferenceRepository mockImageReferenceRepository;
     private static TagSetToTagsRepository mockTagSetToTagsRepository;
@@ -55,7 +56,6 @@ public class ArticleServiceImplTest {
     @BeforeClass
     public static void init() {
         mockArticleRepository = mock(ArticleRepository.class);
-        mockUserRepository = mock(UserRepository.class);
         mockArticleRevisionRepository = mock(ArticleRevisionRepository.class);
         mockImageReferenceRepository = mock(ImageReferenceRepository.class);
         mockTagSetToTagsRepository = mock(TagSetToTagsRepository.class);
@@ -72,7 +72,6 @@ public class ArticleServiceImplTest {
         serviceSpy = spy(
                 new ArticleServiceImpl(
                         mockArticleRepository,
-                        mockUserRepository,
                         mockArticleRevisionRepository,
                         mockImageReferenceRepository,
                         mockTagSetToTagsRepository,
@@ -156,6 +155,74 @@ public class ArticleServiceImplTest {
 
         List<Article> expected = Collections.singletonList(articleBuilder.buildDomain());
         List<Article> actual = serviceSpy.findAllArticles(true, -1L);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGetAllArticlesByCreatorId() {
+        Long creatorId = 10L;
+
+        UserBuilder userBuilder = UserBuilder.builder()
+                .id(creatorId);
+
+        ArticleBuilder articleBuilder = ArticleBuilder.builder()
+                .id(5L)
+                .title("Some title")
+                .createdBy(userBuilder)
+                .revision(null);
+
+        doReturn(Collections.singletonList(articleBuilder.buildEntity()))
+                .when(mockArticleRepository)
+                .findAllByAuditEntity_CreatedBy_Id(creatorId);
+
+        doReturn(null)
+                .when(mockArticleRepository)
+                .findAll();
+
+        doReturn(articleBuilder.buildDomain())
+                .when(serviceSpy)
+                .getArticleWithRevision(articleBuilder.buildEntity());
+
+        List<Article> expected = Collections.singletonList(articleBuilder.buildDomain());
+        List<Article> actual = serviceSpy.findAllArticles(false, creatorId);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGetAllArticlesByCreatorIdAndPublishedOnly() {
+        Long creatorId = 10L;
+
+        UserBuilder userBuilder = UserBuilder.builder()
+                .id(creatorId);
+
+        ArticleBuilder articleBuilder = ArticleBuilder.builder()
+                .id(5L)
+                .title("Some title")
+                .createdBy(userBuilder)
+                .revision(
+                        ArticleRevisionBuilder.builder()
+                                .id(3L)
+                                .description("some description")
+                                .content("Some content")
+                                .createdBy(userBuilder)
+                );
+
+        doReturn(Collections.singletonList(articleBuilder.buildEntity()))
+                .when(mockArticleRepository)
+                .findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(creatorId);
+
+        doReturn(null)
+                .when(mockArticleRepository)
+                .findAll();
+
+        doReturn(articleBuilder.buildDomain())
+                .when(serviceSpy)
+                .getArticleWithRevision(articleBuilder.buildEntity());
+
+        List<Article> expected = Collections.singletonList(articleBuilder.buildDomain());
+        List<Article> actual = serviceSpy.findAllArticles(true, creatorId);
 
         assertEquals(expected, actual);
     }

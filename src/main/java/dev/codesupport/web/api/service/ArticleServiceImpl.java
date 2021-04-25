@@ -31,7 +31,6 @@ public class ArticleServiceImpl implements ArticleService {
     private final CrudAuditableOperations<Long, ArticleEntity, Article, Long> articleCrudOperations;
     private final CrudOperations<ArticleRevisionEntity, ArticleRevision, Long> revisionCrudOperations;
     private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
     private final ImageReferenceRepository imageReferenceRepository;
     private final ArticleRevisionRepository articleRevisionRepository;
     private final ImageReferenceScanner imageReferenceScanner;
@@ -39,7 +38,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     public ArticleServiceImpl(
             ArticleRepository articleRepository,
-            UserRepository userRepository,
             ArticleRevisionRepository articleRevisionRepository,
             ImageReferenceRepository imageReferenceRepository,
             TagSetToTagsRepository tagSetToTagsRepository,
@@ -52,7 +50,6 @@ public class ArticleServiceImpl implements ArticleService {
         revisionCrudOperations = new CrudOperations<>(articleRevisionRepository, ArticleRevisionEntity.class, ArticleRevision.class);
         revisionCrudOperations.setCrudLogic(new ArticleRevisionCrudLogic(tagRepository, tagSetRepository, tagSetToTagsRepository));
         this.articleRepository = articleRepository;
-        this.userRepository = userRepository;
         this.articleRevisionRepository = articleRevisionRepository;
         this.imageReferenceRepository = imageReferenceRepository;
         this.imageReferenceScanner = imageReferenceScanner;
@@ -60,8 +57,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> findAllArticles(boolean publishedOnly, Long creatorId) {
-        // List<ArticleEntity> entities;
-
         if (publishedOnly && creatorId != -1) {
             return articleRepository
                     .findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(creatorId)
@@ -86,26 +81,12 @@ public class ArticleServiceImpl implements ArticleService {
                     .collect(Collectors.toList());
         }
 
-        return articleRepository.findAll().stream().map(this::getArticleWithRevision).collect(Collectors.toList());
-
-//        if (publishedOnly && creatorId != null) {
-//            System.out.println("Here!");
-//            entities = articleRepository.findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(creatorId);
-//        } else {
-//            if (publishedOnly) {
-//                System.out.println("Here1!");
-//                entities = articleRepository.findAllByRevisionIdNotNull();
-//            } else if (creatorId == null) {
-//                System.out.println("Here2!");
-//                entities = articleRepository.findAllByAuditEntity_CreatedBy_Id(creatorId);
-//            } else {
-//                System.out.println("Here3!");
-//                entities = articleRepository.findAll();
-//            }
-//        }
-
         // For each article entity, get an article DTO with the current revision nested inside
-        // return entities.stream().map(this::getArticleWithRevision).collect(Collectors.toList());
+        return articleRepository
+                .findAll()
+                .stream()
+                .map(this::getArticleWithRevision)
+                .collect(Collectors.toList());
     }
 
     @Override

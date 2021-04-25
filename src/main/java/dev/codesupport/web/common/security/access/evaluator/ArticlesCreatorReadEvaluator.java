@@ -28,7 +28,7 @@ public class ArticlesCreatorReadEvaluator extends AbstractAccessEvaluator<Long> 
      */
     @Override
     protected boolean hasPermissionCheck(Authentication auth, Long creatorId) {
-        return getUserDetails(auth).getId().equals(creatorId);
+        return isValidAuth(auth) && getUserDetails(auth).getId().equals(creatorId);
     }
 
     @Override

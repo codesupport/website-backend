@@ -1,15 +1,29 @@
 package dev.codesupport.web.api.service;
 
 import com.google.common.annotations.VisibleForTesting;
-import dev.codesupport.web.api.data.entity.*;
-import dev.codesupport.web.api.data.repository.*;
+import dev.codesupport.web.api.data.entity.ArticleEntity;
+import dev.codesupport.web.api.data.entity.ArticleRevisionEntity;
+import dev.codesupport.web.api.data.entity.ImageReferenceEntity;
+import dev.codesupport.web.api.data.entity.TagEntity;
+import dev.codesupport.web.api.data.entity.TagSetEntity;
+import dev.codesupport.web.api.data.entity.TagSetToTagEntity;
+import dev.codesupport.web.api.data.repository.ArticleRepository;
+import dev.codesupport.web.api.data.repository.ArticleRevisionRepository;
+import dev.codesupport.web.api.data.repository.ImageReferenceRepository;
+import dev.codesupport.web.api.data.repository.TagRepository;
+import dev.codesupport.web.api.data.repository.TagSetRepository;
+import dev.codesupport.web.api.data.repository.TagSetToTagsRepository;
 import dev.codesupport.web.common.exception.DuplicateEntryException;
 import dev.codesupport.web.common.service.service.CrudAuditableOperations;
 import dev.codesupport.web.common.service.service.CrudLogic;
 import dev.codesupport.web.common.service.service.CrudOperations;
 import dev.codesupport.web.common.util.ImageReferenceScanner;
 import dev.codesupport.web.common.util.MappingUtils;
-import dev.codesupport.web.domain.*;
+import dev.codesupport.web.domain.Article;
+import dev.codesupport.web.domain.ArticleRevision;
+import dev.codesupport.web.domain.Tag;
+import dev.codesupport.web.domain.TagSet;
+import dev.codesupport.web.domain.VoidMethodResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -267,7 +281,5 @@ public class ArticleServiceImpl implements ArticleService {
                 tagSetToTagsRepository.save(xMap);
             }
         }
-
     }
-
 }

@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends CrudRepository<ArticleEntity, Long> {
 
+    List<ArticleEntity> findAllByAuditEntity_CreatedBy_Id(Long userId);
+    List<ArticleEntity> findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(Long userId);
     List<ArticleEntity> findAllByRevisionIdNotNull();
     boolean existsByTitleId(String title);
 

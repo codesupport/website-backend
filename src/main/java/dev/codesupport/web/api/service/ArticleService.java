@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface ArticleService {
 
-    @PreAuthorize("hasPermission(#publishedOnly, 'articles', 'read')")
-    List<Article> findAllArticles(boolean publishedOnly);
+    @PreAuthorize("hasPermission(#publishedOnly, 'articles', 'read') || hasPermission(#creatorId, 'articlescreator', 'read')")
+    List<Article> findAllArticles(boolean publishedOnly, Long creatorId);
 
     @PreAuthorize("hasPermission(#id, 'article', 'read')")
     Article getArticleById(Long id);

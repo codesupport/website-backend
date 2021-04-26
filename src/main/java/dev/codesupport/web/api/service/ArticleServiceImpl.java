@@ -70,17 +70,37 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> findAllArticles(boolean publishedOnly) {
-        List<ArticleEntity> entities;
+    public List<Article> findAllArticles(boolean publishedOnly, Long creatorId) {
+        if (publishedOnly && creatorId != -1) {
+            return articleRepository
+                    .findAllByAuditEntity_CreatedBy_IdAndRevisionIdNotNull(creatorId)
+                    .stream()
+                    .map(this::getArticleWithRevision)
+                    .collect(Collectors.toList());
+        }
 
         if (publishedOnly) {
-            entities = articleRepository.findAllByRevisionIdNotNull();
-        } else {
-            entities = articleRepository.findAll();
+            return articleRepository
+                    .findAllByRevisionIdNotNull()
+                    .stream()
+                    .map(this::getArticleWithRevision)
+                    .collect(Collectors.toList());
+        }
+
+        if (creatorId != -1) {
+            return articleRepository
+                    .findAllByAuditEntity_CreatedBy_Id(creatorId)
+                    .stream()
+                    .map(this::getArticleWithRevision)
+                    .collect(Collectors.toList());
         }
 
         // For each article entity, get an article DTO with the current revision nested inside
-        return entities.stream().map(this::getArticleWithRevision).collect(Collectors.toList());
+        return articleRepository
+                .findAll()
+                .stream()
+                .map(this::getArticleWithRevision)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -261,7 +281,5 @@ public class ArticleServiceImpl implements ArticleService {
                 tagSetToTagsRepository.save(xMap);
             }
         }
-
     }
-
 }

@@ -7,6 +7,7 @@ public enum Accessor {
     NONE,
     ARTICLE,
     ARTICLES,
+    ARTICLES_CREATOR,
     ARTICLE_REVISION,
     ARTICLE_REVISIONS,
     CURRENT,

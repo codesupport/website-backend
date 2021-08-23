@@ -36,7 +36,7 @@ Name | Default | Description
 ---|---|---
 `API_HOSTNAME` | | The hostname of the backend API (https://api.codesupport.dev)
 `COOKIE_NAME` | | The name of the auth cookie
-`COOKIE_MAX_AGE` | | The max age of the auth cookie in seconds
+`COOKIE_MAX_AGE` | | The max age of the auth cookie (in seconds)
 `CORS_ORIGIN` | | Origin used for CORS header
 `DATABASE_URL` | | The URL to the database
 `DATABASE_USERNAME` | | The username for the database
